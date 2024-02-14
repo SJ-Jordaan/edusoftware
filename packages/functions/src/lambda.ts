@@ -1,5 +1,5 @@
-import { ApiHandler } from "sst/node/api";
-import * as mongodb from "mongodb";
+import { ApiHandler } from 'sst/node/api';
+import * as mongodb from 'mongodb';
 
 const MongoClient = mongodb.MongoClient;
 
@@ -13,7 +13,7 @@ async function connectToDatabase(database: string) {
   }
 
   if (!process.env.MONGODB_URI) {
-    throw new Error("Please define the MONGODB_URI environment variable");
+    throw new Error('Please define the MONGODB_URI environment variable');
   }
 
   // Connect to our MongoDB database hosted on MongoDB Atlas
@@ -28,10 +28,10 @@ async function connectToDatabase(database: string) {
 export const handler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
-    body: `Hello EduSoftware team!`,
+    body: 'Hello EduSoftware team!',
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
     },
   };
 });

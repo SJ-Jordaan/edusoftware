@@ -1,22 +1,22 @@
-import { StackContext, StaticSite, use } from "sst/constructs";
-import { ApiStack } from "./ApiStack";
-import { StorageStack } from "./StorageStack";
+import { StackContext, StaticSite, use } from 'sst/constructs';
+import { ApiStack } from './ApiStack';
+import { StorageStack } from './StorageStack';
 
 export function FrontendStack({ stack, app }: StackContext) {
   const { api } = use(ApiStack);
   const { competitionBucket } = use(StorageStack);
 
   // Define our React app
-  const site = new StaticSite(stack, "AutomaTutor", {
-    customDomain: app.stage === "prod"
+  const site = new StaticSite(stack, 'AutomaTutor', {
+    customDomain: app.stage === 'prod'
       ? {
-        domainName: "edusoftware.net",
-        domainAlias: "www.edusoftware.net",
+        domainName: 'edusoftware.net',
+        domainAlias: 'www.edusoftware.net',
       }
       : undefined,
-    path: "packages/automatutor",
-    buildCommand: "pnpm run build",
-    buildOutput: "dist",
+    path: 'packages/automatutor',
+    buildCommand: 'pnpm run build',
+    buildOutput: 'dist',
     // Pass in our environment variables
     environment: {
       VITE_API_URL: api.customDomainUrl ?? api.url,
