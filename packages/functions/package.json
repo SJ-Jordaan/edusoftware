@@ -7,9 +7,12 @@
     "typecheck": "tsc -noEmit"
   },
   "devDependencies": {
-    "@types/node": "^20.11.17",
     "@types/aws-lambda": "^8.10.133",
-    "vitest": "^1.2.2",
-    "sst": "^2.40.3"
+    "@types/node": "^20.11.17",
+    "sst": "^2.40.3",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "mongodb": "^6.3.0"
   }
 }

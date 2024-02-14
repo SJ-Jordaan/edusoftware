@@ -1,14 +1,14 @@
 import { SSTConfig } from "sst";
-import { API } from "./stacks/MyStack";
+import { StorageStack, ApiStack, FrontendStack } from "./stacks";
 
 export default {
   config(_input) {
     return {
-      name: "edusoftware",
-      region: "af-south-1",
+      name: "EduSoftware",
+      region: "us-east-1",
     };
   },
   stacks(app) {
-    app.stack(API);
+    app.stack(ApiStack).stack(StorageStack).stack(FrontendStack);
   }
 } satisfies SSTConfig;
