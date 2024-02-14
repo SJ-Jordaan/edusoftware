@@ -3,5 +3,10 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node"
+  },
+  "baseUrl": ".",
+  "paths": {
+    "@edusoftware/functions/*": ["../functions/src/*"],
+    "@edusoftware/core/*": ["src/*"]
   }
 }

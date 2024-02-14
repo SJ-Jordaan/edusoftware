@@ -7,7 +7,6 @@ export default function handler(
     let body, statusCode;
 
     try {
-      // Run the Lambda
       body = await lambda(event, context);
       statusCode = 200;
     } catch (error) {

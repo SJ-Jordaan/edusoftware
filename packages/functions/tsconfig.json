@@ -5,7 +5,8 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@edusoftware/core/*": ["../core/src/*"]
+      "@edusoftware/core/*": ["../core/src/*"],
+      "@edusoftware/functions/*": ["src/*"]
     }
   }
 }

@@ -12,6 +12,9 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1557.0",
+    "mongoose": "^8.1.2",
     "zod": "^3.22.4"
   }
 }
