@@ -1,22 +1,46 @@
 import { AlphabetStrategy } from './AlphabetStrategy';
 
-export class StandardAlphabetStrategy extends AlphabetStrategy {
-  normalise(alphabet) {
+/**
+ * Standard implementation of the AlphabetStrategy for normalising and displaying alphabets.
+ */
+export class StandardAlphabetStrategy implements AlphabetStrategy {
+  normalise(alphabet: string | string[]): string {
     if (!alphabet) {
-      return '';
+      throw new Error('Alphabet must not be empty.');
+    }
+
+    // Handling an array of characters
+    if (Array.isArray(alphabet)) {
+      return alphabet
+        .map((char) => {
+          if (typeof char === 'string') {
+            // Recursive normalisation for each character
+            return this.normaliseCharacter(char);
+          }
+          throw new Error('Invalid character type in alphabet array.');
+        })
+        .filter((char) => char !== '')
+        .join('');
+    }
+
+    // Directly handle a single character or string
+    return this.normaliseCharacter(alphabet);
+  }
+
+  display(alphabet: string | string[]): string {
+    if (!alphabet) {
+      throw new Error('Alphabet must not be empty.');
     }
 
     if (Array.isArray(alphabet)) {
-      return alphabet
-        .map((char) => this.normalise(char))
-        .filter((char) => char !== '');
+      return alphabet.map((char) => this.displayCharacter(char)).join('');
     }
 
-    if (typeof alphabet === 'string' && alphabet.length > 1) {
-      return this.normalise(alphabet.split('')).join('');
-    }
+    return this.displayCharacter(alphabet);
+  }
 
-    switch (alphabet) {
+  private normaliseCharacter(char: string): string {
+    switch (char) {
       case '∅':
         return '∅';
       case 'ε':
@@ -24,20 +48,12 @@ export class StandardAlphabetStrategy extends AlphabetStrategy {
       case '∪':
         return '|';
       default:
-        return alphabet;
+        return char;
     }
   }
 
-  display(alphabet) {
-    if (Array.isArray(alphabet)) {
-      return alphabet.map((char) => this.display(char));
-    }
-
-    if (typeof alphabet === 'string' && alphabet.length > 1) {
-      return this.display(alphabet.split('')).join('');
-    }
-
-    switch (alphabet) {
+  private displayCharacter(char: string): string {
+    switch (char) {
       case '∅':
         return '∅';
       case '':
@@ -45,7 +61,7 @@ export class StandardAlphabetStrategy extends AlphabetStrategy {
       case '|':
         return '∪';
       default:
-        return alphabet;
+        return char;
     }
   }
 }

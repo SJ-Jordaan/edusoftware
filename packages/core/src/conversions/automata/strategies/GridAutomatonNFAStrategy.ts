@@ -1,10 +1,81 @@
 import { NFA } from 'dfa-lib';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
+import { z } from 'zod';
 
-export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
-  convert(automaton) {
-    const states = automaton.filter((e) => e.type === 'state');
-    const transitions = automaton.filter((e) => e.type === 'transition');
+/**
+ * Defines the structure for a state in a grid automaton.
+ */
+export const GridAutomatonStateSchema = z.object({
+  id: z.string(),
+  position: z.object({
+    x: z.number(),
+    y: z.number(),
+  }),
+  type: z.literal('state'),
+  isStart: z.boolean().optional(),
+  isFinal: z.boolean().optional(),
+});
+
+/**
+ * Defines the structure for a transition in a grid automaton.
+ */
+export const GridAutomatonTransitionSchema = z.object({
+  position: z.object({
+    x: z.number(),
+    y: z.number(),
+  }),
+  type: z.literal('transition'),
+  startSide: z.enum(['top', 'bottom', 'left', 'right']),
+  endSide: z.enum(['top', 'bottom', 'left', 'right']),
+  transitions: z.array(
+    z.object({
+      symbols: z.array(z.string()),
+    }),
+  ),
+});
+
+/**
+ * A union schema for elements in a grid automaton, which can be either states or transitions.
+ */
+export const GridAutomatonElementSchema = z.union([
+  GridAutomatonStateSchema,
+  GridAutomatonTransitionSchema,
+]);
+
+/**
+ * Schema for validating the entire grid automaton array.
+ */
+export const GridAutomatonSchema = z.array(GridAutomatonElementSchema);
+
+export type GridAutomatonState = z.infer<typeof GridAutomatonStateSchema>;
+export type GridAutomatonTransition = z.infer<
+  typeof GridAutomatonTransitionSchema
+>;
+export type GridAutomatonElement = z.infer<typeof GridAutomatonElementSchema>;
+export type GridAutomaton = Array<GridAutomatonElement>;
+
+/**
+ * Strategy for converting a grid automaton to an NFA.
+ */
+export class GridAutomatonNFAStrategy implements NFAConversionStrategy {
+  /**
+   * Converts a grid automaton to an NFA.
+   * @param automaton - The grid automaton to convert.
+   * @returns The constructed NFA.
+   */
+  convert(automaton: GridAutomaton) {
+    // Validate the automaton input
+    const parsedAutomaton = GridAutomatonSchema.safeParse(automaton);
+    if (!parsedAutomaton.success) {
+      throw new Error('Invalid grid automaton format');
+    }
+
+    const states = parsedAutomaton.data.filter(
+      (element) => element.type === 'state',
+    ) as GridAutomatonState[];
+    const transitions = parsedAutomaton.data.filter(
+      (element) => element.type === 'transition',
+    ) as GridAutomatonTransition[];
 
     const stateByPosition = new Map(
       states.map((state) => [
@@ -21,7 +92,8 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
       ),
     ];
 
-    const delta = {};
+    const delta: { [key: string]: { [symbol: string]: string[] } } = {};
+
     states.forEach((state) => {
       delta[state.id] = {};
       alphabet.forEach((symbol) => (delta[state.id][symbol] = []));
@@ -43,10 +115,12 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
       const toStateId = stateByPosition.get(`${toPos.x},${toPos.y}`);
 
       if (fromStateId && toStateId) {
-        transition.symbols.forEach((symbol) => {
-          if (!delta[fromStateId][symbol].includes(toStateId)) {
-            delta[fromStateId][symbol].push(toStateId);
-          }
+        transition.transitions.forEach((t) => {
+          t.symbols.forEach((symbol) => {
+            if (!delta[fromStateId][symbol].includes(toStateId)) {
+              delta[fromStateId][symbol].push(toStateId);
+            }
+          });
         });
       }
     });
@@ -57,7 +131,18 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
     return new NFA(alphabet, delta, initial, finals);
   }
 
-  _adjustCoordinatesForDirection(x, y, direction) {
+  /**
+   * Adjusts coordinates based on the direction of a transition.
+   * @param x - The x coordinate.
+   * @param y - The y coordinate.
+   * @param direction - The direction of the transition.
+   * @returns The adjusted coordinates.
+   */
+  private _adjustCoordinatesForDirection(
+    x: number,
+    y: number,
+    direction: 'top' | 'bottom' | 'left' | 'right',
+  ) {
     switch (direction) {
       case 'top':
         return { x, y: y - 1 };

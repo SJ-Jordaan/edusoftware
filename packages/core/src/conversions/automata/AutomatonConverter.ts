@@ -1,46 +1,60 @@
 import {
+  AutomatonInput,
   CanvasAutomatonNFAStrategy,
+  CanvasAutomatonSchema,
   GridAutomatonNFAStrategy,
+  GridAutomatonSchema,
+  NFAConversionStrategy,
   RegexNFAStrategy,
 } from './strategies';
 
 export class AutomatonConverter {
-  constructor(representation, alphabet) {
-    this._representation = representation;
-    this._alphabet = alphabet;
-    this.strategy = this._selectStrategy();
+  private representation: AutomatonInput;
+  private alphabet: string;
+  private strategy: NFAConversionStrategy;
+
+  constructor(representation: AutomatonInput, alphabet: string) {
+    this.representation = representation;
+    this.alphabet = alphabet;
+    this.strategy = this.selectStrategy();
   }
 
-  _selectStrategy() {
-    if (typeof this._representation === 'string') {
+  private selectStrategy(): NFAConversionStrategy {
+    if (typeof this.representation === 'string') {
       try {
-        const parsedRepresentation = JSON.parse(this._representation);
-        if (Array.isArray(parsedRepresentation)) {
-          this._representation = parsedRepresentation;
-          return new GridAutomatonNFAStrategy(parsedRepresentation);
+        const parsed = JSON.parse(this.representation);
+        if (CanvasAutomatonSchema.safeParse(parsed).success) {
+          return new CanvasAutomatonNFAStrategy();
         }
-        throw new Error('No strategy found for the given automaton');
+
+        if (GridAutomatonSchema.safeParse(parsed).success) {
+          return new GridAutomatonNFAStrategy();
+        }
       } catch (error) {
-        return new RegexNFAStrategy(this._representation, this._alphabet);
+        return new RegexNFAStrategy();
       }
     }
 
-    if (!this._representation) {
-      throw new Error('No automaton provided');
+    // Direct object inputs
+    if (CanvasAutomatonSchema.safeParse(this.representation).success) {
+      return new CanvasAutomatonNFAStrategy();
+    } else if (GridAutomatonSchema.safeParse(this.representation).success) {
+      return new GridAutomatonNFAStrategy();
     }
 
-    if (Array.isArray(this._representation)) {
-      return new GridAutomatonNFAStrategy(this._representation);
-    }
-
-    if (this._representation.transitions && this._representation.states) {
-      return new CanvasAutomatonNFAStrategy(this._representation);
-    }
-
-    throw new Error('No strategy found for the given automaton');
+    throw new Error('Automaton format is not supported or is invalid.');
   }
 
   convert() {
-    return this.strategy.convert(this._representation, this._alphabet);
+    try {
+      return this.strategy.convert(this.representation, this.alphabet);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to convert automaton to NFA: ${error.message}`);
+      }
+      throw new Error(
+        'Failed to convert automaton to NFA due to an unexpected error.',
+      );
+    }
   }
 }

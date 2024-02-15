@@ -48,7 +48,7 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
-  packages/automatutor:
+  packages/apps/automatutor:
     dependencies:
       react:
         specifier: ^18.2.0
@@ -99,6 +99,12 @@ importers:
       aws-sdk:
         specifier: ^2.1557.0
         version: 2.1557.0
+      cfgrammar-tool:
+        specifier: ^1.0.0
+        version: 1.0.0
+      dfa-lib:
+        specifier: ^0.0.3
+        version: 0.0.3
       mongoose:
         specifier: ^8.1.2
         version: 8.1.2
@@ -4031,6 +4037,10 @@ packages:
       yargs: 16.2.0
     dev: true
 
+  /cfgrammar-tool@1.0.0:
+    resolution: {integrity: sha512-ILAskaNpILXdncBuxGCaHQVgdCQaX4yBivmfIhpHl+n696PWIteNBiXETNjcdMMNe/jx/TDYvx6zthxUma18ng==}
+    dev: false
+
   /chai@4.4.1:
     resolution: {integrity: sha512-13sOfMv2+DWduEU+/xbun3LScLoqN17nBeTLUsmDfKdoiC1fr0n9PU4guu4AhRcOVFk/sW8LyZWHuhWtQZiF+g==}
     engines: {node: '>=4'}
@@ -4385,6 +4395,10 @@ packages:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
     dev: true
+
+  /dfa-lib@0.0.3:
+    resolution: {integrity: sha512-02jVaiYjiOCFBRNQiTsDcgwjglR0miSsrShsmDU2TUuZDZNkzNd1TeKTepaxhGyN0KcmQlygmaBUBHXwRSQXlw==}
+    dev: false
 
   /diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}

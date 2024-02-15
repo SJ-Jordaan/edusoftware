@@ -14,6 +14,8 @@
   "dependencies": {
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1557.0",
+    "cfgrammar-tool": "^1.0.0",
+    "dfa-lib": "^0.0.3",
     "mongoose": "^8.1.2",
     "zod": "^3.22.4"
   }
