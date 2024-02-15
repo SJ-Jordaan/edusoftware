@@ -5,7 +5,6 @@ let connection: mongoose.Mongoose | null = null;
 
 export async function connectToDatabase() {
   if (connection === null) {
-
     if (!Config.MONGO_URI) {
       throw new Error('MONGO_URI not set');
     }

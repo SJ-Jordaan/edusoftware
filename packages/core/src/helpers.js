@@ -20,7 +20,7 @@ export const handleRandomiseCoordinates = (elements) => {
       parsedElements.map((element, index) => {
         const [x, y] = shuffledCoordinates[index];
         return { ...element, position: { x, y } };
-      })
+      }),
     );
   }
 
@@ -28,6 +28,6 @@ export const handleRandomiseCoordinates = (elements) => {
     elements.map((element, index) => {
       const [x, y] = shuffledCoordinates[index];
       return { ...element, position: { x, y } };
-    })
+    }),
   );
 };

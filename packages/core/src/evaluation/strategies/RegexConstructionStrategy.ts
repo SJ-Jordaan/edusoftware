@@ -5,7 +5,7 @@ export class RegexConstructionStrategy extends EvaluationStrategy {
   evaluate(question, userAnswer) {
     const userAnswerNFA = new AutomatonConverter(
       userAnswer,
-      question.alphabet
+      question.alphabet,
     ).convert();
 
     if (!userAnswerNFA) {
@@ -14,7 +14,7 @@ export class RegexConstructionStrategy extends EvaluationStrategy {
 
     const questionAnswerNFA = new AutomatonConverter(
       question.answer,
-      question.alphabet
+      question.alphabet,
     ).convert();
 
     if (!questionAnswerNFA) {

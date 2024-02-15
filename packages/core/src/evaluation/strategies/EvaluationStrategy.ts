@@ -26,7 +26,7 @@ export abstract class EvaluationStrategy {
     const alphabetStrategy = new StandardAlphabetStrategy();
     m1.alphabet = m2.alphabet = this._union(
       alphabetStrategy.normalise(m1.alphabet),
-      alphabetStrategy.normalise(m2.alphabet)
+      alphabetStrategy.normalise(m2.alphabet),
     );
 
     m1 = m1.minimized();
@@ -49,7 +49,7 @@ export abstract class EvaluationStrategy {
       return {
         correct: false,
         message: `Your solution incorrectly rejects ${alphabetStrategy.display(
-          incorrectRejectCE
+          incorrectRejectCE,
         )}.`,
       };
     }
@@ -57,7 +57,7 @@ export abstract class EvaluationStrategy {
     return {
       correct: false,
       message: `Your solution incorrectly accepts ${alphabetStrategy.display(
-        incorrectAcceptCE
+        incorrectAcceptCE,
       )}.`,
     };
   }

@@ -17,14 +17,14 @@ export class StandardAlphabetStrategy extends AlphabetStrategy {
     }
 
     switch (alphabet) {
-    case '∅':
-      return '∅';
-    case 'ε':
-      return '';
-    case '∪':
-      return '|';
-    default:
-      return alphabet;
+      case '∅':
+        return '∅';
+      case 'ε':
+        return '';
+      case '∪':
+        return '|';
+      default:
+        return alphabet;
     }
   }
 
@@ -38,14 +38,14 @@ export class StandardAlphabetStrategy extends AlphabetStrategy {
     }
 
     switch (alphabet) {
-    case '∅':
-      return '∅';
-    case '':
-      return 'ε';
-    case '|':
-      return '∪';
-    default:
-      return alphabet;
+      case '∅':
+        return '∅';
+      case '':
+        return 'ε';
+      case '|':
+        return '∪';
+      default:
+        return alphabet;
     }
   }
 }

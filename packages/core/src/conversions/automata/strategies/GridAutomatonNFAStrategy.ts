@@ -10,14 +10,14 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
       states.map((state) => [
         `${state.position.x},${state.position.y}`,
         state.id,
-      ])
+      ]),
     );
 
     const alphabet = [
       ...new Set(
         transitions.flatMap((transition) =>
-          transition.transitions.flatMap((t) => t.symbols)
-        )
+          transition.transitions.flatMap((t) => t.symbols),
+        ),
       ),
     ];
 
@@ -31,12 +31,12 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
       const fromPos = this._adjustCoordinatesForDirection(
         transition.position.x,
         transition.position.y,
-        transition.startSide
+        transition.startSide,
       );
       const toPos = this._adjustCoordinatesForDirection(
         transition.position.x,
         transition.position.y,
-        transition.endSide
+        transition.endSide,
       );
 
       const fromStateId = stateByPosition.get(`${fromPos.x},${fromPos.y}`);
@@ -59,16 +59,16 @@ export class GridAutomatonNFAStrategy extends NFAConversionStrategy {
 
   _adjustCoordinatesForDirection(x, y, direction) {
     switch (direction) {
-    case 'top':
-      return { x, y: y - 1 };
-    case 'bottom':
-      return { x, y: y + 1 };
-    case 'left':
-      return { x: x - 1, y };
-    case 'right':
-      return { x: x + 1, y };
-    default:
-      return { x, y };
+      case 'top':
+        return { x, y: y - 1 };
+      case 'bottom':
+        return { x, y: y + 1 };
+      case 'left':
+        return { x: x - 1, y };
+      case 'right':
+        return { x: x + 1, y };
+      default:
+        return { x, y };
     }
   }
 }

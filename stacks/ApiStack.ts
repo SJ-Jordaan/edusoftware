@@ -7,7 +7,7 @@ export function ApiStack({ stack, app }: StackContext) {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,
     defaults: {
       function: {
-        bind: [MONGO_URI]
+        bind: [MONGO_URI],
       },
     },
     routes: {

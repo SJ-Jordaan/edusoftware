@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Level from './Level';
+import { Level } from './Level';
 
 const scoreSchema = new mongoose.Schema({
   userId: { type: String, required: true },
@@ -8,6 +8,4 @@ const scoreSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Score = mongoose.model('Score', scoreSchema);
-
-export default Score;
+export const Score = mongoose.model('Score', scoreSchema);

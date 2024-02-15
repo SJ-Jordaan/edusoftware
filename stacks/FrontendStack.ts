@@ -8,12 +8,13 @@ export function FrontendStack({ stack, app }: StackContext) {
 
   // Define our React app
   const site = new StaticSite(stack, 'AutomaTutor', {
-    customDomain: app.stage === 'prod'
-      ? {
-        domainName: 'edusoftware.net',
-        domainAlias: 'www.edusoftware.net',
-      }
-      : undefined,
+    customDomain:
+      app.stage === 'prod'
+        ? {
+          domainName: 'edusoftware.net',
+          domainAlias: 'www.edusoftware.net',
+        }
+        : undefined,
     path: 'packages/automatutor',
     buildCommand: 'pnpm run build',
     buildOutput: 'dist',

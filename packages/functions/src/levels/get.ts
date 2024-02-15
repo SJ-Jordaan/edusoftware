@@ -1,6 +1,6 @@
-import { connectToDatabase } from '@edusoftware/core/mongo';
-import handler from '@edusoftware/core/handler';
-import Level from '@edusoftware/core/models/Level';
+import { connectToDatabase } from '@edusoftware/core/databases';
+import { handler } from '@edusoftware/core/handlers';
+import { Level } from '@edusoftware/core/models';
 
 export const main = handler(async () => {
   await connectToDatabase();

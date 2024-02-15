@@ -9,7 +9,7 @@ export class RegexAcceptanceStrategy extends EvaluationStrategy {
   evaluate(question, userAnswer) {
     const regexNFA = new AutomatonConverter(
       question.answer,
-      question.alphabet
+      question.alphabet,
     ).convert();
 
     if (!regexNFA) {

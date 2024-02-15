@@ -14,7 +14,7 @@ export class AutomatonConstructionStrategy extends EvaluationStrategy {
 
     const questionRegexConverter = new AutomatonConverter(
       question.answer,
-      question.alphabet
+      question.alphabet,
     );
 
     const questionAnswerNFA = questionRegexConverter.convert();

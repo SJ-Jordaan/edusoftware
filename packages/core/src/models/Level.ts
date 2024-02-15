@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import Question from './Question';
+import { Question } from './Question';
 
 const levelSchema = new Schema(
   {
@@ -25,9 +25,7 @@ const levelSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const Level = mongoose.model('Level', levelSchema);
-
-export default Level;
+export const Level = mongoose.model('Level', levelSchema);
