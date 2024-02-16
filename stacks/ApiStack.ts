@@ -19,6 +19,8 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/levels/updateLevel/index.main',
       'DELETE /levels/{id}':
         'packages/functions/src/levels/deleteLevel/index.main',
+      'GET /questions/{id}':
+        'packages/functions/src/questions/getQuestion/index.main',
     },
   });
 
