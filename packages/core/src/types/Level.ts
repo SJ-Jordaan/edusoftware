@@ -21,6 +21,8 @@ export const PopulatedLevelSchema = z.object({
   endDate: z.string(),
 });
 
+export const UpdateLevelSchema = LevelSchema.partial();
+
 // TypeScript type derived from the Zod schema
 export type Level = z.infer<typeof LevelSchema>;
 export type PopulatedLevel = z.infer<typeof PopulatedLevelSchema>;
