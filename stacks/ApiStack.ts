@@ -17,6 +17,8 @@ export function ApiStack({ stack, app }: StackContext) {
       'POST /levels': 'packages/functions/src/levels/createLevel/index.main',
       'PUT /levels/{id}':
         'packages/functions/src/levels/updateLevel/index.main',
+      'DELETE /levels/{id}':
+        'packages/functions/src/levels/deleteLevel/index.main',
     },
   });
 
