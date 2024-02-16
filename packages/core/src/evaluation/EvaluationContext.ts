@@ -1,25 +1,17 @@
+import { AutomatonInput, AutomatonInputSchema } from '../types/AutomatonInput';
+import { Question, QuestionSchema, QuestionType } from '../types/Question';
 import {
   AutomatonConstructionStrategy,
   RegexConstructionStrategy,
   RegexEquivalenceStrategy,
   RegexAcceptanceStrategy,
+  EvaluationStrategy,
 } from './strategies';
-
-export type QuestionType =
-  | 'Construct Automaton'
-  | 'Construct Automaton Missing Symbols'
-  | 'Regex'
-  | 'Regex Equivalence'
-  | 'Regex Accepts String';
 /**
- * Context class for evaluating different types of questions related to automatons and regexes.
+ * Context class for evaluating different types of questions related to automata and regular expressions.
  */
 export class EvaluationContext {
-  /**
-   * The strategy to use for evaluating the question.
-   * @type {AutomatonConstructionStrategy | RegexConstructionStrategy | RegexEquivalenceStrategy | RegexAcceptanceStrategy}
-   */
-  private strategy;
+  private strategy: EvaluationStrategy;
 
   /**
    * Initializes the evaluation context with the appropriate strategy based on the question type.
@@ -32,7 +24,7 @@ export class EvaluationContext {
   /**
    * Selects the appropriate strategy for the given question type.
    * @param {QuestionType} questionType - The type of question.
-   * @returns The strategy corresponding to the question type.
+   * @returns {EvaluationStrategy} The strategy corresponding to the question type.
    * @throws {Error} If the question type is unsupported.
    */
   private _selectStrategy(questionType: QuestionType) {
@@ -53,13 +45,31 @@ export class EvaluationContext {
 
   /**
    * Evaluates the given question using the selected strategy.
-   * @param question - The question to be evaluated.
-   * @param userAnswer - The user's answer to the question.
-   * @returns The result of the evaluation.
+   * @param {Question} question - The question to be evaluated.
+   * @param {AutomatonInput} userAnswer - The user's answer to the question.
+   * @returns {Object} The result of the evaluation, including whether the answer is correct and an optional message.
    */
-  evaluateQuestion(question: any, userAnswer: any) {
-    // Consider defining types for question and userAnswer if possible.
-    // Validate inputs here if necessary, possibly with zod if question and userAnswer have complex structures.
-    return this.strategy.evaluate(question, userAnswer);
+  evaluateQuestion(
+    question: Question,
+    userAnswer: AutomatonInput,
+  ): { correct: boolean; message?: string } {
+    // Validate the question format
+    const questionValidationResult = QuestionSchema.safeParse(question);
+    if (!questionValidationResult.success) {
+      throw new Error('Invalid question format.');
+    }
+
+    // Validate the user answer format
+    const userAnswerValidationResult =
+      AutomatonInputSchema.safeParse(userAnswer);
+    if (!userAnswerValidationResult.success) {
+      throw new Error('Invalid user answer format.');
+    }
+
+    // Proceed with the evaluation using the validated data
+    return this.strategy.evaluate(
+      questionValidationResult.data,
+      userAnswerValidationResult.data,
+    );
   }
 }

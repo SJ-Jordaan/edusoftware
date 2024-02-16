@@ -1,9 +1,9 @@
+import { AutomatonInput } from '../../types/AutomatonInput';
+import { CanvasAutomatonSchema } from '../../types/CanvasAutomaton';
+import { GridAutomatonSchema } from '../../types/GridAutomaton';
 import {
-  AutomatonInput,
   CanvasAutomatonNFAStrategy,
-  CanvasAutomatonSchema,
   GridAutomatonNFAStrategy,
-  GridAutomatonSchema,
   NFAConversionStrategy,
   RegexNFAStrategy,
 } from './strategies';

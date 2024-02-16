@@ -1,15 +1,7 @@
+import { RegexInputSchema } from '../../../types/RegexInput';
 import { StandardAlphabetStrategy } from '../../alphabet';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
 import to_NFA from 'dfa-lib/regex.js';
-import { z } from 'zod';
-
-/**
- * Validates the inputs for the regex conversion strategy using zod.
- */
-export const RegexInputSchema = z.object({
-  regex: z.string(),
-  alphabet: z.string(),
-});
 
 /**
  * Strategy for converting regular expressions into NFAs.

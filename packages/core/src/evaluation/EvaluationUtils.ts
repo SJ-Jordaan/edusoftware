@@ -1,4 +1,4 @@
-import { NFA } from '../types/NFA';
+import { NonDeterministicFiniteAutomaton } from '../types/NonDeterministicFiniteAutomaton';
 
 import { AutomatonConverter, StandardAlphabetStrategy } from '../conversions';
 
@@ -32,13 +32,13 @@ export class EvaluationUtils {
 
   /**
    * Finds equivalence counterexamples between two minimized NFAs.
-   * @param {NFA} m1 - The first NFA.
-   * @param {NFA} m2 - The second NFA.
+   * @param {NonDeterministicFiniteAutomaton} m1 - The first NFA.
+   * @param {NonDeterministicFiniteAutomaton} m2 - The second NFA.
    * @returns {[string | null, string | null]} A pair of strings indicating incorrect reject and accept counterexamples, if any.
    */
   static findEquivalenceCounterexamples(
-    m1: NFA,
-    m2: NFA,
+    m1: NonDeterministicFiniteAutomaton,
+    m2: NonDeterministicFiniteAutomaton,
   ): [string | null, string | null] {
     const alphabetStrategy = new StandardAlphabetStrategy();
 
@@ -53,5 +53,45 @@ export class EvaluationUtils {
     const minimalDFA2 = m2.minimized();
 
     return minimalDFA1.find_equivalence_counterexamples(minimalDFA2);
+  }
+
+  /**
+   * Finds equivalence counterexamples between two minimized NFAs and evaluates them against provided answers.
+   * @param {NonDeterministicFiniteAutomaton} questionAnswerNFA - The NFA representing the correct answer.
+   * @param {NonDeterministicFiniteAutomaton} userAnswerNFA - The NFA representing the user's answer.
+   * @returns An object indicating whether the user's answer is correct and, if incorrect, provides a message with details.
+   */
+  static evaluateCounterexamples(
+    questionAnswerNFA: NonDeterministicFiniteAutomaton,
+    userAnswerNFA: NonDeterministicFiniteAutomaton,
+  ): { correct: boolean; message?: string } {
+    const [incorrectRejectCE, incorrectAcceptCE] =
+      this.findEquivalenceCounterexamples(questionAnswerNFA, userAnswerNFA);
+
+    // Utilize StandardAlphabetStrategy for displaying counterexamples.
+    const alphabetStrategy = new StandardAlphabetStrategy();
+
+    if (incorrectRejectCE === null && incorrectAcceptCE === null) {
+      return { correct: true };
+    }
+
+    if (incorrectRejectCE !== null) {
+      return {
+        correct: false,
+        message: `Your solution incorrectly rejects ${alphabetStrategy.display(incorrectRejectCE)}.`,
+      };
+    }
+
+    if (incorrectAcceptCE !== null) {
+      return {
+        correct: false,
+        message: `Your solution incorrectly accepts ${alphabetStrategy.display(incorrectAcceptCE)}.`,
+      };
+    }
+
+    return {
+      correct: false,
+      message: 'An unexpected error occurred while evaluating the answer.',
+    };
   }
 }

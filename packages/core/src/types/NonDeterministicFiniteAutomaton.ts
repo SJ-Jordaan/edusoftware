@@ -1,6 +1,6 @@
-import { DFA } from './DFA';
+import { DeterministicFiniteAutomaton } from './DeterministicFiniteAutomaton';
 
-export interface NFA {
+export interface NonDeterministicFiniteAutomaton {
   /** The alphabet of the NFA, represented as a list of characters. */
   alphabet: string[];
 
@@ -46,65 +46,69 @@ export interface NFA {
    * Converts the NFA to an equivalent DFA.
    * @returns An equivalent DFA.
    */
-  to_DFA(): DFA;
+  to_DFA(): DeterministicFiniteAutomaton;
 
   /**
    * Minimizes the NFA by converting it to a minimal equivalent DFA.
    * @returns A minimal DFA equivalent to this NFA.
    */
-  minimized(): DFA;
+  minimized(): DeterministicFiniteAutomaton;
 
   /**
    * Reverses the NFA, producing a new NFA that accepts the reverse of the language.
    * @returns A new NFA that accepts the reverse of the original language.
    */
-  reversed(): NFA;
+  reversed(): NonDeterministicFiniteAutomaton;
 
   /**
    * Clones the NFA, optionally prefixing state names.
    * @param prefix Optional prefix for state names in the cloned NFA.
    * @returns A clone of the NFA.
    */
-  _clone(prefix?: string): NFA;
+  _clone(prefix?: string): NonDeterministicFiniteAutomaton;
 
   /**
    * Concatenates the language of this NFA with another NFA's language.
    * @param other The NFA to concatenate with.
    * @returns A new NFA representing the concatenation.
    */
-  concat(other: NFA): NFA;
+  concat(
+    other: NonDeterministicFiniteAutomaton,
+  ): NonDeterministicFiniteAutomaton;
 
   /**
    * Forms the union of the language of this NFA with another NFA's language.
    * @param other The NFA to form the union with.
    * @returns A new NFA representing the union.
    */
-  union(other: NFA): NFA;
+  union(
+    other: NonDeterministicFiniteAutomaton,
+  ): NonDeterministicFiniteAutomaton;
 
   /**
    * Applies the Kleene star operation to the language of this NFA.
    * @returns A new NFA representing the Kleene star of the original language.
    */
-  star(): NFA;
+  star(): NonDeterministicFiniteAutomaton;
 
   /**
    * Applies the Kleene plus operation to the language of this NFA.
    * @returns A new NFA representing the Kleene plus of the original language.
    */
-  plus(): NFA;
+  plus(): NonDeterministicFiniteAutomaton;
 
   /**
    * Repeats the language of this NFA a specified number of times.
    * @param n The number of repetitions.
    * @returns A new NFA representing the repeated language.
    */
-  repeat(n: number): NFA;
+  repeat(n: number): NonDeterministicFiniteAutomaton;
 
   /**
    * Makes the language of this NFA optional (equivalent to the '?' operator).
    * @returns A new NFA that also accepts the empty string.
    */
-  optional(): NFA;
+  optional(): NonDeterministicFiniteAutomaton;
 
   /**
    * Constructs an NFA that matches exactly the given string.
@@ -112,7 +116,7 @@ export interface NFA {
    * @param alphabet The alphabet of the NFA.
    * @returns An NFA that matches exactly the specified string.
    */
-  for(str: string, alphabet: string[]): NFA;
+  for(str: string, alphabet: string[]): NonDeterministicFiniteAutomaton;
 
   /**
    * Generates a Dot format graph representation of the NFA.

@@ -1,8 +1,5 @@
 import { NFA } from 'dfa-lib';
-import { GridAutomaton } from './GridAutomatonNFAStrategy';
-import { CanvasAutomaton } from './CanvasAutomatonNFAStrategy';
-// Assuming AutomatonInput is defined to include all necessary types
-export type AutomatonInput = string | GridAutomaton | CanvasAutomaton;
+import { AutomatonInput } from '../../../types/AutomatonInput';
 
 /**
  * Interface for strategies converting different types of automaton inputs into NFAs.

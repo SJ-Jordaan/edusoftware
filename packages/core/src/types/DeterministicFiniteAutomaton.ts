@@ -1,4 +1,6 @@
-export interface DFA {
+import { NonDeterministicFiniteAutomaton } from './NonDeterministicFiniteAutomaton';
+
+export interface DeterministicFiniteAutomaton {
   // Properties
   alphabet: string[];
   states: string[];
@@ -19,25 +21,25 @@ export interface DFA {
    * Converts the DFA to an equivalent NFA.
    * @returns An NFA equivalent to this DFA.
    */
-  to_NFA(): NFA;
+  to_NFA(): NonDeterministicFiniteAutomaton;
 
   /**
    * Minimizes the DFA to its smallest equivalent DFA.
    * @returns A new DFA instance that is the minimized version of this DFA.
    */
-  minimized(): DFA;
+  minimized(): DeterministicFiniteAutomaton;
 
   /**
    * Produces a new DFA without unreachable states.
    * @returns A new DFA instance equivalent to this one but without unreachable states.
    */
-  without_unreachables(): DFA;
+  without_unreachables(): DeterministicFiniteAutomaton;
 
   /**
    * Complements the DFA, producing a new DFA that accepts exactly the strings this DFA does not.
    * @returns A new DFA instance that is the complement of this DFA.
    */
-  complemented(): DFA;
+  complemented(): DeterministicFiniteAutomaton;
 
   /**
    * Finds one of the shortest strings accepted by the DFA, if such exists.
@@ -50,7 +52,7 @@ export interface DFA {
    * @param other The other DFA to intersect with.
    * @returns A new DFA instance representing the intersection of this DFA's and the other DFA's languages.
    */
-  intersect(other: DFA): DFA;
+  intersect(other: DeterministicFiniteAutomaton): DeterministicFiniteAutomaton;
 
   /**
    * Finds counterexamples to equivalence between this DFA and another.
@@ -59,7 +61,9 @@ export interface DFA {
    * and the second string is accepted by `other` but not by this DFA. If the DFAs are equivalent,
    * returns [null, null].
    */
-  find_equivalence_counterexamples(other: DFA): [string | null, string | null];
+  find_equivalence_counterexamples(
+    other: DeterministicFiniteAutomaton,
+  ): [string | null, string | null];
 
   /**
    * Generates a string representation of the DFA in Dot graph format.
