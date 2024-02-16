@@ -19,6 +19,8 @@ export const QuestionSchema = z.object({
   operators: z.array(z.string()).optional(),
 });
 
+export const UpdateQuestionSchema = QuestionSchema.partial();
+
 // TypeScript type derived from the Zod schema
 export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
