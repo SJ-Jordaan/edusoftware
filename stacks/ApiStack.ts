@@ -12,7 +12,7 @@ export function ApiStack({ stack, app }: StackContext) {
     },
     routes: {
       'GET /': 'packages/functions/src/lambda.main',
-      'GET /levels': 'packages/functions/src/levels/get.main',
+      'GET /levels': 'packages/functions/src/levels/getLevels/index.main',
     },
   });
 

@@ -123,10 +123,6 @@ importers:
         version: 1.2.2(@types/node@20.11.17)
 
   packages/functions:
-    dependencies:
-      mongodb:
-        specifier: ^6.3.0
-        version: 6.3.0
     devDependencies:
       '@types/aws-lambda':
         specifier: ^8.10.133
