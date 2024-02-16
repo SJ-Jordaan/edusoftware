@@ -8,17 +8,17 @@ const ObjectIdSchema = z
 export const LevelSchema = z.object({
   levelName: z.string(),
   description: z.string(),
-  questionIds: z.array(ObjectIdSchema),
-  startDate: z.date(),
-  endDate: z.date(),
+  questionIds: z.array(ObjectIdSchema).optional(),
+  startDate: z.string(),
+  endDate: z.string(),
 });
 
 export const PopulatedLevelSchema = z.object({
   levelName: z.string(),
   description: z.string(),
-  questionIds: z.array(QuestionSchema),
-  startDate: z.date(),
-  endDate: z.date(),
+  questionIds: z.array(QuestionSchema).optional(),
+  startDate: z.string(),
+  endDate: z.string(),
 });
 
 // TypeScript type derived from the Zod schema

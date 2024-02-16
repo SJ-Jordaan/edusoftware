@@ -29,12 +29,13 @@ export const main = handler<PopulatedLevel>(
     }
 
     try {
-      const level: PopulatedLevel | null =
-        await Level.findById(levelId).populate('questionIds');
+      const levelDoc = await Level.findById(levelId).populate('questionIds');
 
-      if (level === null) {
+      if (!levelDoc) {
         throw new NotFoundError(`Level with ID ${levelId} not found`);
       }
+
+      const level: PopulatedLevel = levelDoc.toObject();
 
       return {
         statusCode: 200,

@@ -14,6 +14,7 @@ export function ApiStack({ stack, app }: StackContext) {
       'GET /': 'packages/functions/src/lambda.main',
       'GET /levels': 'packages/functions/src/levels/getLevels/index.main',
       'GET /levels/{id}': 'packages/functions/src/levels/getLevel/index.main',
+      'POST /levels': 'packages/functions/src/levels/createLevel/index.main',
     },
   });
 
