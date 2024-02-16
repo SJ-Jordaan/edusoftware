@@ -1,4 +1,4 @@
-import handler from '@edusoftware/core/handler';
+import { handler } from '@edusoftware/core/handlers';
 
 export const main = handler(async () => {
   return 'Hello, world!';
