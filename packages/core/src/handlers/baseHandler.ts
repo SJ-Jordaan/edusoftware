@@ -3,8 +3,7 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from 'aws-lambda';
-import { ClientError } from '../types/Error';
-import { LambdaResponse } from '../types/Response';
+import { ApplicationError, LambdaResponse } from '../types';
 
 export const handler = <T>(
   lambda: (
@@ -32,22 +31,29 @@ export const handler = <T>(
         headers: defaultHeaders,
       };
     } catch (error) {
-      console.error('Lambda execution error:', error); // Logging the error for monitoring or debugging
+      console.error('Lambda execution error:', error); // Logging the error
 
-      // Differentiating between client-side (4xx) and server-side errors (5xx)
-      const statusCode = error instanceof ClientError ? 400 : 500;
-
-      return {
-        statusCode,
-        body: JSON.stringify({
-          error:
-            error instanceof Error ? error.message : 'Internal server error',
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      };
+      // Check if the error is an instance of ApplicationError or its subclasses
+      if (error instanceof ApplicationError) {
+        return {
+          statusCode: error.statusCode,
+          body: JSON.stringify({ error: error.message }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*', // Consider more restrictive settings for production
+          },
+        };
+      } else {
+        // Handle unexpected errors
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: 'Internal server error' }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        };
+      }
     }
   };
 };
