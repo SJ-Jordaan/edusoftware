@@ -1,6 +1,10 @@
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
 import { handler } from '@edusoftware/core/handlers';
-import { LambdaResponse, PopulatedLevel } from '@edusoftware/core/types';
+import {
+  ApplicationError,
+  LambdaResponse,
+  PopulatedLevel,
+} from '@edusoftware/core/types';
 
 /**
  * Handler for fetching all levels from the database and returning them.
@@ -28,12 +32,24 @@ export const main = handler<PopulatedLevel[]>(
         statusCode: 200,
         body: levels, // Could be an empty array if no levels are found
       };
-    } catch (error) {
-      // Log the error for debugging purposes
-      console.error('Error fetching levels:', error);
+    } catch (error: unknown) {
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
 
-      // Re-throw the error for global error handling
-      throw error;
+      if (error instanceof Error) {
+        console.error(`Failed to get levels: ${error.message}`);
+        throw new ApplicationError(
+          `Failed to get levels: ${error.message}`,
+          500,
+        );
+      }
+
+      console.error(`Failed to get levels: ${error}`);
+      throw new ApplicationError(
+        'Failed to get levels due to unexpected error',
+        500,
+      );
     }
   },
 );

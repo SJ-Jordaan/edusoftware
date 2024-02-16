@@ -51,9 +51,19 @@ export const main = handler<IQuestion>(
         body: createdQuestion,
       };
     } catch (error: unknown) {
-      console.error(
-        `Failed to create question: ${error instanceof Error ? error.message : error}`,
-      );
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        console.error(`Failed to create question: ${error.message}`);
+        throw new ApplicationError(
+          `Failed to create question: ${error.message}`,
+          500,
+        );
+      }
+
+      console.error(`Failed to create question: ${error}`);
       throw new ApplicationError(
         'Failed to create question due to unexpected error',
         500,

@@ -23,6 +23,8 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/questions/getQuestion/index.main',
       'POST /questions':
         'packages/functions/src/questions/createQuestion/index.main',
+      'DELETE /questions/{id}':
+        'packages/functions/src/questions/deleteQuestion/index.main',
     },
   });
 

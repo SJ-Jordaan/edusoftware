@@ -60,9 +60,19 @@ export const main = handler<ILevel>(
         body: level,
       };
     } catch (error: unknown) {
-      console.error(
-        `Failed to create level: ${error instanceof Error ? error.message : error}`,
-      );
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        console.error(`Failed to create level: ${error.message}`);
+        throw new ApplicationError(
+          `Failed to create level: ${error.message}`,
+          500,
+        );
+      }
+
+      console.error(`Failed to create level: ${error}`);
       throw new ApplicationError(
         'Failed to create level due to unexpected error',
         500,

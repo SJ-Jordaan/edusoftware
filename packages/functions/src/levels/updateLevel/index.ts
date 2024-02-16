@@ -44,23 +44,32 @@ export const main = handler<ILevel>(
 
     await connectToDatabase();
 
-    const level = await Level.findById(levelId);
-    if (!level) {
-      throw new NotFoundError(`Level with ID ${levelId} not found`);
-    }
-
-    Object.assign(level, parsedData);
-
     try {
+      const level = await Level.findById(levelId);
+      if (!level) {
+        throw new NotFoundError(`Level with ID ${levelId}`);
+      }
+
+      Object.assign(level, parsedData);
       const updatedLevel = await level.save();
       return {
         statusCode: 200,
         body: updatedLevel.toObject(), // Convert Mongoose document to object
       };
     } catch (error: unknown) {
-      console.error(
-        `Failed to update level: ${error instanceof Error ? error.message : error}`,
-      );
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        console.error(`Failed to update level: ${error.message}`);
+        throw new ApplicationError(
+          `Failed to update level: ${error.message}`,
+          500,
+        );
+      }
+
+      console.error(`Failed to update level: ${error}`);
       throw new ApplicationError(
         'Failed to update level due to unexpected error',
         500,

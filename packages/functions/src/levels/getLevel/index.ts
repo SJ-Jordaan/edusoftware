@@ -1,6 +1,7 @@
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
 import { handler } from '@edusoftware/core/handlers';
 import {
+  ApplicationError,
   BadRequestError,
   LambdaResponse,
   NotFoundError,
@@ -32,7 +33,7 @@ export const main = handler<PopulatedLevel>(
       const levelDoc = await Level.findById(levelId).populate('questionIds');
 
       if (!levelDoc) {
-        throw new NotFoundError(`Level with ID ${levelId} not found`);
+        throw new NotFoundError(`Level with ID ${levelId}`);
       }
 
       const level: PopulatedLevel = levelDoc.toObject();
@@ -42,9 +43,23 @@ export const main = handler<PopulatedLevel>(
         body: level,
       };
     } catch (error: unknown) {
-      // Log generic errors for debugging purposes
-      console.error(`An error occurred while fetching the level: ${error}`);
-      throw error;
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        console.error(`Failed to get level: ${error.message}`);
+        throw new ApplicationError(
+          `Failed to get level: ${error.message}`,
+          500,
+        );
+      }
+
+      console.error(`Failed to get level: ${error}`);
+      throw new ApplicationError(
+        'Failed to get level due to unexpected error',
+        500,
+      );
     }
   },
 );

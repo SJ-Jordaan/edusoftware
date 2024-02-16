@@ -28,7 +28,7 @@ export const main = handler<IQuestion>(
       const questionDoc = await Question.findById(questionId);
 
       if (!questionDoc) {
-        throw new NotFoundError(`Question with ID ${questionId} not found`);
+        throw new NotFoundError(`Question with ID ${questionId}`);
       }
 
       const question: IQuestion = questionDoc.toObject();
