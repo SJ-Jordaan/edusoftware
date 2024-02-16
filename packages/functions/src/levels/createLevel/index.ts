@@ -27,7 +27,6 @@ export const main = handler<ILevel>(
     try {
       parsedData = LevelSchema.parse(JSON.parse(event.body));
     } catch (error: unknown) {
-      // Correctly handle and propagate parsing/validation errors
       const errorMessage =
         error instanceof Error
           ? error.message

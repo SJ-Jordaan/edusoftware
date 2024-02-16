@@ -13,10 +13,10 @@ export const QuestionSchema = z.object({
   questionType: QuestionTypeSchema,
   questionContent: z.string(),
   answer: z.string(),
-  hints: z.array(z.string()),
+  hints: z.array(z.string()).optional(),
   score: z.number().default(0),
   alphabet: z.string(),
-  operators: z.array(z.string()),
+  operators: z.array(z.string()).optional(),
 });
 
 // TypeScript type derived from the Zod schema
