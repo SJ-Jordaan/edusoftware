@@ -15,7 +15,7 @@ export function FrontendStack({ stack, app }: StackContext) {
             domainAlias: 'www.edusoftware.net',
           }
         : undefined,
-    path: 'packages/automatutor',
+    path: 'packages/apps/automatutor',
     buildCommand: 'pnpm run build',
     buildOutput: 'dist',
     // Pass in our environment variables
@@ -33,4 +33,8 @@ export function FrontendStack({ stack, app }: StackContext) {
   stack.addOutputs({
     SiteUrl: site.customDomainUrl ?? site.url,
   });
+
+  return {
+    AutomaTutor: site,
+  };
 }

@@ -11,5 +11,9 @@
     "@types/node": "^20.11.17",
     "sst": "^2.40.3",
     "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.515.0",
+    "@aws-sdk/util-dynamodb": "^3.515.0"
   }
 }
