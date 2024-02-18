@@ -33,6 +33,8 @@ export function ApiStack({ stack, app }: StackContext) {
       'GET /scores': 'packages/functions/src/score/getLeaderboard/index.main',
       'POST /progress/{levelId}/{questionId}':
         'packages/functions/src/progress/submitAnswer/index.main',
+      'POST /progress/{id}':
+        'packages/functions/src/progress/startLevel/index.main',
     },
   });
 
