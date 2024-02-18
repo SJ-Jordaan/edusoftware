@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import {
   BadRequestError,
   NotFoundError,
@@ -11,14 +11,14 @@ import { Level, connectToDatabase } from '@edusoftware/core/databases';
 /**
  * Deletes an existing level based on the provided ID in the path parameters.
  *
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the path parameters.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the path parameters.
  * @returns {Promise<LambdaResponse<{ message: string }>>} A promise that resolves with a confirmation message.
  * @throws {BadRequestError} If the level ID is not provided in the path parameters.
  * @throws {NotFoundError} If no level with the specified ID is found.
  */
 export const main = handler<{ message: string }>(
   async (
-    event: APIGatewayProxyEvent,
+    event: APIGatewayProxyEventV2,
   ): Promise<LambdaResponse<{ message: string }>> => {
     if (!event.pathParameters || !event.pathParameters.id) {
       throw new BadRequestError('Level ID must be provided in the path');

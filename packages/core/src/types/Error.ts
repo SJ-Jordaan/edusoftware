@@ -44,3 +44,31 @@ export class BadRequestError extends ApplicationError {
     super(`Bad request: ${message}`, 400);
   }
 }
+
+/**
+ * Error class representing an Unauthorized error. This error should be thrown when
+ * the client is not authorized to perform the requested action.
+ */
+export class UnauthorizedError extends ApplicationError {
+  /**
+   * Constructs a new UnauthorizedError.
+   * @param {string} message - A message describing why the client is not authorized.
+   */
+  constructor(message: string) {
+    super(`Unauthorized: ${message}`, 401);
+  }
+}
+
+/**
+ * Error class representing a Forbidden error. This error should be thrown when
+ * the client is authenticated but not authorized to perform the requested action.
+ */
+export class ForbiddenError extends ApplicationError {
+  /**
+   * Constructs a new ForbiddenError.
+   * @param {string} message - A message describing why the client is not authorized.
+   */
+  constructor(message: string) {
+    super(`Forbidden: ${message}`, 403);
+  }
+}

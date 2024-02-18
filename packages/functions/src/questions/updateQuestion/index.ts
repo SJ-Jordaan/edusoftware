@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import {
   BadRequestError,
   NotFoundError,
@@ -14,13 +14,13 @@ import { Question, connectToDatabase } from '@edusoftware/core/databases';
  * AWS Lambda function to update an existing question. Validates incoming data against a Zod schema,
  * fetches the existing question, updates it with provided data, and saves the changes.
  *
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the path parameters and request body.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the path parameters and request body.
  * @returns {Promise<LambdaResponse<any>>} A promise that resolves with the updated question data.
  * @throws {BadRequestError} If the request body is missing or invalid, or if required fields are missing.
  * @throws {NotFoundError} If the question with the specified ID is not found.
  */
 export const main = handler<IQuestion>(
-  async (event: APIGatewayProxyEvent): Promise<LambdaResponse<IQuestion>> => {
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<IQuestion>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
