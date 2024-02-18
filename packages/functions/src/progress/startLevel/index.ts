@@ -27,15 +27,11 @@ export const main = handler<UserProgress>(
   async (
     event: APIGatewayProxyEventV2,
   ): Promise<LambdaResponse<UserProgress>> => {
-    await connectToDatabase();
     const levelId = event.pathParameters?.id;
-    const { userId } = await useSessionWithRoles();
-
-    if (!levelId) {
-      throw new BadRequestError('Level ID must be provided');
-    }
 
     try {
+      await connectToDatabase();
+      const { userId } = await useSessionWithRoles();
       const levelDoc = await Level.findById(levelId);
 
       if (!levelDoc) {
