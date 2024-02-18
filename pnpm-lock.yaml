@@ -96,6 +96,12 @@ importers:
 
   packages/core:
     dependencies:
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.515.0
+        version: 3.515.0
+      '@aws-sdk/util-dynamodb':
+        specifier: ^3.515.0
+        version: 3.515.0(@aws-sdk/client-dynamodb@3.515.0)
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
@@ -242,14 +248,14 @@ packages:
     resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.511.0
+      '@aws-sdk/types': 3.515.0
       tslib: 1.14.1
 
   /@aws-crypto/crc32c@3.0.0:
     resolution: {integrity: sha512-ENNPPManmnVJ4BTXlOjAgD7URidbAznURqD0KvfREyc4o20DPYdEldU1f5cQ7Jbj0CJJSPaMIk/9ZshdB3210w==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.511.0
+      '@aws-sdk/types': 3.515.0
       tslib: 1.14.1
     dev: true
 
@@ -306,7 +312,7 @@ packages:
   /@aws-crypto/util@3.0.0:
     resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
     dependencies:
-      '@aws-sdk/types': 3.511.0
+      '@aws-sdk/types': 3.515.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
@@ -1820,6 +1826,7 @@ packages:
     dependencies:
       '@smithy/types': 2.9.1
       tslib: 2.6.2
+    dev: true
 
   /@aws-sdk/types@3.515.0:
     resolution: {integrity: sha512-B3gUpiMlpT6ERaLvZZ61D0RyrQPsFYDkCncLPVkZOKkCOoFU46zi1o6T5JcYiz8vkx1q9RGloQ5exh79s5pU/w==}

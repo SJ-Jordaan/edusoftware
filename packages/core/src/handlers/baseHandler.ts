@@ -1,18 +1,19 @@
+import { ApiHandler } from 'sst/node/api';
 import {
   Context,
-  APIGatewayProxyEvent,
   APIGatewayProxyResult,
+  APIGatewayProxyEventV2,
 } from 'aws-lambda';
 import { ApplicationError, LambdaResponse } from '../types';
 
 export const handler = <T>(
   lambda: (
-    evt: APIGatewayProxyEvent,
+    evt: APIGatewayProxyEventV2,
     context: Context,
   ) => Promise<LambdaResponse<T>>,
 ) => {
-  return async function (
-    event: APIGatewayProxyEvent,
+  return ApiHandler(async function (
+    event: APIGatewayProxyEventV2,
     context: Context,
   ): Promise<APIGatewayProxyResult> {
     try {
@@ -55,5 +56,5 @@ export const handler = <T>(
         };
       }
     }
-  };
+  });
 };
