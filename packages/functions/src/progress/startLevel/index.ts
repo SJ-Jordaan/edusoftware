@@ -6,7 +6,6 @@ import {
 import { handler } from '@edusoftware/core/handlers';
 import {
   ApplicationError,
-  BadRequestError,
   LambdaResponse,
   NotFoundError,
   UserProgress,
@@ -20,7 +19,6 @@ import { useSessionWithRoles } from '@edusoftware/core/handlers';
  *
  * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the request parameters.
  * @returns {Promise<LambdaResponse<UserProgress>>} A promise that resolves to the fetched level data.
- * @throws {BadRequestError} Thrown if the level ID is not provided in the request.
  * @throws {NotFoundError} Thrown if no level is found matching the provided ID.
  */
 export const main = handler<UserProgress>(
