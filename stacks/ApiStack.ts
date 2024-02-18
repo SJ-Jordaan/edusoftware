@@ -30,6 +30,7 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/questions/deleteQuestion/index.main',
       'PUT /questions/{id}':
         'packages/functions/src/questions/updateQuestion/index.main',
+      'GET /scores': 'packages/functions/src/score/getLeaderboard/index.main',
     },
   });
 
