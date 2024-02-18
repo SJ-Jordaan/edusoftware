@@ -6,15 +6,13 @@ import {
   NotFoundError,
   UserScore,
 } from '@edusoftware/core/types';
-import { APIGatewayProxyEvent } from 'aws-lambda';
 
 /**
  * Lambda function to retrieve the global leaderboard.
  * It fetches the leaderboard, and handles errors appropriately.
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the request parameters.
  * @returns {Promise<LambdaResponse<UserScore[]>>} A promise that resolves to the fetched leaderboard data.
- * @throws {BadRequestError} Thrown if the request parameters are invalid.
  * @throws {NotFoundError} Thrown if no leaderboard data is found.
+ * @throws {ApplicationError} Thrown if an unexpected error occurs while fetching the leaderboard.
  */
 export const main = handler<UserScore[]>(
   async (
