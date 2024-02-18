@@ -14,11 +14,11 @@ import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { useSessionWithRoles } from '@edusoftware/core/handlers';
 
 /**
- * Lambda function to retrieve a specific level by its ID, including all related question IDs.
- * It validates the request, fetches the level, and handles errors appropriately.
+ * Lambda function to retrieve the progress of a specific level by its ID.
+ * It validates the request, fetches the level progress, and handles errors appropriately.
  *
  * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the request parameters.
- * @returns {Promise<LambdaResponse<UserProgress>>} A promise that resolves to the fetched level data.
+ * @returns {Promise<LambdaResponse<UserProgress>>} A promise that resolves to the fetched user progress data.
  * @throws {NotFoundError} Thrown if no level is found matching the provided ID.
  */
 export const main = handler<UserProgress>(
