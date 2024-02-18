@@ -1,7 +1,7 @@
 import { RegexInputSchema } from '../../../types/RegexInput';
 import { StandardAlphabetStrategy } from '../../alphabet';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
-import to_NFA from 'dfa-lib/regex.js';
+import { to_NFA } from '../../../automata/regex';
 
 /**
  * Strategy for converting regular expressions into NFAs.

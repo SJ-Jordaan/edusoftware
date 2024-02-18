@@ -1,4 +1,4 @@
-import { NFA } from 'dfa-lib';
+import { NFA } from '../../../automata/dfa-lib';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
 import {
   GridAutomaton,

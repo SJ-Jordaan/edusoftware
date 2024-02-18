@@ -1,4 +1,4 @@
-import { NFA } from 'dfa-lib';
+import { NFA } from '../../../automata/dfa-lib';
 import { NonDeterministicFiniteAutomaton as NFAInterface } from '../../../types/NonDeterministicFiniteAutomaton';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
 import {

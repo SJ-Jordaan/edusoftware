@@ -1,7 +1,15 @@
-import mongoose, { Schema } from 'mongoose';
-import { Question } from './Question';
+import mongoose from 'mongoose';
+import { Question, IQuestionDoc } from './Question';
 
-const levelSchema = new Schema(
+interface ILevelDoc extends mongoose.Document {
+  levelName: string;
+  description: string;
+  questionIds: mongoose.Types.ObjectId[]; // Assuming you have a separate Question model
+  startDate: Date;
+  endDate: Date;
+}
+
+const levelSchema = new mongoose.Schema(
   {
     levelName: {
       type: String,
@@ -31,4 +39,8 @@ const levelSchema = new Schema(
   },
 );
 
-export const Level = mongoose.model('Level', levelSchema);
+export interface IPopulatedLevelDoc extends Omit<ILevelDoc, 'questionIds'> {
+  questionIds: IQuestionDoc[];
+}
+
+export const Level = mongoose.model<ILevelDoc>('Level', levelSchema);

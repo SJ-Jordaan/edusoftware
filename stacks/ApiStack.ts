@@ -31,6 +31,8 @@ export function ApiStack({ stack, app }: StackContext) {
       'PUT /questions/{id}':
         'packages/functions/src/questions/updateQuestion/index.main',
       'GET /scores': 'packages/functions/src/score/getLeaderboard/index.main',
+      'POST /progress/{levelId}/{questionId}':
+        'packages/functions/src/progress/submitAnswer/index.main',
     },
   });
 

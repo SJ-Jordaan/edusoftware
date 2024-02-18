@@ -1,4 +1,4 @@
-import { NFA } from 'dfa-lib';
+import { NFA } from '../../../automata/dfa-lib';
 import { AutomatonInput } from '../../../types/AutomatonInput';
 
 /**

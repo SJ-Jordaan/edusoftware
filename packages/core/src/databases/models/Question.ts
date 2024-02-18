@@ -1,18 +1,30 @@
 import mongoose from 'mongoose';
 
+enum QuestionType {
+  RegexEquivalence = 'Regex Equivalence',
+  Regex = 'Regex',
+  AutomatonToRegex = 'Automaton to Regex',
+  ConstructAutomaton = 'Construct Automaton',
+  ConstructAutomatonMissingSymbols = 'Construct Automaton Missing Symbols',
+  RegexAcceptsString = 'Regex Accepts String',
+}
+
+export interface IQuestionDoc extends mongoose.Document {
+  questionType: QuestionType;
+  questionContent: string;
+  answer: string;
+  hints: string[];
+  score: number;
+  alphabet: string;
+  operators: string[];
+}
+
 const questionSchema = new mongoose.Schema(
   {
     questionType: {
       type: String,
       required: true,
-      enum: [
-        'Regex Equivalence',
-        'Regex',
-        'Automaton to Regex',
-        'Construct Automaton',
-        'Construct Automaton Missing Symbols',
-        'Regex Accepts String',
-      ],
+      enum: Object.values(QuestionType),
     },
     questionContent: {
       type: String,
@@ -39,4 +51,7 @@ const questionSchema = new mongoose.Schema(
   },
 );
 
-export const Question = mongoose.model('Question', questionSchema);
+export const Question = mongoose.model<IQuestionDoc>(
+  'Question',
+  questionSchema,
+);
