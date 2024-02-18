@@ -6,17 +6,17 @@ import {
   NotFoundError,
   Question as IQuestion,
 } from '@edusoftware/core/types';
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 /**
  * Lambda function to retrieve a specific question by its ID.
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the request parameters.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the request parameters.
  * @returns {Promise<LambdaResponse<IQuestion>>} A promise that resolves to the fetched question data.
  * @throws {BadRequestError} Thrown if the question ID is not provided in the request.
  * @throws {NotFoundError} Thrown if no question is found matching the provided ID.
  */
 export const main = handler<IQuestion>(
-  async (event: APIGatewayProxyEvent): Promise<LambdaResponse<IQuestion>> => {
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<IQuestion>> => {
     await connectToDatabase();
     const questionId = event.pathParameters?.id;
 

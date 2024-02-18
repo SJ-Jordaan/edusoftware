@@ -7,18 +7,18 @@ import {
   LevelSchema,
   ApplicationError,
 } from '@edusoftware/core/types';
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 /**
  * AWS Lambda function to create a new level. Validates incoming data against a Zod schema,
  * checks for existing levels with the same name, and creates a new level if validations pass.
  *
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the request body.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the request body.
  * @returns {Promise<LambdaResponse<Level>>} A promise that resolves with the created level data.
  * @throws {BadRequestError} For any validation failures or if the level already exists.
  */
 export const main = handler<ILevel>(
-  async (event: APIGatewayProxyEvent): Promise<LambdaResponse<ILevel>> => {
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }

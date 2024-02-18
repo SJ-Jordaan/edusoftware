@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { handler } from '@edusoftware/core/handlers';
 import {
   BadRequestError,
@@ -13,12 +13,12 @@ import { Question, connectToDatabase } from '@edusoftware/core/databases';
  * AWS Lambda function to create a new question. Validates incoming data against a Zod schema,
  * and creates a new question if validations pass.
  *
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the request body.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the request body.
  * @returns {Promise<LambdaResponse<IQuestion>>} A promise that resolves with the created question data.
  * @throws {BadRequestError} For any validation failures.
  */
 export const main = handler<IQuestion>(
-  async (event: APIGatewayProxyEvent): Promise<LambdaResponse<IQuestion>> => {
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<IQuestion>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }

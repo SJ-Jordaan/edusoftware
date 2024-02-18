@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import {
   BadRequestError,
   NotFoundError,
@@ -15,13 +15,13 @@ import { Level, connectToDatabase } from '@edusoftware/core/databases';
  * Validates the incoming data against a Zod schema for updates, fetches the existing level,
  * updates it with provided data, and saves the changes.
  *
- * @param {APIGatewayProxyEvent} event - The event object from AWS Lambda, containing the path parameters and request body.
+ * @param {APIGatewayProxyEventV2} event - The event object from AWS Lambda, containing the path parameters and request body.
  * @returns {Promise<LambdaResponse<ILevel>>} A promise that resolves with the updated level data.
  * @throws {BadRequestError} If the request body is missing or invalid.
  * @throws {NotFoundError} If the level with the specified ID is not found.
  */
 export const main = handler<ILevel>(
-  async (event: APIGatewayProxyEvent): Promise<LambdaResponse<ILevel>> => {
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
