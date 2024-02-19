@@ -80,33 +80,42 @@ export const updateProgress = (
   try {
     const timeSpent = calculateTimeSpent(progress);
 
-    const usableQuestionProgress = questionProgress || {
-      questionId: question._id,
-      attempts: 0,
-      correct: false,
-      timeSpent: 0,
-      hintsUsed: 0,
-      scoreEarned: 0,
-    };
+    let usableQuestionProgress = questionProgress;
+    if (!usableQuestionProgress) {
+      usableQuestionProgress = {
+        questionId: question._id,
+        attempts: 1,
+        correct: isAnswerCorrect,
+        timeSpent: timeSpent,
+        hintsUsed: 0,
+        scoreEarned: 0,
+      };
+
+      usableQuestionProgress.scoreEarned = calculateScore({
+        timeSpent: usableQuestionProgress.timeSpent,
+        isCorrect: isAnswerCorrect,
+        attempts: usableQuestionProgress.attempts,
+      });
+
+      progress.questionsAttempted.push(usableQuestionProgress);
+
+      progress.totalScore += usableQuestionProgress.scoreEarned;
+
+      return;
+    }
 
     usableQuestionProgress.attempts += 1;
     usableQuestionProgress.correct = isAnswerCorrect;
     usableQuestionProgress.timeSpent += timeSpent;
+    const previousScore = usableQuestionProgress.scoreEarned;
     usableQuestionProgress.scoreEarned = calculateScore({
       timeSpent: usableQuestionProgress.timeSpent,
       isCorrect: isAnswerCorrect,
       attempts: usableQuestionProgress.attempts,
     });
 
-    progress.questionsAttempted = [
-      ...progress.questionsAttempted.filter(
-        (q) =>
-          q.questionId && q.questionId.toString() !== question._id.toString(),
-      ),
-      usableQuestionProgress,
-    ];
-
-    progress.totalScore += usableQuestionProgress.scoreEarned;
+    // Update the total score by adding the difference between the new and previous scores
+    progress.totalScore += usableQuestionProgress.scoreEarned - previousScore;
   } catch (error) {
     if (error instanceof Error) {
       console.error('Failed to update progress:', error);
