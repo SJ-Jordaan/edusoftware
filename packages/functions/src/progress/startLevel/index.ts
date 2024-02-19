@@ -39,7 +39,9 @@ export const main = handler<UserProgress>(
       let progress = await Progress.findOne({ userId, levelId });
 
       if (progress) {
-        progress.questionsAttempted.pull({});
+        progress.questionsAttempted.forEach((question) => {
+          question.deleteOne();
+        });
         progress.startedAt = new Date();
         progress.completedAt = null;
         progress.totalScore = 0;
@@ -51,7 +53,7 @@ export const main = handler<UserProgress>(
 
       return {
         statusCode: 200,
-        body: progress.toObject() as UserProgress,
+        body: progress.toObject(),
       };
     } catch (error: unknown) {
       if (error instanceof ApplicationError) {
