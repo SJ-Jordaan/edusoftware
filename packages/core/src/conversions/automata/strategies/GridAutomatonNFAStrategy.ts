@@ -1,4 +1,6 @@
-import { NFA } from '../../../automata/dfa-lib';
+import '../../../polyfills/index';
+
+import { NFA } from 'dfa-lib';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
 import {
   GridAutomaton,

@@ -5,10 +5,6 @@ import { AlphabetStrategy } from './AlphabetStrategy';
  */
 export class StandardAlphabetStrategy implements AlphabetStrategy {
   normalise(alphabet: string | string[]): string {
-    if (!alphabet) {
-      throw new Error('Alphabet must not be empty.');
-    }
-
     // Handling an array of characters
     if (Array.isArray(alphabet)) {
       return alphabet
@@ -23,20 +19,26 @@ export class StandardAlphabetStrategy implements AlphabetStrategy {
         .join('');
     }
 
-    // Directly handle a single character or string
-    return this.normaliseCharacter(alphabet);
+    return alphabet
+      .split('')
+      .map((char) => this.normaliseCharacter(char))
+      .filter((char) => char !== '')
+      .join('');
   }
 
   display(alphabet: string | string[]): string {
-    if (!alphabet) {
-      throw new Error('Alphabet must not be empty.');
+    if (alphabet === '') {
+      return 'ε';
     }
 
     if (Array.isArray(alphabet)) {
       return alphabet.map((char) => this.displayCharacter(char)).join('');
     }
 
-    return this.displayCharacter(alphabet);
+    return alphabet
+      .split('')
+      .map((char) => this.displayCharacter(char))
+      .join('');
   }
 
   private normaliseCharacter(char: string): string {
