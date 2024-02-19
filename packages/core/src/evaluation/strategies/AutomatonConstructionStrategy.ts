@@ -37,12 +37,19 @@ export class AutomatonConstructionStrategy implements EvaluationStrategy {
     }
 
     try {
+      // questionAnswer might be a string or an object
+      // userAnswer might be a string or an object
+
       const questionAnswerNFA = new AutomatonConverter(
-        questionResult.data.answer,
+        typeof questionResult.data.answer === 'string'
+          ? JSON.parse(questionResult.data.answer)
+          : questionResult.data.answer,
         questionResult.data.alphabet,
       ).convert();
       const userAnswerNFA = new AutomatonConverter(
-        userAnswerResult.data,
+        typeof userAnswerResult.data === 'string'
+          ? JSON.parse(userAnswerResult.data)
+          : userAnswerResult.data,
         questionResult.data.alphabet,
       ).convert();
 

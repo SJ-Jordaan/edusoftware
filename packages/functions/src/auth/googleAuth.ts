@@ -29,6 +29,8 @@ export const handler = AuthHandler({
       mode: 'oidc',
       clientID: Config.GOOGLE_CLIENT_ID,
       onSuccess: async (tokenset) => {
+        console.log('Google tokenset', tokenset);
+        console.log('Google client id', Config.GOOGLE_CLIENT_ID);
         const claims = tokenset.claims();
         const userId = claims.sub;
         const ddb = new DynamoDBClient({});
@@ -71,10 +73,18 @@ export const handler = AuthHandler({
           );
         }
 
+        console.log(
+          'User added to database',
+          userId,
+          claims.given_name,
+          claims.email,
+          claims.picture,
+        );
+
+        const redirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/callback`;
+
         return Session.parameter({
-          redirect: process.env.IS_LOCAL
-            ? 'http://localhost:5173'
-            : StaticSite.AutomaTutor.url,
+          redirect,
           type: 'user',
           properties: {
             userID: userId,

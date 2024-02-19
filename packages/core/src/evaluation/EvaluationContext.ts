@@ -59,17 +59,25 @@ export class EvaluationContext {
       throw new Error('Invalid question format.');
     }
 
-    // Validate the user answer format
-    const userAnswerValidationResult =
-      AutomatonInputSchema.safeParse(userAnswer);
-    if (!userAnswerValidationResult.success) {
-      throw new Error('Invalid user answer format.');
+    try {
+      if (typeof userAnswer === 'string') {
+        const parsed = JSON.parse(userAnswer);
+
+        if (AutomatonInputSchema.parse(parsed)) {
+          return this.strategy.evaluate(questionValidationResult.data, parsed);
+        }
+      }
+    } catch (e: unknown) {
+      if (AutomatonInputSchema.safeParse(userAnswer).success) {
+        return this.strategy.evaluate(
+          questionValidationResult.data,
+          userAnswer,
+        );
+      }
+
+      throw new Error(`Invalid user answer format: ${e}`);
     }
 
-    // Proceed with the evaluation using the validated data
-    return this.strategy.evaluate(
-      questionValidationResult.data,
-      userAnswerValidationResult.data,
-    );
+    throw new Error('Invalid user answer format.');
   }
 }

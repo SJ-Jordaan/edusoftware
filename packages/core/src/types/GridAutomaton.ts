@@ -18,16 +18,17 @@ export const GridAutomatonStateSchema = z.object({
  * Defines the structure for a transition in a grid automaton.
  */
 export const GridAutomatonTransitionSchema = z.object({
+  id: z.string().optional(), // Assuming IDs might be optional for transitions
   position: z.object({
     x: z.number(),
     y: z.number(),
   }),
   type: z.literal('transition'),
-  startSide: z.enum(['top', 'bottom', 'left', 'right']),
-  endSide: z.enum(['top', 'bottom', 'left', 'right']),
   transitions: z.array(
     z.object({
       symbols: z.array(z.string()),
+      startSide: z.enum(['top', 'bottom', 'left', 'right']),
+      endSide: z.enum(['top', 'bottom', 'left', 'right']),
     }),
   ),
 });

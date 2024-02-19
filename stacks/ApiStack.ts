@@ -1,9 +1,10 @@
-import { Api, Config, StackContext, use } from 'sst/constructs';
+import { Api, StackContext, use } from 'sst/constructs';
 import { StorageStack } from './StorageStack';
+import { SecretStack } from './SecretStack';
 
 export function ApiStack({ stack, app }: StackContext) {
-  const MONGO_URI = new Config.Secret(stack, 'MONGO_URI');
   const { userTable } = use(StorageStack);
+  const { MONGO_URI } = use(SecretStack);
 
   const api = new Api(stack, 'Api', {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,

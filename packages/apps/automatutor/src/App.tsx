@@ -3,56 +3,10 @@ import { UserSession } from '@edusoftware/core/src/types';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
+import { useGetUserInfoQuery } from './slices/userApi.slice';
 
 function App() {
-  const [session, setSession] = useState<UserSession | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const getSession = async () => {
-    const token = localStorage.getItem('session');
-    if (token) {
-      const user = await getUserInfo(token);
-      if (user) {
-        setSession(user);
-      }
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getSession();
-  }, []);
-
-  useEffect(() => {
-    const search = window.location.search;
-    const params = new URLSearchParams(search);
-    const token = params.get('token');
-    if (token) {
-      localStorage.setItem('session', token);
-      window.location.replace(window.location.origin);
-    }
-  }, []);
-
-  const getUserInfo = async (token: string) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/session`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.json();
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const signOut = async () => {
-    localStorage.removeItem('session');
-    setSession(null);
-  };
-
-  if (loading) return <div className="container">Loading...</div>;
+  const [session] = useGetUserInfoQuery();
 
   return (
     <>
