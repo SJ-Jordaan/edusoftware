@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { UserSession } from '@edusoftware/core/src/types';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { useGetUserInfoQuery } from './slices/userApi.slice';
+import { useDispatch } from 'react-redux';
+import { logout } from './slices/auth.slice';
 
 function App() {
-  const [session] = useGetUserInfoQuery();
+  const { data: session } = useGetUserInfoQuery();
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -31,7 +32,7 @@ function App() {
               height={100}
             />
             <p>{session.email}</p>
-            <button onClick={signOut}>Sign out</button>
+            <button onClick={() => dispatch(logout())}>Sign out</button>
           </div>
         ) : (
           <div>
