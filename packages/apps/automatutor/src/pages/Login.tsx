@@ -8,7 +8,8 @@ function Login() {
       <h2 className="text-3xl font-semiBold text-logo-primary">AutomaTutor</h2>
       <EduSoftware className="w-36 h-36" />
       <p className="mt-8 text-center text-gray-800 dark:text-slate-100">
-        Sign in with your University of Pretoria Google account to get started.
+        Sign in with your <b>University of Pretoria</b> Google account to get
+        started.
       </p>
       <a
         href={`${import.meta.env.VITE_API_URL}/auth/google/authorize`}

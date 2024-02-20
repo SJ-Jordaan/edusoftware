@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface Route {
   path: string;
@@ -13,9 +13,9 @@ export const NavBar = ({ routes }: { routes: Route[] }) => {
       <div className="w-full min-h-14" />
       <div className="flex py-4 bg-gray-500 dark:bg-gray-700 text-white fixed bottom-0 left-0 right-0">
         {routes.map((route, index) => (
-          <a
+          <Link
             key={index}
-            href={route.path}
+            to={route.path}
             className="flex flex-1 justify-center"
           >
             <route.icon
@@ -25,7 +25,7 @@ export const NavBar = ({ routes }: { routes: Route[] }) => {
                   : ' stroke-white fill-white'
               }`}
             />
-          </a>
+          </Link>
         ))}
       </div>
     </>

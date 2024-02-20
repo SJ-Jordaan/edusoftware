@@ -21,6 +21,10 @@ import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      <Route
+        path="/login/unauthorized"
+        element={<ErrorPage {...ErrorConfig.Unauthorized} />}
+      />
       <Route path="/login/failed" element={<ErrorPage />} />
       <Route path="/login/callback" element={<LoginRedirect />} />
       <Route path="/login" element={<Login />} />

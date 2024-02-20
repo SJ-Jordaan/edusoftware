@@ -12,6 +12,12 @@ export const ErrorConfig = {
     title: 'Oops! Something went wrong',
     message: 'An unexpected error occurred. Please try again later.',
   },
+  Unauthorized: {
+    error: '401 Unauthorised',
+    title: 'Only @tuks.co.za accounts allowed!',
+    message:
+      'Please sign in with your University of Pretoria Google account to access this page.',
+  },
 };
 
 interface ErrorPageProps {
@@ -39,7 +45,7 @@ function ErrorPage({
       <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-50">
         {title}
       </h1>
-      <p className="text-sm font-normal text-gray-400">{message}</p>
+      <p className="text-sm font-normal text-center text-gray-400">{message}</p>
       <button
         onClick={handleGoHome}
         className="bg-logo-primary px-4 py-2 rounded-full text-gray-900 text-sm"
