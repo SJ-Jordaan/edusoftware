@@ -4,6 +4,11 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      colors: {
+        logo: {
+          primary: '#F6AE84',
+        },
+      },
       animation: {
         'slide-in': 'slide-in 0.75s ease-in-out forwards',
       },

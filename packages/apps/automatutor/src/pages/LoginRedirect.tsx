@@ -1,14 +1,15 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setCredentials } from '../slices/auth.slice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { useAppSelector } from '../store';
 
 function LoginRedirect() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [params] = useSearchParams();
   const token = params.get('token');
-  const { token: existingToken } = useSelector((state) => state.auth);
+  const { token: existingToken } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     // If there's an existing token, redirect to home

@@ -5,7 +5,7 @@ const SESSION_URL = '/session';
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUserInfo: builder.query<UserSession, string>({
+    getUserInfo: builder.query<UserSession, void>({
       query: () => ({
         url: SESSION_URL,
         method: 'GET',
