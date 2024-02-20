@@ -31,7 +31,7 @@ export const main = handler<UserProgress[]>(
         query = { ...query, levelId };
       }
 
-      const progressQuery = Progress.findOne(query).populate(
+      const progressQuery = Progress.find(query).populate(
         'questionsAttempted.questionId',
       );
 
@@ -45,7 +45,7 @@ export const main = handler<UserProgress[]>(
 
       return {
         statusCode: 200,
-        body: progress.toObject() as UserProgress[],
+        body: progress.map((p) => p.toObject()),
       };
     } catch (error: unknown) {
       if (error instanceof ApplicationError) {

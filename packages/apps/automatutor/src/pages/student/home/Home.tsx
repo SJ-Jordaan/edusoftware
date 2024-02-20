@@ -1,21 +1,25 @@
+import { useNavigate } from 'react-router-dom';
 import { Tabs } from '../../../components';
 import { useGetUserInfoQuery } from '../../../slices/userApi.slice';
 import { TABS } from './common/tabs';
+import { HomeLoader } from './components/HomeLoader';
 
 function Home() {
+  const navigate = useNavigate();
   const { data: session, isLoading, isError } = useGetUserInfoQuery();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <HomeLoader />;
   }
 
   if (isError || !session) {
-    return <div>Error</div>;
+    navigate('/login/failed');
+    return;
   }
 
   return (
-    <div className="h-full w-full p-4">
-      <div className="w-full flex space-x-4">
+    <div className="h-full w-full p-4 space-y-2">
+      <div className="w-full flex space-x-4 items-center">
         <img
           className="rounded-full w-20 h-20"
           src={session.picture}

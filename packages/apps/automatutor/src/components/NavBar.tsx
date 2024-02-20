@@ -1,28 +1,11 @@
 import { useLocation } from 'react-router-dom';
-import Home from '../assets/home-icon.svg?react';
-import Leaderboard from '../assets/priorities-icon.svg?react';
-import Levels from '../assets/edit-list-icon.svg?react';
 
-// TODO: Make generic
-const routes = [
-  {
-    path: '/leaderboard',
-    label: 'Leaderboard',
-    icon: Leaderboard,
-  },
-  {
-    path: '/',
-    label: 'Home',
-    icon: Home,
-  },
-  {
-    path: '/levels',
-    label: 'Levels',
-    icon: Levels,
-  },
-];
+interface Route {
+  path: string;
+  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+}
 
-export const NavBar = () => {
+export const NavBar = ({ routes }: { routes: Route[] }) => {
   const location = useLocation();
 
   return (

@@ -4,7 +4,7 @@ import { Question, IQuestionDoc } from './Question';
 interface ILevelDoc extends mongoose.Document {
   levelName: string;
   description: string;
-  questionIds: mongoose.Types.ObjectId[]; // Assuming you have a separate Question model
+  questionIds: mongoose.Types.ObjectId[];
   startDate: Date;
   endDate: Date;
 }
