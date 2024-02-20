@@ -5,7 +5,7 @@ import {
   GetItemCommand,
   PutItemCommand,
 } from '@aws-sdk/client-dynamodb';
-import { marshall } from '@aws-sdk/util-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Table } from 'sst/node/table';
 import { Config } from 'sst/node/config';
 
@@ -29,67 +29,69 @@ export const handler = AuthHandler({
       mode: 'oidc',
       clientID: Config.GOOGLE_CLIENT_ID,
       onSuccess: async (tokenset) => {
-        console.log('Google tokenset', tokenset);
-        console.log('Google client id', Config.GOOGLE_CLIENT_ID);
-        const claims = tokenset.claims();
-        const userId = claims.sub;
-        const ddb = new DynamoDBClient({});
-        const userKey = marshall({ userId: userId });
-
-        // Check if user already exists
-        const existingUser = await ddb.send(
-          new GetItemCommand({
-            TableName: Table.users.tableName,
-            Key: userKey,
-          }),
-        );
-
-        // If user does not exist, add them with default roles
-        if (!existingUser.Item) {
-          await ddb.send(
-            new PutItemCommand({
+        try {
+          const claims = tokenset.claims();
+          const userId = claims.sub;
+          const ddb = new DynamoDBClient({});
+          const userKey = marshall({ userId: userId });
+          // Check if user already exists
+          const existingUser = await ddb.send(
+            new GetItemCommand({
               TableName: Table.users.tableName,
-              Item: marshall({
-                userId: userId,
-                email: claims.email,
-                picture: claims.picture,
-                name: claims.given_name,
-                roles: ['student'],
-              }),
+              Key: userKey,
             }),
           );
-        } else {
-          await ddb.send(
-            new PutItemCommand({
-              TableName: Table.users.tableName,
-              Item: marshall({
-                userId: userId,
-                email: claims.email,
-                picture: claims.picture,
-                name: claims.given_name,
-                roles: existingUser.Item.roles,
+
+          if (existingUser.Item) {
+            const jsonUser = unmarshall(existingUser.Item);
+
+            await ddb.send(
+              new PutItemCommand({
+                TableName: Table.users.tableName,
+                Item: marshall({
+                  userId: userId,
+                  email: claims.email,
+                  picture: claims.picture,
+                  name: claims.given_name,
+                  roles: jsonUser.roles,
+                }),
               }),
-            }),
-          );
+            );
+          } else {
+            await ddb.send(
+              new PutItemCommand({
+                TableName: Table.users.tableName,
+                Item: marshall({
+                  userId: userId,
+                  email: claims.email,
+                  picture: claims.picture,
+                  name: claims.given_name,
+                  roles: ['student'],
+                }),
+              }),
+            );
+          }
+
+          const redirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/callback`;
+
+          return Session.parameter({
+            redirect,
+            type: 'user',
+            properties: {
+              userID: userId,
+            },
+          });
+        } catch (error) {
+          console.error('Error handling Google OAuth authentication:', error);
+          const errorRedirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/failed`;
+          return Session.parameter({
+            redirect: errorRedirect,
+            type: 'public',
+            properties: {
+              error: error instanceof Error ? error.message : error,
+            },
+          });
         }
-
-        console.log(
-          'User added to database',
-          userId,
-          claims.given_name,
-          claims.email,
-          claims.picture,
-        );
-
-        const redirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/callback`;
-
-        return Session.parameter({
-          redirect,
-          type: 'user',
-          properties: {
-            userID: userId,
-          },
-        });
       },
     }),
   },
