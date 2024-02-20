@@ -16,6 +16,7 @@ import PrivateRoute from './components/PrivateRoute.tsx';
 import StudentTemplate from './pages/student/StudentTemplate.tsx';
 import Home from './pages/student/Home.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
+import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,9 +27,9 @@ const router = createBrowserRouter(
       <Route path="/" element={<PrivateRoute />}>
         <Route path="/" element={<StudentTemplate />}>
           <Route path="/" element={<Home />} />
+          <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>
       </Route>
-      {/* Catch all 404 */}
       <Route path="*" element={<ErrorPage {...ErrorConfig.NotFound} />} />
     </>,
   ),
