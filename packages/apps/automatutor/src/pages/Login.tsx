@@ -3,7 +3,7 @@ import GoogleIcon from '../assets/google-color-icon.svg?react';
 
 function Login() {
   return (
-    <div className="h-screen w-screen flex flex-col items-center p-4 pt-16 dark:bg-slate-800">
+    <div className="h-screen w-screen flex flex-col items-center p-4 pt-16 dark:bg-gray-900">
       <h1 className="text-3xl text-gray-800 dark:text-slate-100">Welcome to</h1>
       <h2 className="text-3xl font-semiBold text-logo-primary">AutomaTutor</h2>
       <EduSoftware className="w-36 h-36" />

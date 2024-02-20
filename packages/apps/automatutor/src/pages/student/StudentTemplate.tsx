@@ -3,7 +3,7 @@ import { NavBar } from '../../components';
 
 function StudentTemplate() {
   return (
-    <div className="h-screen w-screen flex flex-col dark:bg-slate-800">
+    <div className="h-screen w-screen flex flex-col dark:bg-gray-900">
       <Outlet />
       <NavBar />
     </div>

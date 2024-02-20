@@ -4,7 +4,7 @@ import TechnicalError from '../assets/Open-Doodles-Messy.svg?react';
 export const ErrorConfig = {
   NotFound: {
     error: '404 Not Found',
-    title: 'Page not found',
+    title: 'We got a bit lost there!',
     message: 'The page you are looking for does not exist.',
   },
   TechnicalError: {
