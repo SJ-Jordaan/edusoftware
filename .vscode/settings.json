@@ -2,7 +2,14 @@
   "search.exclude": {
     "**/.sst": true
   },
-  "cSpell.words": ["automatutor", "dottified", "edusoftware", "unmarshall"],
+  "cSpell.words": [
+    "automatutor",
+    "dottified",
+    "edusoftware",
+    "oidc",
+    "tokenset",
+    "unmarshall"
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },

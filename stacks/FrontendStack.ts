@@ -23,6 +23,9 @@ export function FrontendStack({ stack, app }: StackContext) {
       VITE_API_URL: api.customDomainUrl ?? api.url,
       VITE_REGION: app.region,
       VITE_BUCKET: competitionBucket.bucketName,
+      VITE_GOOGLE_CLIENT_ID:
+        '399481916752-fb7fa2a0i9fs6vpj2ncu68a4q4jkaob8.apps.googleusercontent.com',
+      VITE_GOOGLE_LOGIN_URI: `${api.customDomainUrl ?? api.url}/auth/callback`,
       // VITE_USER_POOL_ID: auth.userPoolId,
       // VITE_USER_POOL_CLIENT_ID: auth.userPoolClientId,
       // VITE_IDENTITY_POOL_ID: auth.cognitoIdentityPoolId || "",

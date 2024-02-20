@@ -16,7 +16,7 @@ import {
  */
 export async function useSessionWithRoles(
   requiredRoles: string[] = [],
-): Promise<UserSession> {
+): Promise<UserSession & { userId: string }> {
   const session = useSession();
 
   if (session.type !== 'user') {
@@ -38,7 +38,10 @@ export async function useSessionWithRoles(
   const user = unmarshall(Item) as UserSession;
 
   if (requiredRoles.length === 0) {
-    return user;
+    return {
+      ...user,
+      userId: session.properties.userID,
+    };
   }
 
   const hasRequiredRole = requiredRoles.some((role) =>
@@ -48,5 +51,8 @@ export async function useSessionWithRoles(
     throw new ForbiddenError('User does not have the required role');
   }
 
-  return user;
+  return {
+    ...user,
+    userId: session.properties.userID,
+  };
 }

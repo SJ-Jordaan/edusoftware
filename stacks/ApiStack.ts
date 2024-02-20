@@ -1,9 +1,10 @@
-import { Api, Config, StackContext, use } from 'sst/constructs';
+import { Api, StackContext, use } from 'sst/constructs';
 import { StorageStack } from './StorageStack';
+import { SecretStack } from './SecretStack';
 
 export function ApiStack({ stack, app }: StackContext) {
-  const MONGO_URI = new Config.Secret(stack, 'MONGO_URI');
   const { userTable } = use(StorageStack);
+  const { MONGO_URI } = use(SecretStack);
 
   const api = new Api(stack, 'Api', {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,
@@ -31,6 +32,14 @@ export function ApiStack({ stack, app }: StackContext) {
       'PUT /questions/{id}':
         'packages/functions/src/questions/updateQuestion/index.main',
       'GET /scores': 'packages/functions/src/score/getLeaderboard/index.main',
+      'POST /progress/{levelId}/{questionId}':
+        'packages/functions/src/progress/submitAnswer/index.main',
+      'GET /progress/{id}':
+        'packages/functions/src/progress/getUserProgress/index.main',
+      'GET /progress':
+        'packages/functions/src/progress/getUserProgress/index.main',
+      'POST /progress/{id}':
+        'packages/functions/src/progress/startLevel/index.main',
     },
   });
 

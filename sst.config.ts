@@ -1,5 +1,6 @@
 import { SSTConfig } from 'sst';
 import { StorageStack, ApiStack, FrontendStack, AuthStack } from './stacks';
+import { SecretStack } from './stacks/SecretStack';
 
 export default {
   config() {
@@ -10,6 +11,7 @@ export default {
   },
   stacks(app) {
     app
+      .stack(SecretStack)
       .stack(StorageStack)
       .stack(ApiStack)
       .stack(FrontendStack)

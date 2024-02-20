@@ -1,3 +1,5 @@
+import '../../../polyfills/index';
+
 import { NFA } from 'dfa-lib';
 import { NonDeterministicFiniteAutomaton as NFAInterface } from '../../../types/NonDeterministicFiniteAutomaton';
 import { NFAConversionStrategy } from './NFAConversionStrategy';

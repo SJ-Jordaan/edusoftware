@@ -1,5 +1,8 @@
 import { Score, connectToDatabase } from '@edusoftware/core/databases';
+import { DynamoDBClient, BatchGetItemCommand } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { handler } from '@edusoftware/core/handlers';
+import { Table } from 'sst/node/table';
 import {
   ApplicationError,
   LambdaResponse,
@@ -15,13 +18,12 @@ import {
  * @throws {ApplicationError} Thrown if an unexpected error occurs while fetching the leaderboard.
  */
 export const main = handler<UserScore[]>(
-  async (
-  ): Promise<LambdaResponse<UserScore[]>> => {
-    await connectToDatabase();
+  async (): Promise<LambdaResponse<UserScore[]>> => {
+    await connectToDatabase(); // Assuming this connects to MongoDB
 
     try {
-      let aggregatePipeline = [];
-      aggregatePipeline.push(
+      // MongoDB aggregation to get leaderboard scores
+      const aggregatePipeline = [
         {
           $group: {
             _id: '$userId',
@@ -30,30 +32,54 @@ export const main = handler<UserScore[]>(
         },
         { $sort: { totalScore: -1 } },
         { $limit: 10 },
-        {
-          $lookup: {
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'userDetails',
-          },
-        },
-        { $unwind: '$userDetails' },
-        {
-          $project: {
-            _id: 0,
-            totalScore: 1,
-            userDetails: {
-              name: '$userDetails.name',
-            },
-          },
-        });
+      ];
 
-      const leaderboard = await Score.aggregate(aggregatePipeline);
+      const leaderboardScores = await Score.aggregate(aggregatePipeline);
 
-      if (!leaderboard || leaderboard.length === 0) {
+      if (!leaderboardScores || leaderboardScores.length === 0) {
         throw new NotFoundError('Leaderboard data not found.');
       }
+
+      // DynamoDB client setup
+      const ddb = new DynamoDBClient({});
+
+      // Prepare keys for BatchGetItem
+      const keys = leaderboardScores.map((score) =>
+        marshall({ userId: score._id }),
+      );
+
+      // Fetch user details from DynamoDB
+      const userDetails = await ddb.send(
+        new BatchGetItemCommand({
+          RequestItems: {
+            [Table.users.tableName]: {
+              Keys: keys,
+            },
+          },
+        }),
+      );
+
+      // Process response from DynamoDB
+      const usersDetailsUnmarshalled = userDetails.Responses
+        ? userDetails.Responses[Table.users.tableName].map((item) =>
+            unmarshall(item),
+          )
+        : [];
+
+      // Merge leaderboardScores with userDetails
+      const leaderboard = leaderboardScores.map((score) => {
+        const userDetails = usersDetailsUnmarshalled.find(
+          (user) => user.userId === score._id,
+        );
+        return {
+          totalScore: score.totalScore,
+          userDetails: {
+            name: userDetails ? userDetails.name : 'Unknown User',
+            email: userDetails ? userDetails.email : null,
+            picture: userDetails ? userDetails.picture : null,
+          },
+        };
+      });
 
       return {
         statusCode: 200,

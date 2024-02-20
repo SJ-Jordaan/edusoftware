@@ -1,3 +1,5 @@
+import '../../../polyfills/index';
+
 import { NFA } from 'dfa-lib';
 import { NFAConversionStrategy } from './NFAConversionStrategy';
 import {

@@ -10,3 +10,4 @@ export * from './RegexInput';
 export * from './Level';
 export * from './Auth';
 export * from './UserScore';
+export * from './UserProgress';
