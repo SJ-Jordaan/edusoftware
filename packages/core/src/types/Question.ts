@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ObjectIdSchema } from './Level';
 
 export const QuestionTypeSchema = z.enum([
   'Construct Automaton',
@@ -20,8 +21,13 @@ export const QuestionSchema = z.object({
 });
 
 export const UpdateQuestionSchema = QuestionSchema.partial();
+export const PopulatedQuestionSchema = QuestionSchema.extend({
+  _id: ObjectIdSchema,
+});
 
 // TypeScript type derived from the Zod schema
 export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
 export type QuestionObject = Question & { _id: string };
+export type UpdateQuestion = z.infer<typeof UpdateQuestionSchema>;
+export type PopulatedQuestion = z.infer<typeof PopulatedQuestionSchema>;

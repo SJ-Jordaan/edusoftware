@@ -15,6 +15,7 @@ export const useLevelManagement = () => {
     isLoading: isLevelsLoading,
     isFetching: isLevelsFetching,
     error: levelsError,
+    refetch: refetchLevels,
   } = useFetchLevelsQuery();
 
   const [createLevel, { isLoading: isCreating, error: createError }] =
@@ -28,6 +29,7 @@ export const useLevelManagement = () => {
     openModal: openCreateModal,
     closeModal: closeCreateModal,
   } = useModal();
+
   const {
     isOpen: isDeleteModalOpen,
     openModal: openDeleteModal,
@@ -39,10 +41,11 @@ export const useLevelManagement = () => {
 
     try {
       await createLevel(level).unwrap();
-      closeCreateModal();
     } catch (error) {
       // TODO: Proper error handling
       console.error('Failed to create level', error);
+    } finally {
+      closeCreateModal();
     }
   };
 
@@ -51,11 +54,12 @@ export const useLevelManagement = () => {
 
     try {
       await deleteLevel(levelId).unwrap();
-      setLevelId(null);
-      closeDeleteModal();
     } catch (error) {
       // TODO: Proper error handling
       console.error('Failed to delete level', error);
+    } finally {
+      setLevelId(null);
+      closeDeleteModal();
     }
   };
 
@@ -64,9 +68,13 @@ export const useLevelManagement = () => {
     setLevelId(id);
   };
 
+  const handleRetry = () => {
+    refetchLevels();
+  };
+
   const isLoading =
     isLevelsLoading || isLevelsFetching || isCreating || isDeleting;
-  const isError = Boolean(levelsError || createError || deleteError);
+  const isError = Boolean(levelsError ?? createError ?? deleteError);
 
   return {
     levels,
@@ -80,5 +88,6 @@ export const useLevelManagement = () => {
     closeCreateModal,
     handleOpenDeleteModal,
     openCreateModal,
+    handleRetry,
   };
 };

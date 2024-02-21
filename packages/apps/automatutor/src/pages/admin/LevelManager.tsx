@@ -20,14 +20,15 @@ const LevelManager = () => {
     openCreateModal,
     closeCreateModal,
     closeDeleteModal,
+    handleRetry,
   } = useLevelManagement();
 
   if (isLoading) {
     return <LevelManagerLoader />;
   }
 
-  if (isError || !levels || levels) {
-    return <ErrorPage />;
+  if (isError || !levels) {
+    return <ErrorPage buttonText={'Retry'} onClick={() => handleRetry()} />;
   }
 
   return (

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { QuestionSchema } from './Question';
+import { PopulatedQuestionSchema } from './Question';
 
-const ObjectIdSchema = z
+export const ObjectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 
@@ -16,7 +16,7 @@ export const LevelSchema = z.object({
 export const PopulatedLevelSchema = z.object({
   levelName: z.string(),
   description: z.string(),
-  questionIds: z.array(QuestionSchema).optional(),
+  questionIds: z.array(PopulatedQuestionSchema).optional(),
   startDate: z.string(),
   endDate: z.string(),
 });

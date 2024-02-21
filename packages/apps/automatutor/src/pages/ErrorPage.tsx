@@ -30,16 +30,25 @@ interface ErrorPageProps {
   title?: string;
   message?: string;
   image?: string;
+  buttonText?: string;
+  onClick?: () => void;
 }
 
 function ErrorPage({
   error = ErrorConfig.TechnicalError.error,
   title = ErrorConfig.TechnicalError.title,
   message = ErrorConfig.TechnicalError.message,
+  buttonText = 'Go Home',
+  onClick,
 }: ErrorPageProps) {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
+    if (typeof onClick === 'function') {
+      onClick();
+      return;
+    }
+
     navigate('/');
   };
 
@@ -55,7 +64,7 @@ function ErrorPage({
         onClick={handleGoHome}
         className="bg-logo-primary rounded-full px-4 py-2 text-sm text-gray-900"
       >
-        Go Home
+        {buttonText}
       </button>
     </div>
   );
