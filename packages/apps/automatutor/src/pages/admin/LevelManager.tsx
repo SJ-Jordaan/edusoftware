@@ -3,6 +3,8 @@ import { CreateLevelModal } from './components/CreateLevelModal';
 import { DeleteLevelModal } from './components/DeleteLevelModal';
 import { useLevelManagement } from './hooks/useLevelManagement';
 import { LevelList } from './components/LevelList';
+import { LevelManagerLoader } from './components/LevelManagerLoader';
+import ErrorPage from '../ErrorPage';
 
 const LevelManager = () => {
   const navigate = useNavigate();
@@ -21,39 +23,39 @@ const LevelManager = () => {
   } = useLevelManagement();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LevelManagerLoader />;
   }
 
-  if (isError || !levels) {
-    return <div>Error</div>;
+  if (isError || !levels || levels) {
+    return <ErrorPage />;
   }
 
   return (
     <div className="container mx-auto mt-5">
       <button
         onClick={openCreateModal}
-        className="mb-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="mb-4 rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         type="button"
       >
         Create New Level
       </button>
-      <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="px-6 py-3">
                 Level Name
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="px-6 py-3">
                 Description
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="px-6 py-3">
                 Start Date
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="px-6 py-3">
                 End Date
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="px-6 py-3">
                 Actions
               </th>
             </tr>

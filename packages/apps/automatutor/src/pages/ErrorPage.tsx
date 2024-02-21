@@ -44,16 +44,16 @@ function ErrorPage({
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center px-4 py-8 dark:bg-gray-900 gap-4">
-      <TechnicalError className="w-64 h-64 fill-gray-900 dark:fill-white" />
+    <div className="flex flex-1 flex-col items-center gap-4 px-4 py-8 dark:bg-gray-900">
+      <TechnicalError className="h-64 w-64 fill-gray-900 dark:fill-white" />
       <h2 className="text-2xl font-bold text-blue-500">{error}</h2>
-      <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-50">
+      <h1 className="text-center text-3xl font-bold text-gray-900 dark:text-gray-50">
         {title}
       </h1>
-      <p className="text-sm font-normal text-center text-gray-400">{message}</p>
+      <p className="text-center text-sm font-normal text-gray-400">{message}</p>
       <button
         onClick={handleGoHome}
-        className="bg-logo-primary px-4 py-2 rounded-full text-gray-900 text-sm"
+        className="bg-logo-primary rounded-full px-4 py-2 text-sm text-gray-900"
       >
         Go Home
       </button>
