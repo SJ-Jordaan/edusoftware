@@ -21,6 +21,14 @@ interface GridAutomatonBuilderProps {
   isEdit: boolean;
 }
 
+const safeParse = (json: string) => {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    return null;
+  }
+};
+
 export const GridAutomatonBuilder = ({
   answer,
   alphabet,
@@ -29,7 +37,7 @@ export const GridAutomatonBuilder = ({
 }: GridAutomatonBuilderProps) => {
   const pieces = useMemo(() => isEdit && createPieces(alphabet), [alphabet]);
 
-  const parsedAnswer = JSON.parse(answer ?? null);
+  const parsedAnswer = safeParse(answer);
   const initialAnswer = !parsedAnswer
     ? [
         {

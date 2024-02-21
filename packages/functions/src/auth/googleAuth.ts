@@ -32,7 +32,11 @@ export const handler = AuthHandler({
       onSuccess: async (tokenset) => {
         try {
           const claims = tokenset.claims();
-          if (!claims.email?.endsWith('@tuks.co.za')) {
+          if (
+            !claims.email?.endsWith('@tuks.co.za') &&
+            !claims.email?.endsWith('@up.ac.za') &&
+            !claims.email?.endsWith('@cs.up.ac.za')
+          ) {
             throw new UnauthorizedError('Email domain must be @tuks.co.za');
           }
           const userId = claims.sub;
