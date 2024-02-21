@@ -64,8 +64,8 @@ function LoginRedirect() {
   }, [session, isLoading, isError, navigate]);
 
   return (
-    <div className="h-screen w-screen flex flex-col p-8 items-center justify-center dark:bg-gray-900">
-      <EduSoftware className="w-36 h-36 animate-bounce" />
+    <div className="flex h-screen w-screen flex-col items-center justify-center p-8 dark:bg-gray-900">
+      <EduSoftware className="h-36 w-36 animate-bounce" />
     </div>
   );
 }

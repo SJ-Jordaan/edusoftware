@@ -9,9 +9,9 @@ interface ModalProps {
 export const DeleteLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Delete Level">
-      <div className="p-4 md:p-5 text-center">
+      <div className="p-4 text-center md:p-5">
         <svg
-          className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+          className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-200"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -32,7 +32,7 @@ export const DeleteLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
           data-modal-hide="popup-modal"
           onClick={() => onClick()}
           type="button"
-          className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2"
+          className="me-2 inline-flex items-center rounded-lg bg-red-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
         >
           Yes, I am sure
         </button>
@@ -40,7 +40,7 @@ export const DeleteLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
           data-modal-hide="popup-modal"
           type="button"
           onClick={() => onClose()}
-          className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+          className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
         >
           No, cancel
         </button>

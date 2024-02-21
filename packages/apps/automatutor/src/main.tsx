@@ -19,6 +19,7 @@ import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
 import LevelManager from './pages/admin/LevelManager.tsx';
+import LevelEditor from './pages/admin/LevelEditor.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +46,7 @@ const router = createBrowserRouter(
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
           <Route path="/admin/levels" element={<LevelManager />} />
+          <Route path="/admin/levels/:id" element={<LevelEditor />} />
         </Route>
       </Route>
 

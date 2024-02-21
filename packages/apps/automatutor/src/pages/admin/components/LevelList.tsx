@@ -19,21 +19,21 @@ export const LevelList = ({ levels, onClick, onDelete }: LevelListProps) => {
   return levels.map((level) => (
     <tr
       key={level._id}
-      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+      className="border-b bg-white dark:border-gray-700 dark:bg-gray-800"
     >
-      <td className="py-4 px-6">{level.levelName}</td>
-      <td className="py-4 px-6">{level.description}</td>
-      <td className="py-4 px-6">{formatDate(level.startDate)}</td>
-      <td className="py-4 px-6">{formatDate(level.endDate)}</td>
-      <td className="py-4 px-6">
+      <td className="px-6 py-4">{level.levelName}</td>
+      <td className="px-6 py-4">{level.description}</td>
+      <td className="px-6 py-4">{formatDate(level.startDate)}</td>
+      <td className="px-6 py-4">{formatDate(level.endDate)}</td>
+      <td className="px-6 py-4">
         <button
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"
+          className="mr-3 font-medium text-blue-600 hover:underline dark:text-blue-500"
           onClick={() => onClick(`/admin/levels/${level._id}`)}
         >
           Edit
         </button>
         <button
-          className="font-medium text-red-600 dark:text-red-500 hover:underline"
+          className="font-medium text-red-600 hover:underline dark:text-red-500"
           onClick={() => onDelete(level._id)}
         >
           Delete

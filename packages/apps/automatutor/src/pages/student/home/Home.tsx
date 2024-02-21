@@ -13,10 +13,10 @@ function Home() {
   }
 
   return (
-    <div className="h-full w-full p-4 space-y-2">
-      <div className="w-full flex space-x-4 items-center">
+    <div className="h-full w-full space-y-2 p-4">
+      <div className="flex w-full items-center space-x-4">
         <img
-          className="rounded-full w-20 h-20"
+          className="h-20 w-20 rounded-full"
           src={user.picture}
           alt={user.name}
         />

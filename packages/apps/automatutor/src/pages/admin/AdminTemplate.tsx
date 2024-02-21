@@ -44,10 +44,10 @@ const AdminTemplate = () => {
   }
 
   return (
-    <div className="min-h-screen min-w-screen flex flex-col dark:bg-gray-900">
+    <div className="min-w-screen flex min-h-screen flex-col dark:bg-gray-900">
       <Sidebar items={sidebarItems} />
       <div className="p-4 md:ml-64">
-        <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+        <div className="mt-14 rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
           <Outlet />
         </div>
       </div>
