@@ -25,9 +25,15 @@ const baseQueryWithReAuth = async (
   extraOptions: object,
 ) => {
   const result = await baseQuery(args, api, extraOptions);
+
   if (result.error && result.error.status === 401) {
     api.dispatch(logout());
   }
+
+  if (result.error && result.error.status === 403) {
+    window.location.href = '/login/forbidden';
+  }
+
   return result;
 };
 

@@ -1,8 +1,10 @@
 import {
   IUpdateLevel,
   Level,
-  PopulatedLevel,
+  LevelObject,
+  PopulatedLevelObject,
   Question,
+  QuestionObject,
 } from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
 
@@ -17,10 +19,6 @@ interface UpdateLevelPayload {
 interface UpdateQuestionPayload extends Question {
   questionId: string;
 }
-
-type PopulatedLevelObject = PopulatedLevel & { _id: string };
-type LevelObject = Level & { _id: string };
-type QuestionObject = Question & { _id: string };
 
 export const levelApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

@@ -1,5 +1,5 @@
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   BadRequestError,
   ApplicationError,
@@ -19,6 +19,8 @@ import { Question, connectToDatabase } from '@edusoftware/core/databases';
  */
 export const main = handler<IQuestion>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<IQuestion>> => {
+    await useSessionWithRoles(['lecturer']);
+
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }

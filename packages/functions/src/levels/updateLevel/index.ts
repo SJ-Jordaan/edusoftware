@@ -7,7 +7,7 @@ import {
   Level as ILevel,
   UpdateLevelSchema,
 } from '@edusoftware/core/types';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
 
 /**
@@ -22,6 +22,8 @@ import { Level, connectToDatabase } from '@edusoftware/core/databases';
  */
 export const main = handler<ILevel>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
+    await useSessionWithRoles(['lecturer']);
+
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }

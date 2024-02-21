@@ -18,6 +18,11 @@ export const ErrorConfig = {
     message:
       'Please sign in with your University of Pretoria Google account to access this page.',
   },
+  Forbidden: {
+    error: '403 Forbidden',
+    title: 'You are not allowed here!',
+    message: 'You do not have permission to access this page.',
+  },
 };
 
 interface ErrorPageProps {

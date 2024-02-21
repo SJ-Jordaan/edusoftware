@@ -7,7 +7,7 @@ import {
   UpdateQuestionSchema,
   Question as IQuestion,
 } from '@edusoftware/core/types';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { Question, connectToDatabase } from '@edusoftware/core/databases';
 
 /**
@@ -21,6 +21,8 @@ import { Question, connectToDatabase } from '@edusoftware/core/databases';
  */
 export const main = handler<IQuestion>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<IQuestion>> => {
+    await useSessionWithRoles(['lecturer']);
+
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }

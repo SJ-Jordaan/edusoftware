@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Edusoftware from '../assets/edusoftware-logo.svg?react';
+import { Link } from 'react-router-dom';
 
 interface SidebarItemProps {
   icon: {
@@ -13,8 +14,8 @@ interface SidebarItemProps {
 
 const SidebarItem = ({ icon, label, href, badge }: SidebarItemProps) => (
   <li>
-    <a
-      href={href}
+    <Link
+      to={href}
       className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
     >
       <svg
@@ -33,7 +34,7 @@ const SidebarItem = ({ icon, label, href, badge }: SidebarItemProps) => (
           {badge}
         </span>
       )}
-    </a>
+    </Link>
   </li>
 );
 

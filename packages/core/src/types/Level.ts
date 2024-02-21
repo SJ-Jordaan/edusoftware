@@ -27,3 +27,5 @@ export const UpdateLevelSchema = LevelSchema.partial();
 export type Level = z.infer<typeof LevelSchema>;
 export type PopulatedLevel = z.infer<typeof PopulatedLevelSchema>;
 export type IUpdateLevel = z.infer<typeof UpdateLevelSchema>;
+export type PopulatedLevelObject = PopulatedLevel & { _id: string };
+export type LevelObject = Level & { _id: string };

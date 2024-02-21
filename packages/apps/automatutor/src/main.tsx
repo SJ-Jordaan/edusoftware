@@ -18,6 +18,7 @@ import Home from './pages/student/home/Home.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
+import LevelManager from './pages/admin/LevelManager.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,10 @@ const router = createBrowserRouter(
       <Route
         path="/login/unauthorized"
         element={<ErrorPage {...ErrorConfig.Unauthorized} />}
+      />
+      <Route
+        path="/login/forbidden"
+        element={<ErrorPage {...ErrorConfig.Forbidden} />}
       />
       <Route path="/login/failed" element={<ErrorPage />} />
       <Route path="/login/callback" element={<LoginRedirect />} />
@@ -38,7 +43,9 @@ const router = createBrowserRouter(
         </Route>
 
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminTemplate />}></Route>
+        <Route path="/admin" element={<AdminTemplate />}>
+          <Route path="/admin/levels" element={<LevelManager />} />
+        </Route>
       </Route>
 
       {/* Page does not exist route */}
