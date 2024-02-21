@@ -1,19 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Tabs } from '../../../components';
-import { useGetUserInfoQuery } from '../../../slices/userApi.slice';
 import { TABS } from './common/tabs';
-import { HomeLoader } from './components/HomeLoader';
+import { useAuth } from '../../../slices/auth.slice';
 
 function Home() {
   const navigate = useNavigate();
-  const { data: session, isLoading, isError } = useGetUserInfoQuery();
+  const { user } = useAuth();
 
-  if (isLoading) {
-    return <HomeLoader />;
-  }
-
-  if (isError || !session) {
-    navigate('/login/failed');
+  if (!user) {
+    navigate('/login/unauthorized');
     return;
   }
 
@@ -22,13 +17,13 @@ function Home() {
       <div className="w-full flex space-x-4 items-center">
         <img
           className="rounded-full w-20 h-20"
-          src={session.picture}
-          alt={session.name}
+          src={user.picture}
+          alt={user.name}
         />
         <div className="text-gray-900 dark:text-gray-50">
           <i>Welcome back to AutomaTutor!</i>
-          <p className="text-2xl">{session.name}</p>
-          <p className="text-sm text-gray-400">{session.email}</p>
+          <p className="text-2xl">{user.name}</p>
+          <p className="text-sm text-gray-400">{user.email}</p>
         </div>
       </div>
       <Tabs tabs={TABS} />

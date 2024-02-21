@@ -17,6 +17,7 @@ import StudentTemplate from './pages/student/StudentTemplate.tsx';
 import Home from './pages/student/home/Home.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
+import AdminTemplate from './pages/admin/AdminTemplate.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,12 +29,19 @@ const router = createBrowserRouter(
       <Route path="/login/failed" element={<ErrorPage />} />
       <Route path="/login/callback" element={<LoginRedirect />} />
       <Route path="/login" element={<Login />} />
+
       <Route path="/" element={<PrivateRoute />}>
+        {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
           <Route path="/" element={<Home />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminTemplate />}></Route>
       </Route>
+
+      {/* Page does not exist route */}
       <Route path="*" element={<ErrorPage {...ErrorConfig.NotFound} />} />
     </>,
   ),
