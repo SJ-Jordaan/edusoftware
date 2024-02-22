@@ -1,7 +1,6 @@
 import { useDrag, useDrop } from 'react-dnd';
 
 interface Item {
-  type: string;
   id: string;
   index: number;
 }
@@ -12,13 +11,12 @@ export const useQuestionDrag = (
   index: number,
   moveItem: (dragIndex: number, hoverIndex: number) => void,
 ) => {
-  const [, drag] = useDrag(
-    () => ({
+  const [, drag] = useDrag(() => {
+    return {
       type,
       item: { id, index },
-    }),
-    [id, index],
-  );
+    };
+  }, [id, index, moveItem]);
 
   const [, drop] = useDrop(
     () => ({

@@ -10,6 +10,7 @@ interface GridAutomatonProps {
   onStateClick: (stateId: string) => void;
   onTransitionClick: (transitionId: string) => void;
   onDrop: (item: Piece, x: number, y: number, type: PieceType) => void;
+  isEdit?: boolean;
 }
 
 const GridAutomaton = ({
@@ -17,6 +18,7 @@ const GridAutomaton = ({
   onStateClick,
   onTransitionClick,
   onDrop,
+  isEdit,
 }: GridAutomatonProps) => {
   const renderCellContent = (x: number, y: number) => {
     const cellContent = pieces.find(
@@ -48,6 +50,25 @@ const GridAutomaton = ({
         return null;
     }
   };
+
+  if (isEdit) {
+    return (
+      <div className="relative">
+        <div className="grid grid-cols-[repeat(6,_3.5rem)] items-center justify-center">
+          {Array.from({ length: 36 }, (_, index) => (
+            <GridCell
+              key={`cell-${index}`}
+              x={index % 6}
+              y={Math.floor(index / 6)}
+              onDrop={onDrop}
+            >
+              {renderCellContent(index % 6, Math.floor(index / 6))}
+            </GridCell>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DndProvider backend={TouchBackend}>

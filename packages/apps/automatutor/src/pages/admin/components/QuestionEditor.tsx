@@ -20,27 +20,27 @@ interface QuestionData {
   questionContent: string;
   answer: string;
   score: number;
-  _id?: string;
+  _id: string;
 }
 
 interface QuestionEditorProps {
   question: QuestionBuilderObject;
   moveQuestion: (dragIndex: number, hoverIndex: number) => void;
-  index: number;
   onSave: (question: QuestionObject) => void;
   onDelete: (questionId: string) => void;
+  index: number;
 }
 
 const QuestionEditor = ({
   question,
   moveQuestion,
-  index,
   onSave,
   onDelete,
+  index,
 }: QuestionEditorProps) => {
   const { drag, drop } = useQuestionDrag(
     ItemType.QUESTION,
-    question._id!,
+    question._id,
     index,
     moveQuestion,
   );
@@ -48,7 +48,7 @@ const QuestionEditor = ({
   const [questionData, setQuestionData] = useState<QuestionData>({
     ...question,
     questionType: question.questionType || 'Construct Automaton',
-    answer: question.answer || '',
+    answer: question.answer ?? '',
     alphabet: alphabetOptions.reduce(
       (acc, letter) => ({
         ...acc,
@@ -125,7 +125,7 @@ const QuestionEditor = ({
     e.preventDefault();
     const saveData = {
       ...questionData,
-      _id: questionData._id!,
+      _id: questionData._id,
       alphabet: Object.keys(questionData.alphabet)
         .filter((letter) => questionData.alphabet[letter])
         .join(''),
@@ -137,13 +137,13 @@ const QuestionEditor = ({
   };
 
   const handleDelete = () => {
-    onDelete(questionData._id!);
+    onDelete(questionData._id);
   };
 
   return (
     <AccordionItem
       _ref={(node) => drag(drop(node))}
-      id={question._id!}
+      id={question._id}
       title={question.questionContent}
       isDefaultExpanded={question.questionContent === 'New Question'}
     >

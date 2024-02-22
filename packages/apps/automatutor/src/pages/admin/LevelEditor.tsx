@@ -57,8 +57,8 @@ const LevelEditor = () => {
           {questions.map((question, index) => (
             <QuestionEditor
               key={`${question._id}-question-${index}`}
-              question={question}
               index={index}
+              question={question}
               moveQuestion={moveQuestion}
               onSave={handleSaveQuestion}
               onDelete={handleDeleteQuestion}

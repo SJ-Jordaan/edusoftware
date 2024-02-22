@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Alphabet,
-  BasePiece,
   Piece,
   PieceType,
   Side,
@@ -38,7 +37,7 @@ export const GridAutomatonBuilder = ({
   const pieces = useMemo(() => isEdit && createPieces(alphabet), [alphabet]);
 
   const parsedAnswer = safeParse(answer);
-  const initialAnswer = !parsedAnswer
+  const initialAnswer: Piece[] = !parsedAnswer
     ? [
         {
           id: 'start',
@@ -51,7 +50,7 @@ export const GridAutomatonBuilder = ({
       ]
     : parsedAnswer;
 
-  const [automaton, setAutomaton] = useState(initialAnswer);
+  const [automaton, setAutomaton] = useState<Piece[]>(initialAnswer);
 
   useEffect(() => {
     const serializedAutomaton = JSON.stringify(automaton);
@@ -87,7 +86,7 @@ export const GridAutomatonBuilder = ({
     if (!transitionId) return; // Guard clause if no transitionId is selected
 
     const rotateSide = (side: Side) => {
-      const rotationMap = {
+      const rotationMap: Record<Side, Side> = {
         top: 'right',
         right: 'bottom',
         bottom: 'left',
@@ -142,15 +141,11 @@ export const GridAutomatonBuilder = ({
           position: { ...movingElement.position },
         };
       } else if (movingElementIndex === -1) {
-        const newItem: BasePiece = {
-          id: `${type}-${uuidv4()}`,
-          type: type,
-          position: { x, y },
-        };
-
         updatedElements.push({
           ...item,
-          ...newItem,
+          type,
+          position: { x, y },
+          id: `${type}-${uuidv4()}`,
         } as Piece);
 
         return [...updatedElements];
@@ -173,6 +168,7 @@ export const GridAutomatonBuilder = ({
         pieces={automaton}
         onDrop={handleDrop}
         onTransitionClick={handleRotate}
+        isEdit={isEdit}
       />
 
       {isEdit && pieces && (

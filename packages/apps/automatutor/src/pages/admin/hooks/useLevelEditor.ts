@@ -21,8 +21,7 @@ export interface QuestionBuilderObject {
   operators: string[];
   score: number;
   hints?: string[];
-  _id?: string;
-  index: number;
+  _id: string;
 }
 
 export const useLevelEditor = (id: string) => {
@@ -64,13 +63,11 @@ export const useLevelEditor = (id: string) => {
     }));
 
     setEditableQuestions(
-      level.questionIds
-        ?.map((q, index) => ({ ...q, index }))
-        ?.map((q) => ({
-          ...q,
-          alphabet: q.alphabet.split(''),
-          operators: q.operators ?? [],
-        })) ?? [],
+      level.questionIds?.map((q) => ({
+        ...q,
+        alphabet: q.alphabet.split(''),
+        operators: q.operators ?? [],
+      })) ?? [],
     );
   }, [level]);
 
@@ -161,7 +158,7 @@ export const useLevelEditor = (id: string) => {
           description: editableLevel.description,
           startDate: new Date(editableLevel.startDate).toISOString(),
           endDate: new Date(editableLevel.endDate).toISOString(),
-          questionIds: editableQuestions.map((q) => q._id!),
+          questionIds: editableQuestions.map((q) => q._id),
         },
       });
     } catch (error) {
@@ -173,13 +170,13 @@ export const useLevelEditor = (id: string) => {
   const handleAddQuestion = () => {
     setEditableQuestions((prevQuestions) => [
       {
-        index: prevQuestions.length,
         questionType: 'Construct Automaton',
         questionContent: 'New Question',
         answer: '',
         alphabet: [],
         operators: [],
         score: 100,
+        _id: `new-question-${prevQuestions.length}`,
       },
       ...prevQuestions,
     ]);
