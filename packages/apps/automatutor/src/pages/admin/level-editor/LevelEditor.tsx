@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useLevelEditor } from './hooks/useLevelEditor';
-import { formatDateForInput } from './common/time';
+import { formatDateForInput } from '../common/time';
 import { DndProvider } from 'react-dnd';
 import { LevelForm } from './components/LevelForm';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Accordion } from '../../components/Accordion';
+import { Accordion } from '../../../components/Accordion';
 import QuestionEditor from './components/QuestionEditor';
 
 const LevelEditor = () => {

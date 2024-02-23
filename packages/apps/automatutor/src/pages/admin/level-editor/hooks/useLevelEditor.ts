@@ -9,9 +9,9 @@ import {
   useFetchLevelQuery,
   useUpdateLevelMutation,
   useUpdateQuestionMutation,
-} from '../../../slices/levelApi.slice';
+} from '../../../../slices/levelApi.slice';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { formatDateForInput } from '../common/time';
+import { formatDateForInput } from '../../common/time';
 
 export interface QuestionBuilderObject {
   questionType: QuestionType;

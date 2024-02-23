@@ -1,11 +1,15 @@
 import { FormEvent, useState } from 'react';
 import { CheckboxGroup } from './CheckboxGroup';
 import { HintInput } from './HintInput';
-import { AccordionItem } from '../../../components/Accordion';
-import { ItemType, alphabetOptions, operatorOptions } from '../common/symbols';
+import { AccordionItem } from '../../../../components/Accordion';
+import {
+  ItemType,
+  alphabetOptions,
+  operatorOptions,
+} from '../../common/symbols';
 import { QuestionObject, QuestionType } from '@edusoftware/core/src/types';
 import { useQuestionDrag } from '../hooks/useQuestionDrag';
-import { GridAutomatonBuilder } from '../../../components/grid-automaton-builder/GridAutomatonBuilder';
+import { GridAutomatonBuilder } from '../../../../components/grid-automaton-builder/GridAutomatonBuilder';
 import { QuestionBuilderObject } from '../hooks/useLevelEditor';
 
 interface CheckboxOptions {

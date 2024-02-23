@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import { Level } from '@edusoftware/core/src/types';
 
 interface ModalProps {

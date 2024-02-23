@@ -4,7 +4,7 @@ import { DeleteLevelModal } from './components/DeleteLevelModal';
 import { useLevelManagement } from './hooks/useLevelManagement';
 import { LevelList } from './components/LevelList';
 import { LevelManagerLoader } from './components/LevelManagerLoader';
-import ErrorPage from '../ErrorPage';
+import ErrorPage from '../../ErrorPage';
 
 const LevelManager = () => {
   const navigate = useNavigate();

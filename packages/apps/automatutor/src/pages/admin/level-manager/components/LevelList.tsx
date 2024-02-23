@@ -1,5 +1,5 @@
 import { PopulatedLevelObject } from '@edusoftware/core/src/types';
-import { formatDate } from '../common/time';
+import { formatDate } from '../../common/time';
 
 interface LevelListProps {
   levels: PopulatedLevelObject[];

@@ -1,10 +1,10 @@
 import { Level } from '@edusoftware/core/src/types';
-import { useModal } from '../../../components';
+import { useModal } from '../../../../components';
 import {
   useCreateLevelMutation,
   useDeleteLevelMutation,
   useFetchLevelsQuery,
-} from '../../../slices/levelApi.slice';
+} from '../../../../slices/levelApi.slice';
 import { useState } from 'react';
 
 export const useLevelManagement = () => {

@@ -18,8 +18,8 @@ import Home from './pages/student/home/Home.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
-import LevelManager from './pages/admin/LevelManager.tsx';
-import LevelEditor from './pages/admin/LevelEditor.tsx';
+import LevelManager from './pages/admin/level-manager/LevelManager.tsx';
+import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
