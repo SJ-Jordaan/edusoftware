@@ -13,7 +13,6 @@ export class ApplicationError extends Error {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
-    Error.captureStackTrace(this, this.constructor);
   }
 }
 

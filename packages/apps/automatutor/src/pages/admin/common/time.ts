@@ -10,6 +10,14 @@ export const formatDate = (dateString: string) => {
   return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
 };
 
+type DateParts = {
+  year?: string;
+  month?: string;
+  day?: string;
+  hour?: string;
+  minute?: string;
+};
+
 export const formatDateForInput = (isoString: string) => {
   const date = new Date(isoString);
 
@@ -25,11 +33,20 @@ export const formatDateForInput = (isoString: string) => {
   const locale = navigator.language;
   const parts = new Intl.DateTimeFormat(locale, options).formatToParts(date);
 
-  const dateParts = parts.reduce((acc, part) => {
-    acc[part.type] = part.value;
+  const dateParts = parts.reduce<DateParts>((acc, part) => {
+    if (
+      part.type === 'year' ||
+      part.type === 'month' ||
+      part.type === 'day' ||
+      part.type === 'hour' ||
+      part.type === 'minute'
+    ) {
+      acc[part.type] = part.value;
+    }
+
     return acc;
   }, {});
 
-  const { year, month, day, hour, minute } = dateParts;
+  const { year = '', month = '', day = '', hour = '', minute = '' } = dateParts;
   return `${year}-${month}-${day}T${hour}:${minute}`;
 };
