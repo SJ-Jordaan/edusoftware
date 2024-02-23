@@ -6,6 +6,7 @@ import { LevelForm } from './components/LevelForm';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Accordion } from '../../../components/Accordion';
 import QuestionEditor from './components/QuestionEditor';
+import { LevelEditorLoader } from './components/LevelEditorLoader';
 
 const LevelEditor = () => {
   const { id = '' } = useParams();
@@ -23,7 +24,7 @@ const LevelEditor = () => {
   } = useLevelEditor(id);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LevelEditorLoader />;
   }
 
   if (isError || !level) {
