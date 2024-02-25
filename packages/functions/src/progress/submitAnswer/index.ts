@@ -13,7 +13,6 @@ import {
   hasExceededTimeLimit,
   fetchCurrentQuestionProgress,
   isLevelCompleted,
-  fetchNextQuestion,
 } from './helpers';
 import { updateProgress } from './helpers/updateProgress';
 import { connectToDatabase } from '@edusoftware/core/databases';
@@ -96,7 +95,6 @@ export const main = handler<AnswerEvaluation>(
             isCorrect,
             isCompleted: false,
             message: message ?? 'Answer submitted successfully',
-            nextQuestionId: fetchNextQuestion(levelDoc, levelProgress),
           },
         };
       }
@@ -150,7 +148,6 @@ export const main = handler<AnswerEvaluation>(
           isCorrect,
           isCompleted: false,
           message: message ?? 'Answer submitted successfully',
-          nextQuestionId: fetchNextQuestion(levelDoc, levelProgress),
         },
       };
     } catch (error: unknown) {

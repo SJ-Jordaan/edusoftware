@@ -1,6 +1,9 @@
 import { useDrop } from 'react-dnd';
 import RecycleBin from '../../assets/recycle-bin-icon.svg?react';
-import { Piece, automataTypes } from '../grid-automaton/algorithms';
+import {
+  Piece,
+  automataTypes,
+} from '@edusoftware/core/src/types/GridAutomaton';
 
 interface TrashBinProps {
   onItemDropped: (item: Piece, itemType: unknown) => void;

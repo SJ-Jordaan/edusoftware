@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPieces } from '../grid-automaton/algorithms';
 import {
   Alphabet,
   Piece,
   PieceType,
   Side,
-  createPieces,
-} from '../grid-automaton/algorithms';
+} from '@edusoftware/core/src/types/GridAutomaton';
 import { DraggableState } from '../grid-automaton/DraggableState';
 import { DraggableTransition } from '../grid-automaton/DraggableTransition';
 import { DummyCell } from './DummyCell';
@@ -15,16 +15,16 @@ import GridAutomaton from '../grid-automaton/GridAutomaton';
 
 interface GridAutomatonBuilderProps {
   answer: string;
-  alphabet: Alphabet;
+  alphabet?: Alphabet;
   onChange: (e: { target: { name: string; value: string } }) => void;
-  isEdit: boolean;
+  isEdit?: boolean;
 }
 
-const safeParse = (json: string) => {
+const safeParse = (value: string) => {
   try {
-    return JSON.parse(json);
+    return JSON.parse(value);
   } catch (e) {
-    return null;
+    return value;
   }
 };
 
@@ -53,6 +53,7 @@ export const GridAutomatonBuilder = ({
   const [automaton, setAutomaton] = useState<Piece[]>(initialAnswer);
 
   useEffect(() => {
+    console.log('Automaton changed:', automaton);
     const serializedAutomaton = JSON.stringify(automaton);
     onChange({
       target: { name: 'answer', value: serializedAutomaton },

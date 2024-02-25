@@ -1,3 +1,5 @@
+import { PopulatedQuestion } from './Question';
+
 export interface LambdaResponse<T> {
   statusCode: number;
   body: T;
@@ -6,8 +8,12 @@ export interface LambdaResponse<T> {
 
 export interface AnswerEvaluation {
   isCorrect: boolean;
-  nextQuestionId?: string;
   scoreEarned?: number;
   isCompleted: boolean;
   message: string;
+}
+
+export interface GetLevelProgressResponse {
+  question?: PopulatedQuestion;
+  isCompleted: boolean;
 }

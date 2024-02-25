@@ -20,6 +20,7 @@ import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
 import LevelManager from './pages/admin/level-manager/LevelManager.tsx';
 import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
+import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +43,9 @@ const router = createBrowserRouter(
           <Route path="/" element={<Home />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>
+
+        {/* Level Solving routes */}
+        <Route path="/level/:id" element={<LevelSolver />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>

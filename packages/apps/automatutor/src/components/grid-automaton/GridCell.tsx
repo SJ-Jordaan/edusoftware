@@ -1,5 +1,9 @@
 import { useDrop } from 'react-dnd';
-import { Piece, PieceType, automataTypes } from './algorithms';
+import {
+  Piece,
+  PieceType,
+  automataTypes,
+} from '@edusoftware/core/src/types/GridAutomaton';
 
 interface GridCellProps {
   x: number;

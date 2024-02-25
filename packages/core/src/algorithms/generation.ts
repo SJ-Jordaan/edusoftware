@@ -1,47 +1,6 @@
-export type Alphabet = Record<string, boolean>;
+import { Alphabet, Piece, Side, StatePiece, TransitionPiece } from '../types';
 
-export type Side = 'top' | 'right' | 'bottom' | 'left';
-
-export interface Position {
-  x: number;
-  y: number;
-}
-
-export type PieceType = 'state' | 'transition';
-
-export interface BasePiece {
-  id: string;
-  type: 'state' | 'transition';
-  position: Position;
-}
-
-export interface StatePiece extends BasePiece {
-  type: 'state';
-  isFinal: boolean;
-  isStart: boolean;
-}
-
-export interface Transition {
-  symbols: string[];
-  startSide: Side;
-  endSide: Side;
-}
-
-export interface TransitionPiece extends BasePiece {
-  type: 'transition';
-  transitions: Transition[];
-}
-
-export type Piece = StatePiece | TransitionPiece;
-
-export const automataTypes = {
-  STATE: 'state',
-  TRANSITION: 'transition',
-};
-
-// Decide whether to use a straight path based on sides
 export function shouldUseStraightPath(startSide: Side, endSide: Side) {
-  // Example logic: straight path if opposite sides and same row or column
   const oppositeSides =
     (startSide === 'left' && endSide === 'right') ||
     (startSide === 'right' && endSide === 'left') ||
@@ -84,7 +43,11 @@ export function generateSelfLoopPath(size: number, startSide: Side) {
   }
 }
 
-export const createPieces = (alphabet: Alphabet): Partial<Piece>[] => {
+export const createPieces = (
+  alphabet: Alphabet | undefined,
+): Partial<Piece>[] => {
+  if (!alphabet) return [];
+
   // Convert the alphabet object to an array of enabled symbols
   const alphabetArray = getEnabledSymbols(alphabet);
 

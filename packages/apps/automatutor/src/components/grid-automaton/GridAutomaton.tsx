@@ -3,7 +3,7 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { DraggableState } from './DraggableState';
 import { GridCell } from './GridCell';
 import { DraggableTransition } from './DraggableTransition';
-import { Piece, PieceType } from './algorithms';
+import { Piece, PieceType } from '@edusoftware/core/src/types/GridAutomaton';
 
 interface GridAutomatonProps {
   pieces: Piece[];

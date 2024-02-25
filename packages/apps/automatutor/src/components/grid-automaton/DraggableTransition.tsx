@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 import { useDrag } from 'react-dnd';
-import { automataTypes } from './algorithms';
+import { automataTypes } from '@edusoftware/core/src/types/GridAutomaton';
 import { ARROW_PIECES } from './ArrowPieces';
-import { Transition } from './algorithms';
+import { Transition } from '@edusoftware/core/src/types/GridAutomaton';
 
 interface DraggableTransitionProps {
   id?: string;

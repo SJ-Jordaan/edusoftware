@@ -1,6 +1,7 @@
 import {
   IPopulatedLevelDoc,
   IProgressDocumentPopulated,
+  IQuestionDoc,
   Level,
   Progress,
 } from '@edusoftware/core/databases';
@@ -61,7 +62,7 @@ export const fetchCurrentQuestionProgress = async (
 export const fetchNextQuestion = (
   level: IPopulatedLevelDoc,
   progress: IProgressDocumentPopulated,
-): string => {
+): IQuestionDoc | undefined => {
   const nextQuestion = level.questionIds.find(
     (question) =>
       !progress.questionsAttempted.some((attempt) => {
@@ -77,5 +78,5 @@ export const fetchNextQuestion = (
       }),
   );
 
-  return nextQuestion?.id;
+  return nextQuestion;
 };

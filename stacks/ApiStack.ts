@@ -40,6 +40,8 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/progress/getUserProgress/index.main',
       'POST /progress/{id}':
         'packages/functions/src/progress/startLevel/index.main',
+      'GET /progress/level/{id}':
+        'packages/functions/src/progress/getLevelProgress/index.main',
     },
   });
 
