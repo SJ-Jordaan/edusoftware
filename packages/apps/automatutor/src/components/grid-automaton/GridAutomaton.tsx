@@ -4,22 +4,33 @@ import { DraggableState } from './DraggableState';
 import { GridCell } from './GridCell';
 import { DraggableTransition } from './DraggableTransition';
 import { Piece, PieceType } from '@edusoftware/core/src/types/GridAutomaton';
+import { useAppDispatch, useAppSelector } from '../../store';
+import {
+  moveOrAddPiece,
+  rotateTransition,
+  toggleFinalState,
+} from '../grid-automaton-builder/gridAutomaton.slice';
 
-interface GridAutomatonProps {
-  pieces: Piece[];
-  onStateClick: (stateId: string) => void;
-  onTransitionClick: (transitionId: string) => void;
-  onDrop: (item: Piece, x: number, y: number, type: PieceType) => void;
-  isEdit?: boolean;
+interface GridProps {
+  isTouch?: boolean;
 }
 
-const GridAutomaton = ({
-  pieces,
-  onStateClick,
-  onTransitionClick,
-  onDrop,
-  isEdit,
-}: GridAutomatonProps) => {
+const GridAutomaton = ({ isTouch = true }: GridProps) => {
+  const dispatch = useAppDispatch();
+  const pieces = useAppSelector((state) => state.gridAutomaton.pieces);
+
+  const handleStateClick = (id: string) => {
+    dispatch(toggleFinalState(id));
+  };
+
+  const handleRotate = (id: string) => {
+    dispatch(rotateTransition(id));
+  };
+
+  const handleDrop = (item: Piece, x: number, y: number, type: PieceType) => {
+    dispatch(moveOrAddPiece(item, x, y, type));
+  };
+
   const renderCellContent = (x: number, y: number) => {
     const cellContent = pieces.find(
       (element) => element.position.x === x && element.position.y === y,
@@ -34,7 +45,7 @@ const GridAutomaton = ({
             key={`state-${cellContent.id}`}
             isFinal={cellContent.isFinal}
             isStart={cellContent.isStart}
-            onClick={() => onStateClick(cellContent.id)}
+            onClick={() => handleStateClick(cellContent.id)}
           />
         );
       case 'transition':
@@ -43,7 +54,7 @@ const GridAutomaton = ({
             key={`transition-${cellContent.id}-${cellContent.transitions[0].startSide}-${cellContent.transitions[0].endSide}`}
             id={cellContent.id}
             arrows={cellContent.transitions}
-            onClick={() => onTransitionClick(cellContent.id)}
+            onClick={() => handleRotate(cellContent.id)}
           />
         );
       default:
@@ -51,7 +62,7 @@ const GridAutomaton = ({
     }
   };
 
-  if (isEdit) {
+  if (!isTouch) {
     return (
       <div className="relative">
         <div className="grid grid-cols-[repeat(6,_3.5rem)] items-center justify-center">
@@ -60,7 +71,7 @@ const GridAutomaton = ({
               key={`cell-${index}`}
               x={index % 6}
               y={Math.floor(index / 6)}
-              onDrop={onDrop}
+              onDrop={handleDrop}
             >
               {renderCellContent(index % 6, Math.floor(index / 6))}
             </GridCell>
@@ -79,7 +90,7 @@ const GridAutomaton = ({
               key={`cell-${index}`}
               x={index % 6}
               y={Math.floor(index / 6)}
-              onDrop={onDrop}
+              onDrop={handleDrop}
             >
               {renderCellContent(index % 6, Math.floor(index / 6))}
             </GridCell>

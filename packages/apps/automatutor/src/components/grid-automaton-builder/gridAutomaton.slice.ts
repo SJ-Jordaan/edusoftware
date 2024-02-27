@@ -9,13 +9,9 @@ import {
 } from '@edusoftware/core/src/types/GridAutomaton';
 
 interface GridAutomatonState {
+  isEditable: boolean;
   pieces: Piece[];
   toolbar: Partial<Piece>[];
-}
-
-interface InitGridPayload {
-  pieces: string;
-  alphabet: Alphabet;
 }
 
 interface MoveOrAddPiecePayload {
@@ -28,6 +24,7 @@ interface MoveOrAddPiecePayload {
 const initialState: GridAutomatonState = {
   pieces: [],
   toolbar: [],
+  isEditable: false,
 };
 
 const rotateSide = (side: Side) => {
@@ -65,8 +62,11 @@ const gridAutomatonSlice = createSlice({
   name: 'automaton',
   initialState,
   reducers: {
-    initGrid(state, action: PayloadAction<InitGridPayload>) {
-      const { pieces: stringifiedPieces, alphabet } = action.payload;
+    setEdit(state, action: PayloadAction<boolean>) {
+      state.isEditable = action.payload;
+    },
+    initGrid(state, action: PayloadAction<string>) {
+      const stringifiedPieces = action.payload;
       const pieces = parseOrNull(stringifiedPieces);
 
       state.pieces = pieces ?? [
@@ -79,8 +79,9 @@ const gridAutomatonSlice = createSlice({
           label: 'start',
         },
       ];
-
-      state.toolbar = createPieces(alphabet);
+    },
+    initToolbar(state, action: PayloadAction<Alphabet | undefined>) {
+      state.toolbar = createPieces(action.payload);
     },
     deletePiece(state, action: PayloadAction<string>) {
       state.pieces = state.pieces.filter(
@@ -158,6 +159,7 @@ const gridAutomatonSlice = createSlice({
 
 export const {
   initGrid,
+  initToolbar,
   deletePiece,
   toggleFinalState,
   rotateTransition,

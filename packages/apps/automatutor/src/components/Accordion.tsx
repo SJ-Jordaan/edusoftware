@@ -4,8 +4,9 @@ import CrossArrowIcon from '../assets/cross-arrows-icon.svg?react';
 interface AccordionItemProps {
   id: string;
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   _ref: LegacyRef<HTMLDivElement>;
+  onClick?: () => void;
   isDefaultExpanded?: boolean;
 }
 
@@ -14,11 +15,20 @@ export const AccordionItem = ({
   title,
   children,
   _ref,
+  onClick,
   isDefaultExpanded = false,
 }: AccordionItemProps) => {
   const [isExpanded, setIsExpanded] = useState(isDefaultExpanded);
 
-  const toggle = () => setIsExpanded(!isExpanded);
+  const toggle = () => children && setIsExpanded(!isExpanded);
+
+  const handleClick = () => {
+    if (typeof onClick === 'function') {
+      onClick();
+    }
+
+    toggle();
+  };
 
   return (
     <div ref={_ref}>
@@ -29,26 +39,28 @@ export const AccordionItem = ({
             ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-50'
             : ''
         }`}
-        onClick={toggle}
+        onClick={handleClick}
         aria-expanded={isExpanded}
         aria-controls={`accordion-collapse-body-${id}`}
       >
         <CrossArrowIcon className="fill-current stroke-current hover:cursor-grab" />
         <span>{title}</span>
-        <svg
-          className={`h-3 w-3 ${isExpanded ? '' : 'rotate-180'} shrink-0`}
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M9 5 5 1 1 5"
-          />
-        </svg>
+        {children && (
+          <svg
+            className={`h-3 w-3 ${isExpanded ? '' : 'rotate-180'} shrink-0`}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5 5 1 1 5"
+            />
+          </svg>
+        )}
       </button>
       <div
         id={`accordion-collapse-body-${id}`}

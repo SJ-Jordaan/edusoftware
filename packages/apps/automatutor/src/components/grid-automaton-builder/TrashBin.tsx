@@ -4,15 +4,19 @@ import {
   Piece,
   automataTypes,
 } from '@edusoftware/core/src/types/GridAutomaton';
+import { deletePiece } from './gridAutomaton.slice';
+import { useAppDispatch } from '../../store';
 
-interface TrashBinProps {
-  onItemDropped: (item: Piece, itemType: unknown) => void;
-}
+export const TrashBin = () => {
+  const dispatch = useAppDispatch();
 
-export const TrashBin = ({ onItemDropped }: TrashBinProps) => {
+  const handleDelete = (id: string) => {
+    dispatch(deletePiece(id));
+  };
+
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [automataTypes.STATE, automataTypes.TRANSITION],
-    drop: (item: Piece, monitor) => onItemDropped(item, monitor.getItemType()),
+    drop: (item: Piece) => handleDelete(item.id),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),

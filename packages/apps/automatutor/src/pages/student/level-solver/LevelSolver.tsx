@@ -34,13 +34,7 @@ const renderSpecificInterface = ({
       );
 
     case 'Construct Automaton':
-      return (
-        <GridAutomatonBuilder
-          key={question._id}
-          onChange={(e) => handleAnswerChange(e, question._id)}
-          answer={answer}
-        />
-      );
+      return <GridAutomatonBuilder key={question._id} answer={answer} />;
     default:
       return null;
   }

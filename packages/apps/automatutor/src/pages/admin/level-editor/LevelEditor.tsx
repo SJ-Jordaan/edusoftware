@@ -1,21 +1,21 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLevelEditor } from './hooks/useLevelEditor';
 import { formatDateForInput } from '../common/time';
 import { DndProvider } from 'react-dnd';
 import { LevelForm } from './components/LevelForm';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Accordion } from '../../../components/Accordion';
-import QuestionEditor from './components/QuestionEditor';
+import QuestionPosition from './components/QuestionPosition';
 import { LevelEditorLoader } from './components/LevelEditorLoader';
+import { BackButton } from '../../../components';
 
 const LevelEditor = () => {
   const { id = '' } = useParams();
+  const navigate = useNavigate();
   const {
     level,
     isLoading,
     isError,
-    handleSaveQuestion,
-    handleDeleteQuestion,
     questions,
     handleAddQuestion,
     updateEditableAttributes,
@@ -34,6 +34,7 @@ const LevelEditor = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container mx-auto space-y-4 p-4">
+        <BackButton />
         <LevelForm
           onSubmit={handleUpdateLevel}
           onUpdate={updateEditableAttributes}
@@ -56,13 +57,12 @@ const LevelEditor = () => {
 
         <Accordion>
           {questions.map((question, index) => (
-            <QuestionEditor
+            <QuestionPosition
               key={`${question._id}-question-${index}`}
               index={index}
               question={question}
               moveQuestion={moveQuestion}
-              onSave={handleSaveQuestion}
-              onDelete={handleDeleteQuestion}
+              onClick={() => navigate(`/admin/levels/${id}/${question._id}`)}
             />
           ))}
         </Accordion>
