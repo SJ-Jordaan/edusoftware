@@ -3,10 +3,12 @@ import {
   useGetLevelProgressQuery,
   useSubmitAnswerMutation,
 } from '../../../../slices/progressApi.slice';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
+import { useAppSelector } from '../../../../store';
 
 export const useLevelSolver = () => {
   const { id } = useParams<{ id: string }>();
+  const gridAutomaton = useAppSelector((state) => state.gridAutomaton.pieces);
 
   if (!id) throw new Error('No level id provided');
 
@@ -15,23 +17,28 @@ export const useLevelSolver = () => {
     data: level,
     isLoading: levelLoading,
     isError: levelError,
+    isFetching: levelFetching,
   } = useGetLevelProgressQuery(id);
 
   const [submitAnswer, { isLoading: isSubmitting, isError: submitFailed }] =
     useSubmitAnswerMutation();
 
-  const isLoading = levelLoading || isSubmitting;
+  const isLoading = levelLoading || isSubmitting || levelFetching;
   const isError = levelError || submitFailed;
 
   const [answer, setAnswer] = useState('');
 
-  useEffect(() => {
-    if (!level || !level.question || !level.question._id) {
+  useLayoutEffect(() => {
+    if (!level) {
       return;
     }
 
     if (level.isCompleted) {
       navigate('/');
+      return;
+    }
+
+    if (!level.question) {
       return;
     }
 
@@ -43,15 +50,24 @@ export const useLevelSolver = () => {
       throw new Error('No level provided');
     }
 
+    const finalAnswer =
+      level.question.questionType === 'Construct Automaton'
+        ? JSON.stringify(gridAutomaton)
+        : answer;
+
     const response = await submitAnswer({
       levelId: id,
       questionId: level.question._id,
-      answer,
+      answer: finalAnswer,
     }).unwrap();
 
     if (!response.isCorrect) {
       console.log(response.message);
       return;
+    }
+
+    if (response.isCompleted) {
+      navigate('/');
     }
   };
 

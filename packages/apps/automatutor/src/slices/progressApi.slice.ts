@@ -45,7 +45,9 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
         const { isCompleted, question } = response;
 
         if (!question) {
-          throw new Error('No question provided');
+          return {
+            isCompleted,
+          };
         }
 
         const isAutomatonConstruction =
