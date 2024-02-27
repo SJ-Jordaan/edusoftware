@@ -1,4 +1,5 @@
 import { GridAutomatonBuilder } from '../../../components/grid-automaton-builder/GridAutomatonBuilder';
+import { PageLoader } from '../../../components/loaders/PageLoader';
 import { RegexBuilder } from '../../../components/regex-builder/RegexBuilder';
 import { useLevelSolver } from './hooks/useLevelSolver';
 import { PopulatedQuestion } from '@edusoftware/core/src/types';
@@ -51,7 +52,7 @@ const LevelSolver = () => {
   } = useLevelSolver();
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return <PageLoader />;
   }
 
   if (isError) {

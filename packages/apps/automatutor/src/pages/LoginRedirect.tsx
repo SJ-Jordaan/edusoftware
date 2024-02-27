@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../slices/auth.slice';
 import { useEffect, useState } from 'react';
 import { useGetUserInfoQuery } from '../slices/userApi.slice';
-import EduSoftware from '../assets/edusoftware-logo.svg?react';
+import { PageLoader } from '../components/loaders/PageLoader';
 
 enum Progress {
   Started,
@@ -63,11 +63,7 @@ function LoginRedirect() {
     }
   }, [session, isLoading, isError, navigate]);
 
-  return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center p-8 dark:bg-gray-900">
-      <EduSoftware className="h-36 w-36 animate-bounce" />
-    </div>
-  );
+  return <PageLoader />;
 }
 
 export default LoginRedirect;
