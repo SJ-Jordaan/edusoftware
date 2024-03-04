@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useRef } from 'react';
 import Backspace from '../../assets/backspace-icon.svg?react';
 import RecycleBin from '../../assets/recycle-bin-icon.svg?react';
 
@@ -12,10 +12,9 @@ interface RegexBuilderProps {
 export const RegexBuilder = ({
   alphabet,
   operators,
-  answer,
+  answer: regex,
   onChange,
 }: RegexBuilderProps) => {
-  const [regex, setRegex] = useState(answer);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export const RegexBuilder = ({
     const newRegex =
       regex.slice(0, selectionStart) + symbol + regex.slice(selectionStart);
 
-    setRegex(newRegex);
+    onChange({ target: { name: 'answer', value: newRegex } });
 
     // Wait for the state to update, then set the focus back to the input
 
@@ -59,7 +58,7 @@ export const RegexBuilder = ({
 
     const newRegex =
       regex.slice(0, selectionStart - 1) + regex.slice(selectionStart);
-    setRegex(newRegex);
+    onChange({ target: { name: 'answer', value: newRegex } });
 
     inputRef.current.focus();
     // Optional: Adjust cursor position after deletion
@@ -68,7 +67,7 @@ export const RegexBuilder = ({
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setRegex(event.target.value);
+    onChange(event);
   };
 
   return (
@@ -90,7 +89,7 @@ export const RegexBuilder = ({
         <button
           className="group flex h-10 w-10 items-center justify-center rounded-full active:bg-gray-400"
           disabled={regex.length === 0}
-          onClick={() => setRegex('')}
+          onClick={() => onChange({ target: { name: 'answer', value: '' } })}
         >
           <RecycleBin className="h-8 w-8 fill-red-400 group-disabled:fill-red-800" />
         </button>

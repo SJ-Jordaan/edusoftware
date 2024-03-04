@@ -2,14 +2,17 @@ import mongoose from 'mongoose';
 import { Config } from 'sst/node/config';
 
 let connection: mongoose.Mongoose | null = null;
+type ExtendedConfig = typeof Config & { MONGO_URI?: string };
 
 export async function connectToDatabase() {
   if (connection === null) {
-    if (!Config.MONGO_URI) {
+    const mongoUri = (Config as ExtendedConfig).MONGO_URI;
+
+    if (!mongoUri) {
       throw new Error('MONGO_URI not set');
     }
 
-    connection = await mongoose.connect(Config.MONGO_URI, {
+    connection = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
     });
   }

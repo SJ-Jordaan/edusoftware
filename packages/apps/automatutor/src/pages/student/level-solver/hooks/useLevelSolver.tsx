@@ -29,7 +29,10 @@ export const useLevelSolver = () => {
   const [answer, setAnswer] = useState('');
 
   useLayoutEffect(() => {
+    console.log('layout effect');
+
     if (!level) {
+      console.log('no level, returning');
       return;
     }
 
@@ -39,8 +42,11 @@ export const useLevelSolver = () => {
     }
 
     if (!level.question) {
+      console.log('no question, returning');
       return;
     }
+
+    console.log('setting answer to: ', level.question.answer);
 
     setAnswer(level.question.answer);
   }, [level?.isCompleted, level?.question?._id, navigate]);
