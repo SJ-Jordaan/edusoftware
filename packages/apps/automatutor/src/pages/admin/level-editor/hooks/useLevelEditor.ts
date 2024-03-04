@@ -12,6 +12,7 @@ import {
 } from '../../../../slices/levelApi.slice';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { formatDateForInput } from '../../common/time';
+import { useNavigate } from 'react-router-dom';
 
 export interface QuestionBuilderObject {
   questionType: QuestionType;
@@ -25,6 +26,8 @@ export interface QuestionBuilderObject {
 }
 
 export const useLevelEditor = (id: string) => {
+  const navigate = useNavigate();
+
   const [editableQuestions, setEditableQuestions] = useState<
     QuestionBuilderObject[]
   >([]);
@@ -73,27 +76,33 @@ export const useLevelEditor = (id: string) => {
 
   const handleSaveQuestion = async (questionData: QuestionObject) => {
     try {
-      if (questionData._id) {
-        await updateQuestion({ questionId: questionData._id, ...questionData });
-        return;
-      }
-
       if (!level) {
         throw new Error('Level not found');
       }
 
-      const question = await createQuestion(questionData).unwrap();
+      if (questionData._id === 'new') {
+        const question = await createQuestion(questionData).unwrap();
 
-      const questionIds = level.questionIds
-        ? level.questionIds.map((q) => q._id)
-        : [];
+        const questionIds = level.questionIds
+          ? level.questionIds.map((q) => q._id)
+          : [];
 
-      await updateLevel({
-        levelId: id,
-        level: {
-          questionIds: [question._id, ...questionIds],
-        },
-      });
+        await updateLevel({
+          levelId: id,
+          level: {
+            questionIds: [question._id, ...questionIds],
+          },
+        });
+
+        navigate(`/admin/levels/${id}/${question._id}`, {
+          replace: true,
+        });
+
+        return;
+      }
+
+      await updateQuestion({ questionId: questionData._id, ...questionData });
+      return;
     } catch (error) {
       // TODO: Proper error handling
       console.error('Failed to create question', error);
@@ -143,9 +152,7 @@ export const useLevelEditor = (id: string) => {
     });
   };
 
-  const handleUpdateLevel = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleUpdateLevel = async () => {
     if (!editableLevel) {
       return;
     }

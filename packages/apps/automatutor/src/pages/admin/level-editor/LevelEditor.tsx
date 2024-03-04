@@ -17,7 +17,6 @@ const LevelEditor = () => {
     isLoading,
     isError,
     questions,
-    handleAddQuestion,
     updateEditableAttributes,
     moveQuestion,
     handleUpdateLevel,
@@ -49,7 +48,7 @@ const LevelEditor = () => {
           </h3>
           <button
             className="rounded-lg bg-green-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={() => handleAddQuestion()}
+            onClick={() => navigate(`/admin/levels/${id}/new`)}
           >
             Add Question
           </button>

@@ -49,7 +49,7 @@ const QuestionEditor = () => {
     operators: {},
     hints: [],
     score: 0,
-    _id: '',
+    _id: questionId,
   });
 
   useEffect(() => {
@@ -152,7 +152,6 @@ const QuestionEditor = () => {
     const saveData = {
       ...questionData,
       score: Number(questionData.score),
-      _id: questionData._id,
       alphabet: Object.keys(questionData.alphabet)
         .filter((letter) => questionData.alphabet[letter])
         .join(''),
@@ -173,12 +172,12 @@ const QuestionEditor = () => {
     handleSaveQuestion(saveData);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!questionData) {
       throw new Error('Question Data is undefined');
     }
 
-    handleDeleteQuestion(questionData._id);
+    await handleDeleteQuestion(questionData._id);
     navigate(-1);
   };
 
