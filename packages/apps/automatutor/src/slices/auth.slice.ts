@@ -42,6 +42,7 @@ export function useAuth() {
     token: auth.token,
     user: auth.user,
     isAuthenticated: !!auth.token,
+    isAdmin: auth.user?.roles.includes('lecturer'),
     setCredentials: (token: string) =>
       dispatch(authSlice.actions.setCredentials(token)),
     setUser: (user: UserSession) => dispatch(authSlice.actions.setUser(user)),

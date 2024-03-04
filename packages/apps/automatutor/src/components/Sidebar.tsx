@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Edusoftware from '../assets/edusoftware-logo.svg?react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../slices/auth.slice';
 
 interface SidebarItemProps {
   icon: {
@@ -16,10 +17,10 @@ const SidebarItem = ({ icon, label, href, badge }: SidebarItemProps) => (
   <li>
     <Link
       to={href}
-      className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+      className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
     >
       <svg
-        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+        className="h-5 w-5 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
         aria-hidden="true"
         fill="currentColor"
         viewBox={icon.viewBox}
@@ -28,9 +29,9 @@ const SidebarItem = ({ icon, label, href, badge }: SidebarItemProps) => (
           <path key={index} d={path}></path>
         ))}
       </svg>
-      <span className="flex-1 ms-3 whitespace-nowrap">{label}</span>
+      <span className="ms-3 flex-1 whitespace-nowrap">{label}</span>
       {badge && (
-        <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
+        <span className="ms-3 inline-flex items-center justify-center rounded-full bg-gray-100 px-2 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
           {badge}
         </span>
       )}
@@ -44,27 +45,28 @@ interface SidebarProps {
 
 export const Sidebar = ({ items }: SidebarProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Function to toggle sidebar visibility
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+      <nav className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center justify-start rtl:justify-end">
+            <div className="flex w-full items-center justify-start rtl:justify-end">
               <button
                 onClick={toggleSidebar}
                 data-drawer-target="logo-sidebar"
                 data-drawer-toggle="logo-sidebar"
                 aria-controls="logo-sidebar"
                 type="button"
-                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                className="inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 sm:hidden dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               >
                 <span className="sr-only">Open sidebar</span>
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6"
                   aria-hidden="true"
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -77,24 +79,63 @@ export const Sidebar = ({ items }: SidebarProps) => {
                   ></path>
                 </svg>
               </button>
-              <a href="https://flowbite.com" className="flex ms-2 md:me-24">
-                <Edusoftware className="h-8 w-8 me-3" />
-                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              <a href="https://edusoftware.net" className="ms-2 flex md:me-24">
+                <Edusoftware className="me-3 h-8 w-8" />
+                <span className="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl dark:text-white">
                   AutomaTutor
                 </span>
               </a>
+              <button
+                type="button"
+                className="ml-auto flex rounded-full bg-gray-800 text-sm focus:ring-4 focus:ring-gray-300 md:me-0 dark:focus:ring-gray-600"
+                id="user-menu-button"
+                onClick={() => setShowDropdown((prev) => !prev)}
+                data-dropdown-toggle="user-dropdown"
+                data-dropdown-placement="bottom"
+              >
+                <span className="sr-only">Open user menu</span>
+                <img
+                  className="h-8 w-8 rounded-full"
+                  src={user?.picture}
+                  alt="user photo"
+                />
+              </button>
+              <div
+                className={`absolute right-0 top-8 z-50 my-4 ${showDropdown ? '' : 'hidden'} list-none divide-y divide-gray-100 rounded-lg bg-white text-base shadow dark:divide-gray-600 dark:bg-gray-700`}
+                id="user-dropdown"
+              >
+                <div className="px-4 py-3">
+                  <span className="block text-sm text-gray-900 dark:text-white">
+                    {user?.name}
+                  </span>
+                  <span className="block truncate text-sm text-gray-500 dark:text-gray-400">
+                    {user?.email}
+                  </span>
+                </div>
+                <ul className="py-2" aria-labelledby="user-menu-button">
+                  <li>
+                    <a
+                      href="#"
+                      onClick={() => logout()}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      Sign out
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </nav>
 
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-transform ${
+        className={`fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white pt-20 transition-transform dark:border-gray-700 dark:bg-gray-800 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        <div className="h-full overflow-y-auto bg-white px-3 pb-4 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
             {items.map((item, index) => (
               <SidebarItem key={index} {...item} />
