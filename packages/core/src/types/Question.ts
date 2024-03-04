@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { ObjectIdSchema } from './Level';
-
+export const ObjectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 export const QuestionTypeSchema = z.enum([
   'Construct Automaton',
   'Construct Automaton Missing Symbols',

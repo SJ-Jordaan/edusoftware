@@ -5,6 +5,7 @@ import {
 } from '../../../../slices/progressApi.slice';
 import { useLayoutEffect, useState } from 'react';
 import { useAppSelector } from '../../../../store';
+import { isAnswerCorrect } from '@edusoftware/core/src/evaluation/helpers/isAnswerCorrect';
 
 export const useLevelSolver = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,10 +30,7 @@ export const useLevelSolver = () => {
   const [answer, setAnswer] = useState('');
 
   useLayoutEffect(() => {
-    console.log('layout effect');
-
     if (!level) {
-      console.log('no level, returning');
       return;
     }
 
@@ -42,11 +40,8 @@ export const useLevelSolver = () => {
     }
 
     if (!level.question) {
-      console.log('no question, returning');
       return;
     }
-
-    console.log('setting answer to: ', level.question.answer);
 
     setAnswer(level.question.answer);
   }, [level?.isCompleted, level?.question?._id, navigate]);
@@ -60,6 +55,17 @@ export const useLevelSolver = () => {
       level.question.questionType === 'Construct Automaton'
         ? JSON.stringify(gridAutomaton)
         : answer;
+
+    // TODO: Local validation
+    const { correct: isCorrect, message } = isAnswerCorrect(
+      { ...level.question, answer: level.memo ?? level.question.answer },
+      finalAnswer,
+    );
+
+    if (!isCorrect) {
+      console.log(message);
+      return;
+    }
 
     const response = await submitAnswer({
       levelId: id,

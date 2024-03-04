@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import { PopulatedQuestionSchema } from './Question';
-
-export const ObjectIdSchema = z
-  .string()
-  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
+import { ObjectIdSchema, PopulatedQuestionSchema } from './Question';
 
 export const LevelSchema = z.object({
   levelName: z.string(),

@@ -36,7 +36,7 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
       providesTags: ['Progress'],
     }),
     getLevelProgress: builder.query<
-      { question?: PopulatedQuestion; isCompleted: boolean },
+      { question?: PopulatedQuestion; isCompleted: boolean; memo?: string },
       string
     >({
       query: (levelId) => `${PROGRESS_URL}/level/${levelId}`,
@@ -57,10 +57,9 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
           ? handleRandomiseCoordinates(JSON.parse(question.answer))
           : '';
 
-        console.log('answer', answer);
-
         return {
           isCompleted,
+          memo: question.answer,
           question: {
             ...question,
             answer,

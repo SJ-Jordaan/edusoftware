@@ -61,15 +61,17 @@ const LevelSolver = () => {
 
   return (
     <div className="flex h-full flex-col p-4 dark:bg-slate-800">
-      <div className="flex h-full w-full flex-col py-4">
+      <div className="flex h-full w-full flex-col">
         <p className="dark:text-gray-50">{question?.questionContent}</p>
+        <div className="mt-auto" />
         {renderSpecificInterface({
           question: question,
           answer: answer,
           handleAnswerChange,
         })}
+        <div className="mt-auto" />
         <button
-          className="mt-auto flex w-full items-center justify-center rounded-md bg-green-500 p-2 font-bold text-white"
+          className="mt-4 flex w-full items-center justify-center rounded-md bg-green-500 p-2 font-bold text-white"
           onClick={() => handleSubmit()}
         >
           Submit

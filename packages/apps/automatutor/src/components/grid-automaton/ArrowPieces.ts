@@ -91,7 +91,7 @@ export const ARROW_PIECES: Record<string, ArrowPiece> = {
   'bottom-bottom': {
     pathD:
       'M 16.799999999999997 56 C 5.6 50.4 0 22.4 28 22.4 C 56 22.4 50.4 50.4 39.199999999999996 56',
-    polygonPoints: undefined,
+    polygonPoints: '39.2,46 34.2,56 44.2,56',
     textPosition: { x: 18, y: 18, rotate: 0 },
   },
 };

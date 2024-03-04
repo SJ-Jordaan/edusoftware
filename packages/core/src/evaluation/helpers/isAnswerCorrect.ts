@@ -1,9 +1,9 @@
-import { IQuestionDoc } from '../../databases';
+import { QuestionObject } from './../../types/Question';
 import { ApplicationError, AutomatonInput } from '../../types';
 import { EvaluationContext } from '../EvaluationContext';
 
 export const isAnswerCorrect = (
-  question: IQuestionDoc,
+  question: QuestionObject,
   answer: AutomatonInput,
 ) => {
   try {
