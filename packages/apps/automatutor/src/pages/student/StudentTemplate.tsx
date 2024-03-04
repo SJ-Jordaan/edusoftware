@@ -17,7 +17,7 @@ const routes: Route[] = [
 
 function StudentTemplate() {
   return (
-    <div className="flex h-screen w-screen flex-col dark:bg-gray-900">
+    <div className="min-w-screen flex min-h-screen flex-col dark:bg-gray-900">
       <Outlet />
       <NavBar routes={routes} />
     </div>
