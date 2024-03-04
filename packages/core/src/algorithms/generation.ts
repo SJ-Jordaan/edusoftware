@@ -94,6 +94,12 @@ export const createTransitionPieces = (
         { symbols: symbols, startSide: 'bottom', endSide: 'right' },
       ],
     },
+    {
+      type: 'transition',
+      transitions: [
+        { symbols: symbols, startSide: 'bottom', endSide: 'bottom' },
+      ],
+    },
   ];
 };
 
