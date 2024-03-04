@@ -15,6 +15,8 @@ import {
 } from '@edusoftware/core/types';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { useSessionWithRoles } from '@edusoftware/core/handlers';
+import { calculateTimeRemaining } from './helpers/time';
+import { completeLevel } from '../submitAnswer/helpers';
 
 export const main = handler<GetLevelProgressResponse>(
   async (
@@ -58,6 +60,20 @@ export const main = handler<GetLevelProgressResponse>(
         };
       }
 
+      const maxTime = 60 * 10;
+      const timeRemaining = calculateTimeRemaining(levelProgress, maxTime);
+
+      if (timeRemaining <= 1) {
+        await completeLevel(levelProgress, userId, levelId);
+
+        return {
+          statusCode: 200,
+          body: {
+            isCompleted: true,
+          },
+        };
+      }
+
       const nextQuestion = levelDoc.questionIds.find(
         (question) =>
           !levelProgress.questionsAttempted.some((attempt) => {
@@ -86,6 +102,7 @@ export const main = handler<GetLevelProgressResponse>(
         statusCode: 200,
         body: {
           question: nextQuestion.toObject(),
+          timeRemaining,
           isCompleted: false,
         },
       };

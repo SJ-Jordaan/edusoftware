@@ -1,6 +1,7 @@
 import { GridAutomatonBuilder } from '../../../components/grid-automaton-builder/GridAutomatonBuilder';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import { RegexBuilder } from '../../../components/regex-builder/RegexBuilder';
+import { CountdownTimer } from './components/CountdownTimer';
 import { useLevelSolver } from './hooks/useLevelSolver';
 import { PopulatedQuestion } from '@edusoftware/core/src/types';
 
@@ -44,11 +45,13 @@ const renderSpecificInterface = ({
 const LevelSolver = () => {
   const {
     question,
+    timeRemaining,
     answer,
     isLoading,
     isError,
     handleSubmit,
     handleAnswerChange,
+    handleEndLevel,
   } = useLevelSolver();
 
   if (isLoading) {
@@ -61,6 +64,7 @@ const LevelSolver = () => {
 
   return (
     <div className="flex h-full flex-col p-4 dark:bg-slate-800">
+      <CountdownTimer initialCount={timeRemaining} onEnd={handleEndLevel} />
       <div className="flex h-full w-full flex-col">
         <p className="dark:text-gray-50">{question?.questionContent}</p>
         <div className="mt-auto" />

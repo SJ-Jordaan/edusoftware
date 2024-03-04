@@ -15,5 +15,6 @@ export interface AnswerEvaluation {
 
 export interface GetLevelProgressResponse {
   question?: PopulatedQuestion;
+  timeRemaining?: number;
   isCompleted: boolean;
 }

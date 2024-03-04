@@ -7,6 +7,7 @@ import {
 import { TimeLineItem } from './TimelineItem';
 import { UserProgress } from '@edusoftware/core/src/types';
 import { TimelineLoader } from './TimelineLoader';
+import { PageLoader } from '../../../../components/loaders/PageLoader';
 
 export const Challenges = () => {
   const navigate = useNavigate();
@@ -41,8 +42,12 @@ export const Challenges = () => {
     }
   };
 
-  const isLoading = levelsLoading || startLevelLoading || userProgressLoading;
+  const isLoading = levelsLoading || userProgressLoading;
   const isError = levelsError || startLevelError || userProgressError;
+
+  if (startLevelLoading) {
+    return <PageLoader />;
+  }
 
   if (isLoading) {
     return (

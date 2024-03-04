@@ -36,13 +36,18 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
       providesTags: ['Progress'],
     }),
     getLevelProgress: builder.query<
-      { question?: PopulatedQuestion; isCompleted: boolean; memo?: string },
+      {
+        question?: PopulatedQuestion;
+        isCompleted: boolean;
+        memo?: string;
+        timeRemaining?: number;
+      },
       string
     >({
       query: (levelId) => `${PROGRESS_URL}/level/${levelId}`,
       providesTags: ['LevelProgress'],
       transformResponse: (response: GetLevelProgressResponse) => {
-        const { isCompleted, question } = response;
+        const { isCompleted, question, timeRemaining } = response;
 
         if (!question) {
           return {
@@ -59,6 +64,7 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
 
         return {
           isCompleted,
+          timeRemaining,
           memo: question.answer,
           question: {
             ...question,

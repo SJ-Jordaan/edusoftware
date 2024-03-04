@@ -6,10 +6,16 @@ import {
 import { useLayoutEffect, useState } from 'react';
 import { useAppSelector } from '../../../../store';
 import { isAnswerCorrect } from '@edusoftware/core/src/evaluation/helpers/isAnswerCorrect';
+import correct from '../../../../assets/correct.mp3';
+import incorrect from '../../../../assets/incorrect.mp3';
+import useSound from 'use-sound';
+import { toast } from 'react-toastify';
 
 export const useLevelSolver = () => {
   const { id } = useParams<{ id: string }>();
   const gridAutomaton = useAppSelector((state) => state.gridAutomaton.pieces);
+  const [playCorrect] = useSound(correct, { volume: 0.25 });
+  const [playIncorrect] = useSound(incorrect, { volume: 0.25 });
 
   if (!id) throw new Error('No level id provided');
 
@@ -56,14 +62,14 @@ export const useLevelSolver = () => {
         ? JSON.stringify(gridAutomaton)
         : answer;
 
-    // TODO: Local validation
     const { correct: isCorrect, message } = isAnswerCorrect(
       { ...level.question, answer: level.memo ?? level.question.answer },
       finalAnswer,
     );
 
     if (!isCorrect) {
-      console.log(message);
+      playIncorrect();
+      toast(message);
       return;
     }
 
@@ -74,13 +80,34 @@ export const useLevelSolver = () => {
     }).unwrap();
 
     if (!response.isCorrect) {
-      console.log(response.message);
+      if (!response.isCompleted) {
+        playIncorrect();
+        toast(message);
+      }
+
       return;
     }
+
+    playCorrect();
+    toast('Correct answer!');
 
     if (response.isCompleted) {
       navigate('/');
     }
+  };
+
+  const handleEndLevel = async () => {
+    if (!level || !level.question || !level.question._id) {
+      throw new Error('No level provided');
+    }
+
+    await submitAnswer({
+      levelId: id,
+      questionId: level.question._id,
+      answer: '',
+    });
+
+    navigate('/');
   };
 
   const handleAnswerChange = (event: { target: { value: string } }) => {
@@ -89,10 +116,12 @@ export const useLevelSolver = () => {
 
   return {
     question: level?.question,
+    timeRemaining: level?.timeRemaining,
     answer,
     isLoading,
     isError,
     handleSubmit,
     handleAnswerChange,
+    handleEndLevel,
   };
 };

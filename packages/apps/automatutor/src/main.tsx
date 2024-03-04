@@ -7,6 +7,9 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.min.css';
 import './index.css';
 import { Provider } from 'react-redux';
 import store from './store.ts';
@@ -70,6 +73,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <React.StrictMode>
         <RouterProvider router={router} />
+        <ToastContainer position="bottom-center" pauseOnHover theme="dark" />
       </React.StrictMode>
     </Provider>
   </ErrorBoundary>,
