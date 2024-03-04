@@ -55,29 +55,29 @@ export class GridAutomatonNFAStrategy implements NFAConversionStrategy {
     });
 
     transitions.forEach((transition) => {
-      const fromPos = this._adjustCoordinatesForDirection(
-        transition.position.x,
-        transition.position.y,
-        transition.startSide,
-      );
-      const toPos = this._adjustCoordinatesForDirection(
-        transition.position.x,
-        transition.position.y,
-        transition.endSide,
-      );
+      transition.transitions.forEach((t) => {
+        const fromPos = this._adjustCoordinatesForDirection(
+          transition.position.x,
+          transition.position.y,
+          t.startSide,
+        );
+        const toPos = this._adjustCoordinatesForDirection(
+          transition.position.x,
+          transition.position.y,
+          t.endSide,
+        );
 
-      const fromStateId = stateByPosition.get(`${fromPos.x},${fromPos.y}`);
-      const toStateId = stateByPosition.get(`${toPos.x},${toPos.y}`);
+        const fromStateId = stateByPosition.get(`${fromPos.x},${fromPos.y}`);
+        const toStateId = stateByPosition.get(`${toPos.x},${toPos.y}`);
 
-      if (fromStateId && toStateId) {
-        transition.transitions.forEach((t) => {
+        if (fromStateId && toStateId) {
           t.symbols.forEach((symbol) => {
             if (!delta[fromStateId][symbol].includes(toStateId)) {
               delta[fromStateId][symbol].push(toStateId);
             }
           });
-        });
-      }
+        }
+      });
     });
 
     const initial = states.filter((s) => s.isStart).map((s) => s.id);
