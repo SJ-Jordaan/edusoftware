@@ -1,6 +1,7 @@
 import { GridAutomatonBuilder } from '../../../components/grid-automaton-builder/GridAutomatonBuilder';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import { RegexBuilder } from '../../../components/regex-builder/RegexBuilder';
+import { usePreventOverscroll } from '../../../hooks';
 import { CountdownTimer } from './components/CountdownTimer';
 import { useLevelSolver } from './hooks/useLevelSolver';
 import { PopulatedQuestion } from '@edusoftware/core/src/types';
@@ -53,6 +54,8 @@ const LevelSolver = () => {
     handleAnswerChange,
     handleEndLevel,
   } = useLevelSolver();
+
+  usePreventOverscroll();
 
   if (isLoading) {
     return <PageLoader />;
