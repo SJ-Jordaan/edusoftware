@@ -15,6 +15,7 @@ export const Challenges = () => {
     data: levels,
     error: levelsError,
     isLoading: levelsLoading,
+    isFetching: levelsFetching,
   } = useFetchLevelsQuery();
   const [startLevel, { isLoading: startLevelLoading, error: startLevelError }] =
     useStartLevelMutation();
@@ -22,6 +23,7 @@ export const Challenges = () => {
     data: userProgress,
     isLoading: userProgressLoading,
     error: userProgressError,
+    isFetching: userProgressFetching,
   } = useGetProgressQuery();
 
   const progress = userProgress as UserProgress[] | undefined;
@@ -42,11 +44,26 @@ export const Challenges = () => {
     }
   };
 
-  const isLoading = levelsLoading || userProgressLoading;
+  const resetChallenge = async (levelId: string) => {
+    try {
+      if (startLevelLoading) return;
+
+      await startLevel(levelId).unwrap();
+      navigate(`/level/${levelId}`);
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  };
+
+  const isLoading =
+    levelsLoading ||
+    userProgressLoading ||
+    levelsFetching ||
+    userProgressFetching;
   const isError = levelsError || startLevelError || userProgressError;
 
   if (startLevelLoading) {
-    return <PageLoader />;
+    return <PageLoader overlay />;
   }
 
   if (isLoading) {
@@ -71,6 +88,7 @@ export const Challenges = () => {
           <TimeLineItem
             key={`level-${level._id}`}
             onClick={() => handleStartChallenge(level._id)}
+            onReset={() => resetChallenge(level._id)}
             progress={progress?.find((p) => p.levelId === level._id)}
             {...level}
           />

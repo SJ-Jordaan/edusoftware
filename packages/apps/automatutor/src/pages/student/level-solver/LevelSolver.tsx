@@ -66,24 +66,22 @@ const LevelSolver = () => {
   }
 
   return (
-    <div className="flex h-full flex-col p-4 dark:bg-slate-800">
+    <div className="flex h-full flex-col p-2 py-4 dark:bg-slate-800">
       <CountdownTimer initialCount={timeRemaining} onEnd={handleEndLevel} />
-      <div className="flex h-full w-full flex-col">
-        <p className="dark:text-gray-50">{question?.questionContent}</p>
-        <div className="mt-auto" />
+      <div className="mt-4 flex flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
+        <p className="text-lg dark:text-gray-50">{question?.questionContent}</p>
         {renderSpecificInterface({
           question: question,
           answer: answer,
           handleAnswerChange,
         })}
-        <div className="mt-auto" />
-        <button
-          className="mt-4 flex w-full items-center justify-center rounded-md bg-green-500 p-2 font-bold text-white"
-          onClick={() => handleSubmit()}
-        >
-          Submit
-        </button>
       </div>
+      <button
+        className="mt-auto w-full rounded-lg border border-gray-200 bg-green-700 px-5 py-2.5 text-sm font-medium text-gray-50 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:border-gray-700 dark:bg-green-800 dark:hover:bg-green-700 dark:focus:ring-green-800"
+        onClick={() => handleSubmit()}
+      >
+        Submit
+      </button>
     </div>
   );
 };

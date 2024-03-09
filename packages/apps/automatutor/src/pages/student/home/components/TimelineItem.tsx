@@ -1,4 +1,5 @@
 import { UserProgress } from '@edusoftware/core/src/types';
+import { useAuth } from '../../../../slices/auth.slice';
 
 interface TimelineItemProps {
   levelName: string;
@@ -6,6 +7,7 @@ interface TimelineItemProps {
   startDate: string;
   endDate: string;
   onClick: () => void;
+  onReset: () => void;
   progress: UserProgress | undefined;
 }
 
@@ -15,8 +17,11 @@ export const TimeLineItem = ({
   startDate,
   endDate,
   onClick,
+  onReset,
   progress,
 }: TimelineItemProps) => {
+  const { isAdmin } = useAuth();
+
   const hasStarted = new Date(startDate) < new Date();
   const hasEnded = new Date(endDate) < new Date();
 
@@ -30,7 +35,7 @@ export const TimeLineItem = ({
             : `Ended on ${new Date(endDate).toLocaleDateString()}`
           : `Starts on ${new Date(startDate).toLocaleDateString()}`}
       </time>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white">
         {levelName}
       </h3>
       <p className="mb-2 text-base font-normal text-gray-500 dark:text-gray-400">
@@ -50,29 +55,55 @@ export const TimeLineItem = ({
           </div>
         )}
 
-        {hasStarted && !hasEnded && !progress?.completedAt ? (
-          <button
-            onClick={onClick}
-            className="inline-flex w-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-          >
-            {progress && !progress.completedAt ? 'Continue' : 'Start'}{' '}
-            <svg
-              className="ms-2 h-3 w-3 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
+        <div className="flex gap-4 pt-2">
+          {hasStarted && !hasEnded && !progress?.completedAt ? (
+            <button
+              onClick={onClick}
+              className="inline-flex w-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
-          </button>
-        ) : null}
+              {progress && !progress.completedAt ? 'Continue' : 'Start'}{' '}
+              <svg
+                className="ms-2 h-3 w-3 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                />
+              </svg>
+            </button>
+          ) : null}
+
+          {progress && isAdmin && (
+            <button
+              onClick={onReset}
+              className="inline-flex w-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+            >
+              {'Reset'}{' '}
+              <svg
+                className="ms-2 h-3 w-3 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
     </li>
   );
