@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { Tabs } from '../../../components';
 import { TABS } from './common/tabs';
 import { useAuth } from '../../../slices/auth.slice';
+import { useCheckPWA } from '../../../hooks';
 
 function Home() {
   const navigate = useNavigate();
+  useCheckPWA();
   const { user } = useAuth();
 
   if (!user) {

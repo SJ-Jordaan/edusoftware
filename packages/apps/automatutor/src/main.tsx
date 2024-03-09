@@ -26,6 +26,7 @@ import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
 import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import QuestionEditor from './pages/admin/question-editor/QuestionEditor.tsx';
 import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
+import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -75,6 +76,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <React.StrictMode>
         <RouterProvider router={router} />
+        <ReloadPrompt />
         <ToastContainer position="bottom-center" pauseOnHover theme="dark" />
       </React.StrictMode>
     </Provider>
