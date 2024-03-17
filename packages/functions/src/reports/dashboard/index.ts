@@ -1,19 +1,10 @@
+import { DashboardReport } from '@edusoftware/core/types';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import { Score, Progress } from '@edusoftware/core/databases'; // Adjust imports as necessary
 import { handler } from '@edusoftware/core/handlers';
 import { Table } from 'sst/node/table';
 import { ApplicationError, LambdaResponse } from '@edusoftware/core/types';
-
-export interface DashboardReport {
-  userCount: number;
-  averageScorePerLevel: Array<{ _id: string; averageScore: number }>;
-  progressBreakdown: Array<{
-    _id: string;
-    started: number;
-    completed: number;
-  }>;
-}
 
 export const main = handler<DashboardReport>(
   async (): Promise<LambdaResponse<DashboardReport>> => {

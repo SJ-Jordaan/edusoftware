@@ -29,7 +29,7 @@ export const LeaderBoard = () => {
               {second?.userDetails?.name ?? 'None'}
             </p>
             <p className="line-clamp-1 max-w-full overflow-hidden text-ellipsis text-xs text-gray-400">
-              {extractStudentNumber(first?.userDetails?.email) ?? 'None'}
+              {extractStudentNumber(second?.userDetails?.email) ?? 'None'}
             </p>
           </div>
           <p className="text-xl text-blue-400">{second?.totalScore ?? 0}</p>
@@ -57,7 +57,7 @@ export const LeaderBoard = () => {
               {third?.userDetails?.name ?? 'None'}
             </p>
             <p className="line-clamp-1 max-w-full overflow-hidden text-ellipsis text-xs text-gray-400">
-              {extractStudentNumber(first?.userDetails?.email) ?? 'None'}
+              {extractStudentNumber(third?.userDetails?.email) ?? 'None'}
             </p>
           </div>
           <p className="text-xl text-green-400">{third?.totalScore ?? 0}</p>

@@ -1,4 +1,4 @@
-import { DashboardReport } from './../../../../functions/src/reports/dashboard/index';
+import { DashboardReport } from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
 const REPORTS_URL = '/report';
 
