@@ -1,6 +1,6 @@
 import { UserScore } from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
-const SCORES_URL = '/score';
+const SCORES_URL = '/scores';
 
 export const scoreApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

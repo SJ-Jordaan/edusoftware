@@ -1,6 +1,7 @@
 import {
   Level,
   Progress,
+  Score,
   connectToDatabase,
 } from '@edusoftware/core/databases';
 import { handler } from '@edusoftware/core/handlers';
@@ -36,24 +37,34 @@ export const main = handler<UserProgress>(
         throw new NotFoundError(`Level with ID ${levelId}`);
       }
 
-      let progress = await Progress.findOne({ userId, levelId });
+      // Initiate both find operations without waiting for them to complete immediately
+      const progressPromise = Progress.findOne({ userId, levelId });
+      const scorePromise = Score.findOne({ userId, levelId });
 
+      // Wait for both find operations to complete
+      const [progress, score] = await Promise.all([
+        progressPromise,
+        scorePromise,
+      ]);
+
+      // If progress exists, delete it. Similarly, if score exists, delete it.
+      // These deletions are independent and can be performed concurrently.
+      const deletionPromises = [];
       if (progress) {
-        progress.questionsAttempted.forEach((question) => {
-          question.deleteOne();
-        });
-        progress.startedAt = new Date();
-        progress.completedAt = null;
-        progress.totalScore = 0;
-      } else {
-        progress = new Progress({ userId, levelId });
+        deletionPromises.push(Progress.deleteOne({ userId, levelId }));
       }
+      if (score) {
+        deletionPromises.push(Score.deleteOne({ userId, levelId }));
+      }
+      await Promise.all(deletionPromises);
 
-      await progress.save();
+      // After deletions are complete, create a new progress record.
+      const newProgress = new Progress({ userId, levelId });
+      await newProgress.save();
 
       return {
         statusCode: 200,
-        body: progress.toObject(),
+        body: newProgress.toObject(),
       };
     } catch (error: unknown) {
       if (error instanceof ApplicationError) {

@@ -8,6 +8,7 @@ import {
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Table } from 'sst/node/table';
 import { Config } from 'sst/node/config';
+import { UnauthorizedError } from '@edusoftware/core/types';
 
 declare module 'sst/node/auth' {
   export interface SessionTypes {
@@ -31,6 +32,13 @@ export const handler = AuthHandler({
       onSuccess: async (tokenset) => {
         try {
           const claims = tokenset.claims();
+          if (
+            !claims.email?.endsWith('@tuks.co.za') &&
+            !claims.email?.endsWith('@up.ac.za') &&
+            !claims.email?.endsWith('@cs.up.ac.za')
+          ) {
+            throw new UnauthorizedError('Email domain must be @tuks.co.za');
+          }
           const userId = claims.sub;
           const ddb = new DynamoDBClient({});
           const userKey = marshall({ userId: userId });
@@ -83,6 +91,18 @@ export const handler = AuthHandler({
           });
         } catch (error) {
           console.error('Error handling Google OAuth authentication:', error);
+
+          if (error instanceof UnauthorizedError) {
+            const errorRedirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/unauthorized`;
+            return Session.parameter({
+              redirect: errorRedirect,
+              type: 'public',
+              properties: {
+                error: error.message,
+              },
+            });
+          }
+
           const errorRedirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/failed`;
           return Session.parameter({
             redirect: errorRedirect,

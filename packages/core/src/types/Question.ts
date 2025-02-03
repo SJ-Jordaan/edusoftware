@@ -1,5 +1,7 @@
 import { z } from 'zod';
-
+export const ObjectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 export const QuestionTypeSchema = z.enum([
   'Construct Automaton',
   'Construct Automaton Missing Symbols',
@@ -20,7 +22,13 @@ export const QuestionSchema = z.object({
 });
 
 export const UpdateQuestionSchema = QuestionSchema.partial();
+export const PopulatedQuestionSchema = QuestionSchema.extend({
+  _id: ObjectIdSchema,
+});
 
 // TypeScript type derived from the Zod schema
 export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
+export type QuestionObject = Question & { _id: string };
+export type UpdateQuestion = z.infer<typeof UpdateQuestionSchema>;
+export type PopulatedQuestion = z.infer<typeof PopulatedQuestionSchema>;

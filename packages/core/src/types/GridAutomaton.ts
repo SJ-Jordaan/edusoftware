@@ -52,3 +52,43 @@ export type GridAutomatonTransition = z.infer<
 >;
 export type GridAutomatonElement = z.infer<typeof GridAutomatonElementSchema>;
 export type GridAutomaton = Array<GridAutomatonElement>;
+export type Alphabet = Record<string, boolean>;
+
+export type Side = 'top' | 'right' | 'bottom' | 'left';
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export type PieceType = 'state' | 'transition';
+
+export interface BasePiece {
+  id: string;
+  type: 'state' | 'transition';
+  position: Position;
+}
+
+export interface StatePiece extends BasePiece {
+  type: 'state';
+  isFinal: boolean;
+  isStart: boolean;
+}
+
+export interface Transition {
+  symbols: string[];
+  startSide: Side;
+  endSide: Side;
+}
+
+export interface TransitionPiece extends BasePiece {
+  type: 'transition';
+  transitions: Transition[];
+}
+
+export type Piece = StatePiece | TransitionPiece;
+
+export const automataTypes = {
+  STATE: 'state',
+  TRANSITION: 'transition',
+};

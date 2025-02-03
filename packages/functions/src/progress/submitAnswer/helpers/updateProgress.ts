@@ -7,15 +7,14 @@ import {
 /**
  * Calculates the score based on time spent, correctness, and number of attempts.
  *
- * @param params - The parameters for score calculation.
- * @param params.timeSpent - The time spent in seconds.
- * @param params.isCorrect - Whether the answer is correct.
- * @param params.attempts - The number of attempts.
- * @returns The calculated score as a whole number.
+ * @param {number} timeSpent - The time spent in seconds.
+ * @param {boolean} isCorrect - Whether the answer is correct.
+ * @param {number} attempts - The number of attempts.
+ * @returns {number} The calculated score as a whole number.
  * @throws {Error} If any input parameter is invalid.
  */
 function calculateScore({
-  timeSpent, // in seconds
+  timeSpent,
   isCorrect,
   attempts,
 }: {
@@ -34,33 +33,24 @@ function calculateScore({
     return 0;
   }
 
-  // Initialize the score with a time-based bonus
-  let score = 0;
-  const initialTimeBonus = 500;
-  const firstDecayRate = 8; // Points decreased per second for the first 30 seconds
-  const secondDecayRate = 27; // Points decreased per second after 30 seconds
+  const BASE_SCORE = 500; // Base score for the worst correct performance
+  const MAX_TIME = 600; // Max considered time in seconds
+  const TIME_BONUS_PER_SECOND = 1; // Bonus per second saved from MAX_TIME
+  const MAX_ATTEMPT_BONUS = 1000; // Max bonus for attempts, achieved with 1 attempt
+  const ATTEMPT_BONUS_DECAY = 100; // Reduction in attempt bonus per attempt beyond the first
 
-  // Calculate time bonus based on the time spent
-  if (timeSpent <= 30) {
-    score = initialTimeBonus - timeSpent * firstDecayRate;
-  } else {
-    // Calculate the remaining bonus after the first 30 seconds
-    const bonusAfter30 = initialTimeBonus - 30 * firstDecayRate;
-    // Calculate the decrease after 30 seconds
-    const decreaseAfter30 = (timeSpent - 30) * secondDecayRate;
-    score = Math.max(bonusAfter30 - decreaseAfter30, 0);
-  }
+  // Calculate time bonus
+  const time_bonus = Math.max(MAX_TIME - timeSpent, 0) * TIME_BONUS_PER_SECOND;
 
-  // Calculate the attempt bonus
-  const attemptBonus = 444 - attempts * 111;
-  score += attemptBonus;
+  // Calculate attempts bonus, ensuring no bonus after 10 attempts
+  const attempt_bonus = Math.max(
+    MAX_ATTEMPT_BONUS - (attempts - 1) * ATTEMPT_BONUS_DECAY,
+    0,
+  );
 
-  // Double the score if the answer was correct on the first attempt
-  if (attempts === 1) {
-    score *= 2;
-  }
+  // Calculate total score
+  const score = BASE_SCORE + time_bonus + attempt_bonus;
 
-  // Ensure the score is rounded to a whole number
   return Math.round(score);
 }
 

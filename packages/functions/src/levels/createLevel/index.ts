@@ -1,5 +1,5 @@
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   BadRequestError,
   LambdaResponse,
@@ -19,6 +19,8 @@ import { APIGatewayProxyEventV2 } from 'aws-lambda';
  */
 export const main = handler<ILevel>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
+    await useSessionWithRoles(['lecturer']);
+
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
@@ -36,11 +38,9 @@ export const main = handler<ILevel>(
 
     await connectToDatabase();
 
-    const { levelName, description, questionIds, startDate, endDate } =
-      parsedData;
-
-    // Attempt to create the new level
     try {
+      const { levelName, description, questionIds, startDate, endDate } =
+        parsedData;
       const levelDoc = await Level.create({
         levelName,
         description,

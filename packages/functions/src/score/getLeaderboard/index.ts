@@ -36,8 +36,15 @@ export const main = handler<UserScore[]>(
 
       const leaderboardScores = await Score.aggregate(aggregatePipeline);
 
-      if (!leaderboardScores || leaderboardScores.length === 0) {
+      if (!leaderboardScores) {
         throw new NotFoundError('Leaderboard data not found.');
+      }
+
+      if (leaderboardScores.length === 0) {
+        return {
+          statusCode: 200,
+          body: [],
+        };
       }
 
       // DynamoDB client setup

@@ -1,26 +1,77 @@
+import { IProgressDocumentPopulated } from '@edusoftware/core/src/databases';
+import {
+  AnswerEvaluation,
+  GetLevelProgressResponse,
+  PopulatedQuestion,
+} from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
+import { handleRandomiseCoordinates } from '../pages/student/level-solver/common/algorithms';
 const PROGRESS_URL = '/progress';
+
+interface AnswerInputs {
+  levelId: string;
+  questionId: string;
+  answer: string;
+}
 
 export const userProgressApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    startLevel: builder.mutation({
+    startLevel: builder.mutation<void, string>({
       query: (levelId) => ({
         url: `${PROGRESS_URL}/${levelId}`,
         method: 'POST',
       }),
-      invalidatesTags: ['Progress'],
+      invalidatesTags: ['Progress', 'LevelProgress'],
     }),
-    submitAnswer: builder.mutation({
-      query: ({ levelId, questionId, answerData }) => ({
+    submitAnswer: builder.mutation<AnswerEvaluation, AnswerInputs>({
+      query: ({ levelId, questionId, answer }) => ({
         url: `${PROGRESS_URL}/${levelId}/${questionId}`,
         method: 'POST',
-        body: answerData,
+        body: { answer },
       }),
-      invalidatesTags: ['Progress'],
-    }),
-    getProgress: builder.query({
-      query: (levelId = '') => `${PROGRESS_URL}/${levelId}`,
+      invalidatesTags: ['Progress', 'LevelProgress'],
+    }), //TODO: Deprecate levelId
+    getProgress: builder.query<IProgressDocumentPopulated[], string | void>({
+      query: (levelId) => `${PROGRESS_URL}${levelId ? `/${levelId}` : ''}`,
       providesTags: ['Progress'],
+    }),
+    getLevelProgress: builder.query<
+      {
+        question?: PopulatedQuestion;
+        isCompleted: boolean;
+        memo?: string;
+        timeRemaining?: number;
+      },
+      string
+    >({
+      query: (levelId) => `${PROGRESS_URL}/level/${levelId}`,
+      providesTags: ['LevelProgress'],
+      transformResponse: (response: GetLevelProgressResponse) => {
+        const { isCompleted, question, timeRemaining } = response;
+
+        if (!question) {
+          return {
+            isCompleted,
+          };
+        }
+
+        const isAutomatonConstruction =
+          question.questionType === 'Construct Automaton';
+
+        const answer = isAutomatonConstruction
+          ? handleRandomiseCoordinates(JSON.parse(question.answer))
+          : '';
+
+        return {
+          isCompleted,
+          timeRemaining,
+          memo: question.answer,
+          question: {
+            ...question,
+            answer,
+          },
+        };
+      },
     }),
   }),
 });
@@ -29,4 +80,5 @@ export const {
   useStartLevelMutation,
   useSubmitAnswerMutation,
   useGetProgressQuery,
+  useGetLevelProgressQuery,
 } = userProgressApiSlice;

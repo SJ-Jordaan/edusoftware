@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAppSelector } from '../store';
+import { useAuth } from '../slices/auth.slice';
 
 const PrivateRoute = () => {
-  const { token } = useAppSelector((state) => state.auth);
+  const { token } = useAuth();
   return token ? <Outlet /> : <Navigate to="/login" replace />;
 };
 

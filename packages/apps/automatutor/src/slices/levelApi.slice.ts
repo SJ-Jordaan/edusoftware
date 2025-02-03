@@ -1,13 +1,15 @@
 import {
   IUpdateLevel,
   Level,
-  PopulatedLevel,
+  LevelObject,
+  PopulatedLevelObject,
   Question,
+  QuestionObject,
 } from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
 
-const LEVEL_URL = '/level';
-const QUESTION_URL = '/question';
+const LEVEL_URL = '/levels';
+const QUESTION_URL = '/questions';
 
 interface UpdateLevelPayload {
   levelId: string;
@@ -20,17 +22,17 @@ interface UpdateQuestionPayload extends Question {
 
 export const levelApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    fetchLevels: builder.query<PopulatedLevel[], void>({
+    fetchLevels: builder.query<PopulatedLevelObject[], void>({
       query: () => LEVEL_URL,
       providesTags: ['Level'],
     }),
-    fetchLevel: builder.query<PopulatedLevel, string>({
+    fetchLevel: builder.query<PopulatedLevelObject, string>({
       query: (levelId) => `${LEVEL_URL}/${levelId}`,
       providesTags: (_result, _error, levelId) => [
         { type: 'Level', id: levelId },
       ],
     }),
-    createLevel: builder.mutation<Level, Level>({
+    createLevel: builder.mutation<LevelObject, Level>({
       query: (level) => ({
         url: LEVEL_URL,
         method: 'POST',
@@ -38,7 +40,7 @@ export const levelApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Level'],
     }),
-    updateLevel: builder.mutation<Level, UpdateLevelPayload>({
+    updateLevel: builder.mutation<LevelObject, UpdateLevelPayload>({
       query: ({ levelId, level }) => ({
         url: `${LEVEL_URL}/${levelId}`,
         method: 'PUT',
@@ -55,7 +57,7 @@ export const levelApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Level'],
     }),
-    createQuestion: builder.mutation<Question, Question>({
+    createQuestion: builder.mutation<QuestionObject, Question>({
       query: (question) => ({
         url: QUESTION_URL,
         method: 'POST',
@@ -63,7 +65,7 @@ export const levelApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Question', 'Level'],
     }),
-    updateQuestion: builder.mutation<Question, UpdateQuestionPayload>({
+    updateQuestion: builder.mutation<QuestionObject, UpdateQuestionPayload>({
       query: ({ questionId, ...question }) => ({
         url: `${QUESTION_URL}/${questionId}`,
         method: 'PUT',
