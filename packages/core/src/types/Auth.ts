@@ -4,3 +4,7 @@ export interface UserSession {
   email: string;
   roles: string[];
 }
+
+export interface Claims {
+  email?: string;
+}

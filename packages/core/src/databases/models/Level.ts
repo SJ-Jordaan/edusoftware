@@ -11,6 +11,10 @@ interface ILevelDoc extends mongoose.Document {
 
 const levelSchema = new mongoose.Schema(
   {
+    organisation: {
+      type: String,
+      required: true
+    },
     levelName: {
       type: String,
       required: true,
