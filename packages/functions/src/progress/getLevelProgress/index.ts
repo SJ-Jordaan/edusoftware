@@ -30,7 +30,7 @@ export const main = handler<GetLevelProgressResponse>(
     }
 
     try {
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
 
       const [levelDoc, progress] = await Promise.all([
         Level.findById(levelId).populate(

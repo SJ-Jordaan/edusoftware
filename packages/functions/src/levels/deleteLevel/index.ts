@@ -4,6 +4,7 @@ import {
   NotFoundError,
   LambdaResponse,
   ApplicationError,
+  OrganisationRole,
 } from '@edusoftware/core/types';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
@@ -20,7 +21,10 @@ export const main = handler<{ message: string }>(
   async (
     event: APIGatewayProxyEventV2,
   ): Promise<LambdaResponse<{ message: string }>> => {
-    await useSessionWithRoles(['lecturer']);
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
 
     if (!event.pathParameters || !event.pathParameters.id) {
       throw new BadRequestError('Level ID must be provided in the path');

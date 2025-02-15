@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Modal from '../../../../components/Modal';
-import { Level } from '@edusoftware/core/src/types';
+import { Level, OrganisationName } from '@edusoftware/core/src/types';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ export const CreateLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [organisation, _] = useState(OrganisationName.PUBLIC);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Level">
@@ -90,7 +91,13 @@ export const CreateLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
           <button
             type="submit"
             onClick={() =>
-              onClick({ levelName, description, startDate, endDate })
+              onClick({
+                levelName,
+                description,
+                startDate,
+                endDate,
+                organisation,
+              })
             }
             className="rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >

@@ -7,6 +7,7 @@ export const LevelSchema = z.object({
   questionIds: z.array(ObjectIdSchema).optional(),
   startDate: z.string(),
   endDate: z.string(),
+  organisation: z.string(),
 });
 
 export const PopulatedLevelSchema = z.object({
@@ -15,6 +16,7 @@ export const PopulatedLevelSchema = z.object({
   questionIds: z.array(PopulatedQuestionSchema).optional(),
   startDate: z.string(),
   endDate: z.string(),
+  organisation: z.string(),
 });
 
 export const UpdateLevelSchema = LevelSchema.partial();

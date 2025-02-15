@@ -15,7 +15,6 @@ export function ApiStack({ stack, app }: StackContext) {
     },
     routes: {
       'Get /session': 'packages/functions/src/auth/session.handler', // TODO: Fix up the path here, maybe create authApi
-      'GET /': 'packages/functions/src/lambda.main',
       'GET /levels': 'packages/functions/src/levels/getLevels/index.main',
       'GET /levels/{id}': 'packages/functions/src/levels/getLevel/index.main',
       'POST /levels': 'packages/functions/src/levels/createLevel/index.main',

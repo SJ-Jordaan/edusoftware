@@ -30,25 +30,21 @@ export const main = handler<UserProgress>(
 
     try {
       await connectToDatabase();
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
       const levelDoc = await Level.findById(levelId);
 
       if (!levelDoc) {
         throw new NotFoundError(`Level with ID ${levelId}`);
       }
 
-      // Initiate both find operations without waiting for them to complete immediately
       const progressPromise = Progress.findOne({ userId, levelId });
       const scorePromise = Score.findOne({ userId, levelId });
 
-      // Wait for both find operations to complete
       const [progress, score] = await Promise.all([
         progressPromise,
         scorePromise,
       ]);
 
-      // If progress exists, delete it. Similarly, if score exists, delete it.
-      // These deletions are independent and can be performed concurrently.
       const deletionPromises = [];
       if (progress) {
         deletionPromises.push(Progress.deleteOne({ userId, levelId }));
@@ -58,7 +54,6 @@ export const main = handler<UserProgress>(
       }
       await Promise.all(deletionPromises);
 
-      // After deletions are complete, create a new progress record.
       const newProgress = new Progress({ userId, levelId });
       await newProgress.save();
 

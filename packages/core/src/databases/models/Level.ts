@@ -13,7 +13,7 @@ const levelSchema = new mongoose.Schema(
   {
     organisation: {
       type: String,
-      required: true
+      required: true,
     },
     levelName: {
       type: String,

@@ -19,10 +19,9 @@ import {
  */
 export const main = handler<UserScore[]>(
   async (): Promise<LambdaResponse<UserScore[]>> => {
-    await connectToDatabase(); // Assuming this connects to MongoDB
+    await connectToDatabase();
 
     try {
-      // MongoDB aggregation to get leaderboard scores
       const aggregatePipeline = [
         {
           $group: {
@@ -47,15 +46,12 @@ export const main = handler<UserScore[]>(
         };
       }
 
-      // DynamoDB client setup
       const ddb = new DynamoDBClient({});
 
-      // Prepare keys for BatchGetItem
       const keys = leaderboardScores.map((score) =>
         marshall({ userId: score._id }),
       );
 
-      // Fetch user details from DynamoDB
       const userDetails = await ddb.send(
         new BatchGetItemCommand({
           RequestItems: {
@@ -66,14 +62,12 @@ export const main = handler<UserScore[]>(
         }),
       );
 
-      // Process response from DynamoDB
       const usersDetailsUnmarshalled = userDetails.Responses
         ? userDetails.Responses[Table.users.tableName].map((item) =>
             unmarshall(item),
           )
         : [];
 
-      // Merge leaderboardScores with userDetails
       const leaderboard = leaderboardScores.map((score) => {
         const userDetails = usersDetailsUnmarshalled.find(
           (user) => user.userId === score._id,

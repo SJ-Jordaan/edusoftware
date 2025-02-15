@@ -3,6 +3,7 @@ import { useAuth } from '../slices/auth.slice';
 import { useEffect, useState } from 'react';
 import { useGetUserInfoQuery } from '../slices/userApi.slice';
 import { PageLoader } from '../components/loaders/PageLoader';
+import { isPrivilegedUser } from '@edusoftware/core/src/organisations';
 
 enum Progress {
   Started,
@@ -31,7 +32,7 @@ function LoginRedirect() {
     if (existingToken && existingUser) {
       setProgress(Progress.Completed);
 
-      if (existingUser.roles.includes('lecturer')) {
+      if (isPrivilegedUser(existingUser.roles)) {
         navigate('/admin', { replace: true });
         return;
       }
@@ -50,7 +51,7 @@ function LoginRedirect() {
       setProgress(Progress.Completed);
       setUser(session);
 
-      if (session.roles.includes('lecturer')) {
+      if (isPrivilegedUser(session.roles)) {
         navigate('/admin', { replace: true });
         return;
       }

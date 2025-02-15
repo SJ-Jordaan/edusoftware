@@ -1,11 +1,16 @@
-import { Organisation } from "./Organisation";
+import { OrganisationName, OrganisationRole } from '../../types';
+import { Organisation } from './Organisation';
 
 export class PublicOrganisation extends Organisation {
   isMember(): boolean {
     return true;
   }
 
-  getRoles(): string[] {
-    return ['student'];
+  getRoles(): OrganisationRole[] {
+    return [OrganisationRole.STUDENT];
+  }
+
+  getName(): OrganisationName {
+    return OrganisationName.PUBLIC;
   }
 }

@@ -25,7 +25,7 @@ export const main = handler<UserProgress[]>(
 
     try {
       await connectToDatabase();
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
       let query: { userId: string; levelId?: string } = { userId };
       if (levelId) {
         query = { ...query, levelId };

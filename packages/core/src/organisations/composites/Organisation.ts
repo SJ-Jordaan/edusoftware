@@ -1,12 +1,14 @@
-import { Claims } from "../../types";
+import { IdTokenClaims } from 'openid-client';
+import { OrganisationName, OrganisationRole } from '../../types';
 
 export abstract class Organisation {
-  protected claims: Claims;
+  protected claims: IdTokenClaims;
 
-  constructor(claims: Claims) {
+  constructor(claims: IdTokenClaims) {
     this.claims = claims;
   }
 
   abstract isMember(): boolean;
-  abstract getRoles(): string[];
+  abstract getRoles(): OrganisationRole[];
+  abstract getName(): OrganisationName;
 }

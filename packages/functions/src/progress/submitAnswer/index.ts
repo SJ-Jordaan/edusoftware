@@ -35,7 +35,7 @@ export const main = handler<AnswerEvaluation>(
 
     try {
       await connectToDatabase();
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
       const currentProgress = await fetchCurrentQuestionProgress(
         userId,
         levelId,

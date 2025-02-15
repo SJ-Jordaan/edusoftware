@@ -1,22 +1,20 @@
 import { DashboardReport } from '@edusoftware/core/types';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { connectToDatabase } from '@edusoftware/core/databases';
-import { Score, Progress } from '@edusoftware/core/databases'; // Adjust imports as necessary
+import { Score, Progress } from '@edusoftware/core/databases';
 import { handler } from '@edusoftware/core/handlers';
 import { Table } from 'sst/node/table';
 import { ApplicationError, LambdaResponse } from '@edusoftware/core/types';
 
 export const main = handler<DashboardReport>(
   async (): Promise<LambdaResponse<DashboardReport>> => {
-    await connectToDatabase(); // Connect to MongoDB
+    await connectToDatabase();
 
     try {
-      // Fetch all necessary statistics
       const userCount = await getUserCount();
       const averageScorePerLevel = await getAverageScorePerLevel();
       const progressBreakdown = await getProgressBreakdownByLevel();
 
-      // Compile statistics into a single response object
       const adminData: DashboardReport = {
         userCount,
         averageScorePerLevel,

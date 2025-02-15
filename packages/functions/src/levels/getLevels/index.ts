@@ -1,5 +1,5 @@
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   ApplicationError,
   LambdaResponse,
@@ -22,15 +22,16 @@ import {
 export const main = handler<PopulatedLevel[]>(
   async (): Promise<LambdaResponse<PopulatedLevel[]>> => {
     await connectToDatabase();
+    const user = await useSessionWithRoles();
 
     try {
-      const levels: PopulatedLevel[] = await Level.find({}).populate(
-        'questionIds',
-      );
+      const levels: PopulatedLevel[] = await Level.find({
+        organisation: { $in: user.organisations },
+      }).populate('questionIds');
 
       return {
         statusCode: 200,
-        body: levels, // Could be an empty array if no levels are found
+        body: levels,
       };
     } catch (error: unknown) {
       if (error instanceof ApplicationError) {
