@@ -1,24 +1,41 @@
-import { DashboardReport } from '@edusoftware/core/types';
+import { DashboardReport, OrganisationRole } from '@edusoftware/core/types';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { connectToDatabase } from '@edusoftware/core/databases';
-import { Score, Progress } from '@edusoftware/core/databases';
-import { handler } from '@edusoftware/core/handlers';
+import { Score, Progress, Level } from '@edusoftware/core/databases';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { Table } from 'sst/node/table';
 import { ApplicationError, LambdaResponse } from '@edusoftware/core/types';
 
+interface EnhancedLevelStats {
+  levelId: string;
+  levelName: string;
+  averageScore: number;
+  totalStudents: number;
+  completionRate: number;
+  inProgress: number;
+  completed: number;
+}
+
 export const main = handler<DashboardReport>(
   async (): Promise<LambdaResponse<DashboardReport>> => {
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
+
     await connectToDatabase();
 
     try {
-      const userCount = await getUserCount();
-      const averageScorePerLevel = await getAverageScorePerLevel();
-      const progressBreakdown = await getProgressBreakdownByLevel();
+      // Run queries in parallel
+      const [userCount, levelStats] = await Promise.all([
+        getUserCount(),
+        getLevelStatistics(),
+      ]);
 
       const adminData: DashboardReport = {
         userCount,
-        averageScorePerLevel,
-        progressBreakdown,
+        levelStats,
+        lastUpdated: new Date().toISOString(),
       };
 
       return {
@@ -26,11 +43,7 @@ export const main = handler<DashboardReport>(
         body: adminData,
       };
     } catch (error: unknown) {
-      if (error instanceof ApplicationError) {
-        throw error;
-      }
-
-      console.error(`Failed to get admin data: ${error}`);
+      console.error('Failed to get admin data:', error);
       throw new ApplicationError(
         'Failed to get admin data due to unexpected error',
         500,
@@ -49,39 +62,61 @@ async function getUserCount(): Promise<number> {
   return response.Count || 0;
 }
 
-async function getAverageScorePerLevel(): Promise<
-  Array<{ _id: string; averageScore: number }>
-> {
-  const aggregatePipeline = [
+async function getLevelStatistics(): Promise<EnhancedLevelStats[]> {
+  // Combined aggregation pipeline
+  const progressPipeline = [
     {
       $group: {
         _id: '$levelId',
-        averageScore: { $avg: '$score' },
-      },
-    },
-  ];
-  return Score.aggregate(aggregatePipeline).exec();
-}
-
-async function getProgressBreakdownByLevel(): Promise<
-  Array<{
-    _id: string;
-    started: number;
-    completed: number;
-  }>
-> {
-  const aggregatePipeline = [
-    {
-      $group: {
-        _id: '$levelId',
-        started: { $sum: 1 },
+        totalStudents: { $sum: 1 },
         completed: {
-          $sum: {
-            $cond: [{ $ne: ['$completedAt', null] }, 1, 0],
-          },
+          $sum: { $cond: [{ $ne: ['$completedAt', null] }, 1, 0] },
         },
       },
     },
   ];
-  return Progress.aggregate(aggregatePipeline).exec();
+
+  const scorePipeline = [
+    {
+      $group: {
+        _id: '$levelId',
+        averageScore: { $avg: '$score' },
+        highestScore: { $max: '$score' },
+        lowestScore: { $min: '$score' },
+      },
+    },
+  ];
+
+  // Run queries in parallel
+  const [progressData, scoreData, levels] = await Promise.all([
+    Progress.aggregate(progressPipeline).exec(),
+    Score.aggregate(scorePipeline).exec(),
+    Level.find({}, 'levelName').lean().exec(),
+  ]);
+
+  // Create a map for easier lookup
+  const levelMap = new Map(
+    levels.map((level) => [level._id.toString(), level.levelName]),
+  );
+  const scoreMap = new Map(
+    scoreData.map((item) => [item._id.toString(), item]),
+  );
+
+  // Combine the data
+  return progressData.map((progress) => {
+    const levelId = progress._id.toString();
+    const scoreInfo = scoreMap.get(levelId) || { averageScore: 0 };
+
+    return {
+      levelId,
+      levelName: levelMap.get(levelId) || 'Unknown Level',
+      averageScore: Math.round(scoreInfo.averageScore * 10) / 10,
+      totalStudents: progress.totalStudents,
+      completionRate: Math.round(
+        (progress.completed / progress.totalStudents) * 100,
+      ),
+      inProgress: progress.totalStudents - progress.completed,
+      completed: progress.completed,
+    };
+  });
 }

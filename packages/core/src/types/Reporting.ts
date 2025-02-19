@@ -1,9 +1,15 @@
 export interface DashboardReport {
   userCount: number;
-  averageScorePerLevel: Array<{ _id: string; averageScore: number }>;
-  progressBreakdown: Array<{
-    _id: string;
-    started: number;
-    completed: number;
-  }>;
+  levelStats: EnhancedLevelStats[];
+  lastUpdated: string;
+}
+
+export interface EnhancedLevelStats {
+  levelId: string;
+  levelName: string;
+  averageScore: number;
+  totalStudents: number;
+  completionRate: number;
+  inProgress: number;
+  completed: number;
 }

@@ -13,8 +13,8 @@ export const QuestionTypeSchema = z.enum([
 
 export const QuestionSchema = z.object({
   questionType: QuestionTypeSchema,
-  questionContent: z.string(),
-  answer: z.string(),
+  questionContent: z.string().min(1, 'Question content is required'),
+  answer: z.string().min(1, 'Answer is required'),
   hints: z.array(z.string()).optional(),
   score: z.number().default(0),
   alphabet: z.string(),
