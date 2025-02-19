@@ -6,103 +6,107 @@ import { Table } from 'sst/node/table';
 import {
   ApplicationError,
   LambdaResponse,
-  NotFoundError,
-  UserScore,
+  LeaderboardResponse,
 } from '@edusoftware/core/types';
 
-/**
- * Lambda function to retrieve the global leaderboard.
- * It fetches the leaderboard, and handles errors appropriately.
- * @returns {Promise<LambdaResponse<UserScore[]>>} A promise that resolves to the fetched leaderboard data.
- * @throws {NotFoundError} Thrown if no leaderboard data is found.
- * @throws {ApplicationError} Thrown if an unexpected error occurs while fetching the leaderboard.
- */
-export const main = handler<UserScore[]>(
-  async (): Promise<LambdaResponse<UserScore[]>> => {
+export const main = handler<LeaderboardResponse>(
+  async (): Promise<LambdaResponse<LeaderboardResponse>> => {
     await connectToDatabase();
 
     try {
-      const aggregatePipeline = [
+      // Ignore any levelId filtering here: we return all scores
+      const pipeline = [
+        {
+          $lookup: {
+            from: 'levels',
+            localField: 'levelId',
+            foreignField: '_id',
+            as: 'levelDetails',
+          },
+        },
+        { $unwind: '$levelDetails' },
         {
           $group: {
             _id: '$userId',
             totalScore: { $sum: '$score' },
+            scores: {
+              $push: {
+                levelId: '$levelId',
+                levelName: '$levelDetails.levelName',
+                organisation: '$levelDetails.organisation',
+                score: '$score',
+                achievedAt: '$createdAt',
+              },
+            },
           },
         },
         { $sort: { totalScore: -1 } },
         { $limit: 10 },
+        {
+          $project: {
+            userId: '$_id',
+            totalScore: 1,
+            scores: { $slice: ['$scores', -5] },
+          },
+        },
       ];
 
-      const leaderboardScores = await Score.aggregate(aggregatePipeline);
-
-      if (!leaderboardScores) {
-        throw new NotFoundError('Leaderboard data not found.');
-      }
+      const leaderboardScores = await Score.aggregate(pipeline);
 
       if (leaderboardScores.length === 0) {
-        return {
-          statusCode: 200,
-          body: [],
-        };
+        return { statusCode: 200, body: [] };
       }
 
+      // Fetch user details from DynamoDB
       const ddb = new DynamoDBClient({});
-
-      const keys = leaderboardScores.map((score) =>
-        marshall({ userId: score._id }),
+      const userKeys = leaderboardScores.map((score) =>
+        marshall({ userId: score.userId }),
       );
 
       const userDetails = await ddb.send(
         new BatchGetItemCommand({
           RequestItems: {
-            [Table.users.tableName]: {
-              Keys: keys,
-            },
+            [Table.users.tableName]: { Keys: userKeys },
           },
         }),
       );
 
-      const usersDetailsUnmarshalled = userDetails.Responses
-        ? userDetails.Responses[Table.users.tableName].map((item) =>
-            unmarshall(item),
-          )
-        : [];
+      // Create a map of user details
+      const usersMap = new Map(
+        userDetails.Responses?.[Table.users.tableName]?.map((item) => {
+          const user = unmarshall(item);
+          return [user.userId, user];
+        }) || [],
+      );
 
-      const leaderboard = leaderboardScores.map((score) => {
-        const userDetails = usersDetailsUnmarshalled.find(
-          (user) => user.userId === score._id,
-        );
+      // Format the final response as expected by the UI
+      const leaderboard = leaderboardScores.map((score, index) => {
+        const user = usersMap.get(score.userId);
         return {
+          userId: score.userId,
+          rank: index + 1,
           totalScore: score.totalScore,
           userDetails: {
-            name: userDetails ? userDetails.name : 'Unknown User',
-            email: userDetails ? userDetails.email : null,
-            picture: userDetails ? userDetails.picture : null,
+            name: user?.name || 'Unknown User',
+            email: user?.email || null,
+            picture: user?.picture || null,
           },
+          scores: score.scores.map((entry: any) => ({
+            levelId: entry.levelId.toString(),
+            levelName: entry.levelName,
+            score: entry.score,
+            achievedAt: entry.achievedAt,
+          })),
         };
       });
 
-      return {
-        statusCode: 200,
-        body: leaderboard,
-      };
+      return { statusCode: 200, body: leaderboard };
     } catch (error: unknown) {
-      if (error instanceof ApplicationError) {
-        throw error;
-      }
+      console.error('Leaderboard error:', error);
 
-      if (error instanceof Error) {
-        console.error(`Failed to get leaderboard: ${error.message}`);
-        throw new ApplicationError(
-          `Failed to get leaderboard: ${error.message}`,
-          500,
-        );
-      }
-
-      console.error(`Failed to get leaderboard: ${error}`);
       throw new ApplicationError(
-        'Failed to get leaderboard due to unexpected error',
-        500,
+        'Failed to fetch leaderboard',
+        error instanceof ApplicationError ? error.statusCode : 500,
       );
     }
   },

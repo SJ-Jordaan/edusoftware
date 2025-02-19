@@ -12,3 +12,4 @@ export * from './Auth';
 export * from './UserScore';
 export * from './UserProgress';
 export * from './Reporting';
+export * from './Leaderboard';
