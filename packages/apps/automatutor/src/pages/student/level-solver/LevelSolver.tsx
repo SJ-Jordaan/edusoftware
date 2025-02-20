@@ -12,7 +12,6 @@ const renderSpecificInterface = ({
   question,
   answer,
   handleAnswerChange,
-  isTouch,
 }: {
   question: PopulatedQuestion | undefined;
   answer: string;
@@ -41,13 +40,7 @@ const renderSpecificInterface = ({
       );
 
     case 'Construct Automaton':
-      return (
-        <GridAutomatonBuilder
-          key={question._id}
-          answer={answer}
-          isTouch={isTouch}
-        />
-      );
+      return <GridAutomatonBuilder key={question._id} answer={answer} />;
     default:
       return null;
   }
