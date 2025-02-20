@@ -11,7 +11,7 @@ export function AuthStack({ stack }: StackContext) {
   const auth = new Auth(stack, 'auth', {
     authenticator: {
       handler: 'packages/functions/src/auth/googleAuth.handler',
-      bind: [AutomaTutor, GOOGLE_CLIENT_ID],
+      bind: [AutomaTutor, GOOGLE_CLIENT_ID, api],
     },
   });
 

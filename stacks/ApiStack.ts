@@ -43,6 +43,8 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/progress/getLevelProgress/index.main',
       'GET /report/dashboard':
         'packages/functions/src/reports/dashboard/index.main',
+      'POST /badges/check': 'packages/functions/src/badges/check/index.main',
+      'GET /badges': 'packages/functions/src/badges/get/index.main',
     },
   });
 

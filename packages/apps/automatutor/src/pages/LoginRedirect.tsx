@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetUserInfoQuery } from '../slices/userApi.slice';
 import { PageLoader } from '../components/loaders/PageLoader';
 import { isPrivilegedUser } from '@edusoftware/core/src/organisations';
+import { useCheckBadges } from '../hooks/useCheckBadges';
 
 enum Progress {
   Started,
@@ -27,6 +28,7 @@ function LoginRedirect() {
     isLoading,
     isError,
   } = useGetUserInfoQuery(undefined, { skip: progress === Progress.Started });
+  const { checkForBadges } = useCheckBadges();
 
   useEffect(() => {
     if (existingToken && existingUser) {
@@ -50,6 +52,7 @@ function LoginRedirect() {
     if (session && !isLoading && !isError) {
       setProgress(Progress.Completed);
       setUser(session);
+      checkForBadges('loginCount', 1);
 
       if (isPrivilegedUser(session.roles)) {
         navigate('/admin', { replace: true });
