@@ -1,5 +1,3 @@
-import { DndProvider } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
 import { DraggableState } from './DraggableState';
 import { GridCell } from './GridCell';
 import { DraggableTransition } from './DraggableTransition';
@@ -11,11 +9,7 @@ import {
   toggleFinalState,
 } from '../grid-automaton-builder/gridAutomaton.slice';
 
-interface GridProps {
-  isTouch?: boolean;
-}
-
-const GridAutomaton = ({ isTouch = true }: GridProps) => {
+const GridAutomaton = () => {
   const dispatch = useAppDispatch();
   const pieces = useAppSelector((state) => state.gridAutomaton.pieces);
 
@@ -62,42 +56,21 @@ const GridAutomaton = ({ isTouch = true }: GridProps) => {
     }
   };
 
-  if (!isTouch) {
-    return (
-      <div className="relative">
-        <div className="grid grid-cols-[repeat(6,_3.5rem)] items-center justify-center">
-          {Array.from({ length: 36 }, (_, index) => (
-            <GridCell
-              key={`cell-${index}`}
-              x={index % 6}
-              y={Math.floor(index / 6)}
-              onDrop={handleDrop}
-            >
-              {renderCellContent(index % 6, Math.floor(index / 6))}
-            </GridCell>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <DndProvider backend={TouchBackend}>
-      <div className="relative">
-        <div className="grid grid-cols-[repeat(6,_3.5rem)] items-center justify-center">
-          {Array.from({ length: 36 }, (_, index) => (
-            <GridCell
-              key={`cell-${index}`}
-              x={index % 6}
-              y={Math.floor(index / 6)}
-              onDrop={handleDrop}
-            >
-              {renderCellContent(index % 6, Math.floor(index / 6))}
-            </GridCell>
-          ))}
-        </div>
+    <div className="relative">
+      <div className="grid grid-cols-[repeat(6,_3.5rem)] items-center justify-center">
+        {Array.from({ length: 36 }, (_, index) => (
+          <GridCell
+            key={`cell-${index}`}
+            x={index % 6}
+            y={Math.floor(index / 6)}
+            onDrop={handleDrop}
+          >
+            {renderCellContent(index % 6, Math.floor(index / 6))}
+          </GridCell>
+        ))}
       </div>
-    </DndProvider>
+    </div>
   );
 };
 

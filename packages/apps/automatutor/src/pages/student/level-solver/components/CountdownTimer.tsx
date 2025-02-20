@@ -1,60 +1,42 @@
-import { useState, useEffect, useRef } from 'react';
-import { TimerContainer } from './TimerContainer';
+import { useEffect, useState } from 'react';
+import { ClockIcon } from '@heroicons/react/24/outline';
 
 interface TimerProps {
-  totalCount?: number; // Total countdown time
-  initialCount?: number; // Initial countdown time left
-  onEnd?: () => void;
+  initialCount: number;
+  onEnd: () => void;
 }
 
-export const CountdownTimer = ({
-  initialCount = 60 * 10, // default 10 minutes
-  totalCount = 60 * 10, // default total time also 10 minutes
-  onEnd,
-}: TimerProps) => {
+export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialCount);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMounted = useRef(true);
 
   useEffect(() => {
-    const clear = () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
+    if (timeLeft <= 0) {
+      onEnd();
+      return;
+    }
 
-    intervalRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        const newTime = prevTime - 1;
-        if (newTime <= 0) {
-          clear();
-          if (onEnd) {
-            onEnd();
-          }
-          return 0;
-        }
-
-        return newTime;
-      });
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
-    return () => {
-      isMounted.current = false;
-      clear();
-    };
-  }, [totalCount, onEnd]);
+    return () => clearInterval(timer);
+  }, [timeLeft, onEnd]);
 
-  useEffect(() => {
-    if (isMounted.current) {
-      setTimeLeft(initialCount);
-    }
-  }, [initialCount, totalCount]);
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  const getTimerColor = () => {
+    if (timeLeft <= 30) return 'text-red-500';
+    if (timeLeft <= 60) return 'text-yellow-500';
+    return 'text-green-500';
+  };
 
   return (
-    <TimerContainer
-      minutes={Math.floor(timeLeft / 60)}
-      seconds={Math.floor(timeLeft % 60)}
-    />
+    <div className="flex items-center justify-center rounded-lg bg-gray-800 px-4 py-3 shadow-sm">
+      <ClockIcon className={`mr-2 h-5 w-5 ${getTimerColor()}`} />
+      <span className={`font-mono text-lg font-medium ${getTimerColor()}`}>
+        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+      </span>
+    </div>
   );
 };

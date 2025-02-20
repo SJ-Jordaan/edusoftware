@@ -82,7 +82,7 @@ export const Challenges = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="py-4">
       <ol className="relative border-s border-gray-200 dark:border-gray-700">
         {levels?.map((level) => (
           <TimeLineItem

@@ -8,6 +8,7 @@ import {
   LambdaResponse,
   LeaderboardResponse,
 } from '@edusoftware/core/types';
+import { PipelineStage } from 'mongoose';
 
 export const main = handler<LeaderboardResponse>(
   async (): Promise<LambdaResponse<LeaderboardResponse>> => {
@@ -15,7 +16,7 @@ export const main = handler<LeaderboardResponse>(
 
     try {
       // Ignore any levelId filtering here: we return all scores
-      const pipeline = [
+      const pipeline: PipelineStage[] = [
         {
           $lookup: {
             from: 'levels',
@@ -24,7 +25,7 @@ export const main = handler<LeaderboardResponse>(
             as: 'levelDetails',
           },
         },
-        { $unwind: '$levelDetails' },
+        { $unwind: { path: '$levelDetails' } },
         {
           $group: {
             _id: '$userId',
@@ -91,12 +92,20 @@ export const main = handler<LeaderboardResponse>(
             email: user?.email || null,
             picture: user?.picture || null,
           },
-          scores: score.scores.map((entry: any) => ({
-            levelId: entry.levelId.toString(),
-            levelName: entry.levelName,
-            score: entry.score,
-            achievedAt: entry.achievedAt,
-          })),
+          organizationId: user?.organizationId || 'Unknown Organization',
+          scores: score.scores.map(
+            (entry: {
+              levelId: string;
+              levelName: string;
+              score: number;
+              achievedAt: Date;
+            }) => ({
+              levelId: entry.levelId.toString(),
+              levelName: entry.levelName,
+              score: entry.score,
+              achievedAt: entry.achievedAt,
+            }),
+          ),
         };
       });
 

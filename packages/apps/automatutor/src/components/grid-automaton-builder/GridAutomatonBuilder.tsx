@@ -29,7 +29,7 @@ export const GridAutomatonBuilder = ({
 
   return (
     <div className="flex flex-col">
-      <GridAutomaton isTouch={!isEditable} />
+      <GridAutomaton />
 
       {isEditable && (
         <>

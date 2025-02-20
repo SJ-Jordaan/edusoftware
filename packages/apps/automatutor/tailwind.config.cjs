@@ -4,10 +4,16 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      padding: {
+        safe: 'env(safe-area-inset-bottom)',
+      },
       colors: {
         logo: {
           primary: '#F6AE84',
         },
+        gold: '#FFD700',
+        silver: '#C0C0C0',
+        bronze: '#CD7F32',
       },
       animation: {
         'slide-in': 'slide-in 0.75s ease-in-out forwards',

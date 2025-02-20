@@ -7,26 +7,108 @@ import { useFetchLeaderboardQuery } from '../../../slices/scoreApi.slice';
 import { useFetchLevelsQuery } from '../../../slices/levelApi.slice';
 import ErrorPage from '../../ErrorPage';
 import { LeaderboardLoader } from './components/LeaderboardLoader';
+import { LeaderboardEntry } from '@edusoftware/core/src/types';
+
+// Add this helper function at the top of the file, outside the component
+const getLevelScore = (entry: LeaderboardEntry, levelId: string) => {
+  const levelScore = entry.scores.find((score) => score.levelId === levelId);
+  return levelScore?.score ?? 0;
+};
+
+// Add these helper functions at the top of the file
+const getInitials = (name: string | undefined | null): string => {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+const stringToColor = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 70%, 40%)`;
+};
+
+const AvatarFallback = ({
+  name,
+  size = 'h-10 w-10',
+}: {
+  name: string | undefined | null;
+  size?: string;
+}) => {
+  const initials = getInitials(name);
+  const backgroundColor = stringToColor(name || '?');
+
+  return (
+    <div
+      className={`${size} flex items-center justify-center rounded-full text-sm font-medium text-white`}
+      style={{ backgroundColor }}
+    >
+      {initials}
+    </div>
+  );
+};
 
 export const LeaderBoard = () => {
   const [selectedLevelId, setSelectedLevelId] = useState('');
   const { data: leaderboard, error, isLoading } = useFetchLeaderboardQuery();
   const { data: levels } = useFetchLevelsQuery();
 
-  // Filter leaderboard data based on selected level
+  // Update the filtering logic to include level scores
   const filteredLeaderboard = useMemo(() => {
     if (!leaderboard) return [];
     if (!selectedLevelId) return leaderboard;
 
-    return leaderboard.filter((entry) =>
-      entry.scores.some((score) => score.levelId === selectedLevelId),
-    );
+    return leaderboard
+      .filter((entry) =>
+        entry.scores.some((score) => score.levelId === selectedLevelId),
+      )
+      .sort((a, b) => {
+        // Sort by level score first, then by total score
+        const aScore = getLevelScore(a, selectedLevelId);
+        const bScore = getLevelScore(b, selectedLevelId);
+        return bScore - aScore || b.totalScore - a.totalScore;
+      });
   }, [leaderboard, selectedLevelId]);
 
   if (isLoading) return <LeaderboardLoader />;
   if (error || !leaderboard) return <ErrorPage />;
 
   const [first, second, third, ...rest] = filteredLeaderboard;
+
+  const renderScores = (entry: LeaderboardEntry | undefined) => {
+    if (!entry) return null;
+
+    return (
+      <div className="space-y-1 text-center">
+        <p className="text-base font-bold text-orange-400 sm:text-2xl">
+          {selectedLevelId ? (
+            <>
+              <span>
+                {getLevelScore(entry, selectedLevelId).toLocaleString()}
+              </span>
+              <span className="ml-1 text-xs text-gray-400 sm:text-sm">pts</span>
+            </>
+          ) : (
+            <>
+              <span>{entry.totalScore.toLocaleString()}</span>
+            </>
+          )}
+        </p>
+        {selectedLevelId && (
+          <p className="text-xs text-gray-400 sm:text-sm">
+            Total: {entry.totalScore.toLocaleString()}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 px-4 py-8">
@@ -71,82 +153,86 @@ export const LeaderBoard = () => {
             {/* Top 3 Podium */}
             <div className="mb-12 flex *:flex *:flex-1 *:flex-col *:items-center *:justify-start *:text-center">
               {/* Second Place */}
-              <div className="relative h-48 space-y-2 self-end rounded-l-xl bg-gray-800 p-4 pt-8">
+              <div className="relative h-48 space-y-2 self-end rounded-l-xl bg-gray-800 p-2 pt-8 sm:p-4">
                 <div className="absolute -top-8 h-16 w-16">
                   <Second className="h-full w-full" />
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    <img
-                      src={
-                        second?.userDetails?.picture || '/default-avatar.png'
-                      }
-                      alt={second?.userDetails?.name}
-                      className="border-silver h-12 w-12 rounded-full border-2"
-                    />
-                    <p className="mt-2 line-clamp-1 font-medium text-white">
+                    {second?.userDetails?.picture ? (
+                      <img
+                        src={second.userDetails.picture}
+                        alt={second.userDetails.name}
+                        className="border-silver h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
+                      />
+                    ) : (
+                      <AvatarFallback name={second?.userDetails?.name} />
+                    )}
+                    <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
                       {second?.userDetails?.name ?? 'None'}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs text-gray-400 sm:text-sm">
                       {extractStudentNumber(second?.userDetails?.email) ??
                         'None'}
                     </p>
                   </div>
-                  <p className="mb-2 text-xl font-bold text-blue-400">
-                    {second?.totalScore?.toLocaleString() ?? 0}
-                  </p>
+                  <div className="mb-2 mt-auto">{renderScores(second)}</div>
                 </div>
               </div>
 
               {/* First Place */}
-              <div className="relative h-56 space-y-2 rounded-t-xl bg-gray-800 p-4 pt-6">
+              <div className="relative h-56 space-y-2 rounded-t-xl bg-gray-800 p-2 pt-6 sm:p-4">
                 <div className="absolute -top-8 h-16 w-16">
                   <First className="h-full w-full" />
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    <img
-                      src={first?.userDetails?.picture || '/default-avatar.png'}
-                      alt={first?.userDetails?.name}
-                      className="border-gold h-14 w-14 rounded-full border-2"
-                    />
-                    <p className="mt-2 line-clamp-1 font-medium text-white">
+                    {first?.userDetails?.picture ? (
+                      <img
+                        src={first.userDetails.picture}
+                        alt={first.userDetails.name}
+                        className="border-gold h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
+                      />
+                    ) : (
+                      <AvatarFallback name={first?.userDetails?.name} />
+                    )}
+                    <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
                       {first?.userDetails?.name ?? 'None'}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs text-gray-400 sm:text-sm">
                       {extractStudentNumber(first?.userDetails?.email) ??
                         'None'}
                     </p>
                   </div>
-                  <p className="mb-2 text-2xl font-bold text-orange-400">
-                    {first?.totalScore?.toLocaleString() ?? 0}
-                  </p>
+                  <div className="mb-2 mt-auto">{renderScores(first)}</div>
                 </div>
               </div>
 
               {/* Third Place */}
-              <div className="relative h-48 space-y-2 self-end rounded-r-xl bg-gray-800 p-4 pt-6">
+              <div className="relative h-48 space-y-2 self-end rounded-r-xl bg-gray-800 p-2 pt-6 sm:p-4">
                 <div className="absolute -top-8 h-16 w-16">
                   <Third className="h-full w-full" />
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    <img
-                      src={third?.userDetails?.picture || '/default-avatar.png'}
-                      alt={third?.userDetails?.name}
-                      className="border-bronze h-12 w-12 rounded-full border-2"
-                    />
-                    <p className="mt-2 line-clamp-1 font-medium text-white">
+                    {third?.userDetails?.picture ? (
+                      <img
+                        src={third.userDetails.picture}
+                        alt={third.userDetails.name}
+                        className="border-bronze h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
+                      />
+                    ) : (
+                      <AvatarFallback name={third?.userDetails?.name} />
+                    )}
+                    <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
                       {third?.userDetails?.name ?? 'None'}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs text-gray-400 sm:text-sm">
                       {extractStudentNumber(third?.userDetails?.email) ??
                         'None'}
                     </p>
                   </div>
-                  <p className="mb-2 text-xl font-bold text-green-400">
-                    {third?.totalScore ?? 0}
-                  </p>
+                  <div className="mb-2 mt-auto">{renderScores(third)}</div>
                 </div>
               </div>
             </div>
@@ -161,11 +247,15 @@ export const LeaderBoard = () => {
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-700 text-sm font-medium text-white">
                     {index + 4}
                   </span>
-                  <img
-                    src={position.userDetails?.picture || '/default-avatar.png'}
-                    alt={position.userDetails?.name}
-                    className="h-10 w-10 rounded-full"
-                  />
+                  {position.userDetails?.picture ? (
+                    <img
+                      src={position.userDetails.picture}
+                      alt={position.userDetails.name}
+                      className="h-10 w-10 rounded-full"
+                    />
+                  ) : (
+                    <AvatarFallback name={position.userDetails?.name} />
+                  )}
                   <div className="flex-1">
                     <p className="font-medium text-white">
                       {position.userDetails?.name}
@@ -175,12 +265,22 @@ export const LeaderBoard = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-semibold text-white">
-                      {position.totalScore}
-                    </p>
-                    {position.scores?.[0] && (
-                      <p className="text-sm text-gray-400">
-                        Latest: {position.scores[0].score} pts
+                    {selectedLevelId ? (
+                      <>
+                        <p className="text-lg font-semibold text-white">
+                          {getLevelScore(
+                            position,
+                            selectedLevelId,
+                          ).toLocaleString()}{' '}
+                          pts
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          Total: {position.totalScore.toLocaleString()}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-lg font-semibold text-white">
+                        {position.totalScore.toLocaleString()} total
                       </p>
                     )}
                   </div>

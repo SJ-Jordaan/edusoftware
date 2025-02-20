@@ -46,10 +46,6 @@ const Dashboard = () => {
       align: 'center',
       style: { color: '#64748b' },
     },
-    theme: {
-      mode: 'light',
-      palette: 'palette1',
-    },
   };
 
   const completionRateOptions: ApexOptions = {
