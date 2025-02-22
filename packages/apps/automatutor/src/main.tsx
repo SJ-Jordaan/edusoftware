@@ -27,6 +27,7 @@ import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import QuestionEditor from './pages/admin/question-editor/QuestionEditor.tsx';
 import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
+import { PracticeLevels } from './pages/student/practice/Practice.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
           <Route path="/" element={<Home />} />
+          <Route path="/practice" element={<PracticeLevels />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>
 

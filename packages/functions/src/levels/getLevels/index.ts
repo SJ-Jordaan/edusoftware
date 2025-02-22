@@ -2,6 +2,7 @@ import { Level, connectToDatabase } from '@edusoftware/core/databases';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   ApplicationError,
+  GetLevelsQueryParams,
   LambdaResponse,
   PopulatedLevel,
 } from '@edusoftware/core/types';
@@ -20,14 +21,29 @@ import {
  * the error to be handled by the base error handling mechanism.
  */
 export const main = handler<PopulatedLevel[]>(
-  async (): Promise<LambdaResponse<PopulatedLevel[]>> => {
+  async (event): Promise<LambdaResponse<PopulatedLevel[]>> => {
     await connectToDatabase();
     const user = await useSessionWithRoles();
 
+    const { isPractice, track } = (event.queryStringParameters ||
+      {}) as GetLevelsQueryParams;
+
     try {
-      const levels: PopulatedLevel[] = await Level.find({
+      const query: Record<string, unknown> = {
         organisation: { $in: user.organisations },
-      }).populate('questionIds');
+      };
+
+      // Add filters if provided
+      if (isPractice !== undefined) {
+        query.isPractice = isPractice;
+      }
+
+      if (track) {
+        query.track = track.toUpperCase();
+      }
+
+      const levels: PopulatedLevel[] =
+        await Level.find(query).populate('questionIds');
 
       return {
         statusCode: 200,

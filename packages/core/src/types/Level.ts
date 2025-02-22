@@ -9,6 +9,9 @@ export const LevelSchema = z.object({
   endDate: z.string(),
   organisation: z.string(),
   updatedAt: z.string().optional(),
+  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
+  track: z.enum(['AUTOMATA', 'REGEX']),
+  isPractice: z.boolean(),
 });
 
 export const PopulatedLevelSchema = z.object({
@@ -19,6 +22,9 @@ export const PopulatedLevelSchema = z.object({
   endDate: z.string(),
   organisation: z.string(),
   updatedAt: z.string().optional(),
+  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
+  track: z.enum(['AUTOMATA', 'REGEX']),
+  isPractice: z.boolean(),
 });
 
 export const UpdateLevelSchema = LevelSchema.partial();
@@ -29,3 +35,8 @@ export type PopulatedLevel = z.infer<typeof PopulatedLevelSchema>;
 export type IUpdateLevel = z.infer<typeof UpdateLevelSchema>;
 export type PopulatedLevelObject = PopulatedLevel & { _id: string };
 export type LevelObject = Level & { _id: string };
+
+export interface GetLevelsQueryParams {
+  isPractice?: boolean;
+  track?: string;
+}

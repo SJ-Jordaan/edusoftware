@@ -10,7 +10,8 @@
     "remove": "sst remove",
     "console": "sst console",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "sst:secrets": "sst secrets"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

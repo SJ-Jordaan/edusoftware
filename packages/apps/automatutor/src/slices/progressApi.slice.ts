@@ -2,7 +2,6 @@ import { IProgressDocumentPopulated } from '@edusoftware/core/src/databases';
 import {
   AnswerEvaluation,
   GetLevelProgressResponse,
-  PopulatedQuestion,
 } from '@edusoftware/core/src/types';
 import { apiSlice } from './api.slice';
 import { handleRandomiseCoordinates } from '../pages/student/level-solver/common/algorithms';
@@ -35,23 +34,19 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
       query: (levelId) => `${PROGRESS_URL}${levelId ? `/${levelId}` : ''}`,
       providesTags: ['Progress'],
     }),
-    getLevelProgress: builder.query<
-      {
-        question?: PopulatedQuestion;
-        isCompleted: boolean;
-        memo?: string;
-        timeRemaining?: number;
-      },
-      string
-    >({
+    getLevelProgress: builder.query<GetLevelProgressResponse, string>({
       query: (levelId) => `${PROGRESS_URL}/level/${levelId}`,
       providesTags: ['LevelProgress'],
       transformResponse: (response: GetLevelProgressResponse) => {
-        const { isCompleted, question, timeRemaining } = response;
+        const { isCompleted, question, timeRemaining, isPractice } = response;
 
         if (!question) {
           return {
             isCompleted,
+            timeRemaining: undefined,
+            memo: '',
+            isPractice: false,
+            question: undefined,
           };
         }
 
@@ -66,6 +61,7 @@ export const userProgressApiSlice = apiSlice.injectEndpoints({
           isCompleted,
           timeRemaining,
           memo: question.answer,
+          isPractice,
           question: {
             ...question,
             answer,

@@ -58,7 +58,9 @@ const AvatarFallback = ({
 export const LeaderBoard = () => {
   const [selectedLevelId, setSelectedLevelId] = useState('');
   const { data: leaderboard, error, isLoading } = useFetchLeaderboardQuery();
-  const { data: levels } = useFetchLevelsQuery();
+  const { data: levels } = useFetchLevelsQuery({
+    isPractice: false,
+  });
 
   // Update the filtering logic to include level scores
   const filteredLeaderboard = useMemo(() => {

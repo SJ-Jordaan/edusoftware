@@ -7,6 +7,9 @@ interface ILevelDoc extends mongoose.Document {
   questionIds: mongoose.Types.ObjectId[];
   startDate: Date;
   endDate: Date;
+  isPractice: boolean;
+  track?: 'AUTOMATA' | 'REGEX';
+  difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 }
 
 const levelSchema = new mongoose.Schema(
@@ -31,10 +34,25 @@ const levelSchema = new mongoose.Schema(
     ],
     startDate: {
       type: Date,
-      required: true,
+      required: false,
     },
     endDate: {
       type: Date,
+      required: false,
+    },
+    isPractice: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    track: {
+      type: String,
+      enum: ['AUTOMATA', 'REGEX'],
+      required: true,
+    },
+    difficulty: {
+      type: String,
+      enum: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'],
       required: true,
     },
   },

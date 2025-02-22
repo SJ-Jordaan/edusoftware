@@ -41,6 +41,11 @@ export const useLevelSolver = () => {
     }
 
     if (level.isCompleted) {
+      if (level.isPractice) {
+        navigate('/practice');
+        return;
+      }
+
       navigate('/');
       return;
     }
@@ -92,6 +97,11 @@ export const useLevelSolver = () => {
     toast('Correct answer!');
 
     if (response.isCompleted) {
+      if (level.isPractice) {
+        navigate('/practice');
+        return;
+      }
+
       navigate('/');
     }
   };

@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import { useFetchLevelsQuery } from '../../../../slices/levelApi.slice';
+import { useFetchLevelsQuery } from '../../../slices/levelApi.slice';
+import { TimelineLoader } from '../home/components/TimelineLoader';
+import { PageLoader } from '../../../components/loaders/PageLoader';
 import {
   useGetProgressQuery,
   useStartLevelMutation,
-} from '../../../../slices/progressApi.slice';
-import { TimeLineItem } from './TimelineItem';
+} from '../../../slices/progressApi.slice';
 import { UserProgress } from '@edusoftware/core/src/types';
-import { TimelineLoader } from './TimelineLoader';
-import { PageLoader } from '../../../../components/loaders/PageLoader';
+import { PracticeCard } from './components/PracticeCard';
 
-export const Challenges = () => {
+export const PracticeLevels = () => {
   const navigate = useNavigate();
   const {
     data: levels,
@@ -17,7 +17,7 @@ export const Challenges = () => {
     isLoading: levelsLoading,
     isFetching: levelsFetching,
   } = useFetchLevelsQuery({
-    isPractice: false,
+    isPractice: true,
   });
   const [startLevel, { isLoading: startLevelLoading, error: startLevelError }] =
     useStartLevelMutation();
@@ -30,7 +30,7 @@ export const Challenges = () => {
 
   const progress = userProgress as UserProgress[] | undefined;
 
-  const handleStartChallenge = async (levelId: string): Promise<void> => {
+  const handleStartPractice = async (levelId: string): Promise<void> => {
     try {
       if (startLevelLoading) return;
 
@@ -46,7 +46,7 @@ export const Challenges = () => {
     }
   };
 
-  const resetChallenge = async (levelId: string) => {
+  const handleResetPractice = async (levelId: string) => {
     try {
       if (startLevelLoading) return;
 
@@ -84,18 +84,23 @@ export const Challenges = () => {
   }
 
   return (
-    <div className="py-4">
-      <ol className="relative border-s border-gray-200 dark:border-gray-700">
+    <div className="container mx-auto p-6">
+      <h1 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
+        Practice Exercises
+      </h1>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {levels?.map((level) => (
-          <TimeLineItem
-            key={`level-${level._id}`}
-            onClick={() => handleStartChallenge(level._id)}
-            onReset={() => resetChallenge(level._id)}
+          <PracticeCard
+            key={level._id}
+            levelName={level.levelName}
+            description={level.description}
+            difficulty={level.difficulty}
             progress={progress?.find((p) => p.levelId === level._id)}
-            {...level}
+            onClick={() => handleStartPractice(level._id)}
+            onReset={() => handleResetPractice(level._id)}
           />
         ))}
-      </ol>
+      </div>
     </div>
   );
 };

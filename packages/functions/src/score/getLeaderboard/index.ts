@@ -26,6 +26,12 @@ export const main = handler<LeaderboardResponse>(
           },
         },
         { $unwind: { path: '$levelDetails' } },
+        // Add filter for non-practice levels
+        {
+          $match: {
+            'levelDetails.isPractice': { $ne: true },
+          },
+        },
         {
           $group: {
             _id: '$userId',
