@@ -15,8 +15,8 @@ export const main = handler<LeaderboardResponse>(
     await connectToDatabase();
 
     try {
-      // Ignore any levelId filtering here: we return all scores
-      const pipeline: PipelineStage[] = [
+      // First pipeline: Get overall top 10
+      const overallPipeline: PipelineStage[] = [
         {
           $lookup: {
             from: 'levels',
@@ -26,7 +26,6 @@ export const main = handler<LeaderboardResponse>(
           },
         },
         { $unwind: { path: '$levelDetails' } },
-        // Add filter for non-practice levels
         {
           $match: {
             'levelDetails.isPractice': { $ne: true },
@@ -58,16 +57,64 @@ export const main = handler<LeaderboardResponse>(
         },
       ];
 
-      const leaderboardScores = await Score.aggregate(pipeline);
+      // Second pipeline: Get top 10 per level
+      const perLevelPipeline: PipelineStage[] = [
+        {
+          $lookup: {
+            from: 'levels',
+            localField: 'levelId',
+            foreignField: '_id',
+            as: 'levelDetails',
+          },
+        },
+        { $unwind: { path: '$levelDetails' } },
+        {
+          $match: {
+            'levelDetails.isPractice': { $ne: true },
+          },
+        },
+        {
+          $sort: { score: -1 },
+        },
+        {
+          $group: {
+            _id: '$levelId',
+            topScores: {
+              $push: {
+                userId: '$userId',
+                score: '$score',
+                levelName: '$levelDetails.levelName',
+                organisation: '$levelDetails.organisation',
+                achievedAt: '$createdAt',
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            levelId: '$_id',
+            topScores: { $slice: ['$topScores', 10] },
+          },
+        },
+      ];
 
-      if (leaderboardScores.length === 0) {
-        return { statusCode: 200, body: [] };
-      }
+      const [overallLeaderboard, perLevelLeaderboard] = await Promise.all([
+        Score.aggregate(overallPipeline),
+        Score.aggregate(perLevelPipeline),
+      ]);
+
+      // Combine unique userIds from both leaderboards
+      const userIds = new Set([
+        ...overallLeaderboard.map((score) => score.userId),
+        ...perLevelLeaderboard.flatMap((level) =>
+          level.topScores.map((score) => score.userId),
+        ),
+      ]);
 
       // Fetch user details from DynamoDB
       const ddb = new DynamoDBClient({});
-      const userKeys = leaderboardScores.map((score) =>
-        marshall({ userId: score.userId }),
+      const userKeys = Array.from(userIds).map((userId) =>
+        marshall({ userId }),
       );
 
       const userDetails = await ddb.send(
@@ -86,39 +133,19 @@ export const main = handler<LeaderboardResponse>(
         }) || [],
       );
 
-      // Format the final response as expected by the UI
-      const leaderboard = leaderboardScores.map((score, index) => {
-        const user = usersMap.get(score.userId);
-        return {
-          userId: score.userId,
-          rank: index + 1,
-          totalScore: score.totalScore,
-          userDetails: {
-            name: user?.name || 'Unknown User',
-            email: user?.email || null,
-            picture: user?.picture || null,
-          },
-          organizationId: user?.organizationId || 'Unknown Organization',
-          scores: score.scores.map(
-            (entry: {
-              levelId: string;
-              levelName: string;
-              score: number;
-              achievedAt: Date;
-            }) => ({
-              levelId: entry.levelId.toString(),
-              levelName: entry.levelName,
-              score: entry.score,
-              achievedAt: entry.achievedAt,
-            }),
-          ),
-        };
-      });
-
-      return { statusCode: 200, body: leaderboard };
+      // Format the response
+      return {
+        statusCode: 200,
+        body: {
+          overall: formatLeaderboardEntries(overallLeaderboard, usersMap),
+          perLevel: perLevelLeaderboard.map((level) => ({
+            levelId: level._id.toString(),
+            scores: formatLeaderboardEntries(level.topScores, usersMap),
+          })),
+        },
+      };
     } catch (error: unknown) {
       console.error('Leaderboard error:', error);
-
       throw new ApplicationError(
         'Failed to fetch leaderboard',
         error instanceof ApplicationError ? error.statusCode : 500,
@@ -126,3 +153,25 @@ export const main = handler<LeaderboardResponse>(
     }
   },
 );
+
+// Helper function to format leaderboard entries
+const formatLeaderboardEntries = (
+  scores: any[],
+  usersMap: Map<string, any>,
+) => {
+  return scores.map((score, index) => {
+    const user = usersMap.get(score.userId);
+    return {
+      userId: score.userId,
+      rank: index + 1,
+      totalScore: score.totalScore || score.score,
+      userDetails: {
+        name: user?.name || 'Unknown User',
+        email: user?.email || null,
+        picture: user?.picture || null,
+      },
+      organizationId: user?.organizationId || 'Unknown Organization',
+      scores: score.scores || [],
+    };
+  });
+};

@@ -20,4 +20,11 @@ export interface LeaderboardEntry {
     achievedAt: string;
   }[];
 }
-export type LeaderboardResponse = LeaderboardEntry[];
+
+export interface LeaderboardResponse {
+  overall: LeaderboardEntry[];
+  perLevel: {
+    levelId: string;
+    scores: LeaderboardEntry[];
+  }[];
+}

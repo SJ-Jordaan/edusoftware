@@ -8,9 +8,13 @@ import { TimeLineItem } from './TimelineItem';
 import { UserProgress } from '@edusoftware/core/src/types';
 import { TimelineLoader } from './TimelineLoader';
 import { PageLoader } from '../../../../components/loaders/PageLoader';
+import { useState, useMemo } from 'react';
+import { FilterPill } from '../../../../components';
 
 export const Challenges = () => {
   const navigate = useNavigate();
+  const [showEnded, setShowEnded] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
   const {
     data: levels,
     error: levelsError,
@@ -57,6 +61,26 @@ export const Challenges = () => {
     }
   };
 
+  // Get unique organizations from levels
+  const organizations = useMemo(() => {
+    if (!levels) return [];
+    return Array.from(
+      new Set(levels.map((level) => level.organisation)),
+    ).sort();
+  }, [levels]);
+
+  // Filter levels based on selected filters
+  const filteredLevels = useMemo(() => {
+    if (!levels) return [];
+
+    return levels.filter((level) => {
+      const hasEndedFilter = showEnded || new Date(level.endDate) > new Date();
+      const hasOrgFilter = !selectedOrg || level.organisation === selectedOrg;
+
+      return hasEndedFilter && hasOrgFilter;
+    });
+  }, [levels, showEnded, selectedOrg]);
+
   const isLoading =
     levelsLoading ||
     userProgressLoading ||
@@ -84,9 +108,27 @@ export const Challenges = () => {
   }
 
   return (
-    <div className="py-4">
+    <div className="space-y-4 py-4">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        <FilterPill
+          label="Show Ended Challenges"
+          isActive={showEnded}
+          onClick={() => setShowEnded(!showEnded)}
+        />
+        {organizations.map((org) => (
+          <FilterPill
+            key={org}
+            label={org}
+            isActive={selectedOrg === org}
+            onClick={() => setSelectedOrg(selectedOrg === org ? null : org)}
+          />
+        ))}
+      </div>
+
+      {/* Timeline */}
       <ol className="relative border-s border-gray-200 dark:border-gray-700">
-        {levels?.map((level) => (
+        {filteredLevels.map((level) => (
           <TimeLineItem
             key={`level-${level._id}`}
             onClick={() => handleStartChallenge(level._id)}

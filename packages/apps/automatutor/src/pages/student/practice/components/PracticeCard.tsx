@@ -39,7 +39,7 @@ export const PracticeCard = ({
   difficulty,
 }: PracticeCardProps) => {
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl dark:bg-gray-800">
       {/* Difficulty indicator stripe */}
       <div
         className={`absolute left-0 top-0 h-full w-2 ${difficultyConfig[difficulty].background}`}

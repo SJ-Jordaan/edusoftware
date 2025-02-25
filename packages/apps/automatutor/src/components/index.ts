@@ -4,3 +4,4 @@ export * from './Tabs';
 export * from './Modal';
 export * from './buttons';
 export * from './toasts';
+export * from './FilterPill';

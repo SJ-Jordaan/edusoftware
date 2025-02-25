@@ -50,6 +50,9 @@ export const main = handler<ILevel>(
         startDate,
         endDate,
         organisation,
+        difficulty,
+        track,
+        isPractice,
       } = parsedData;
       const levelDoc = await Level.create({
         levelName,
@@ -58,6 +61,9 @@ export const main = handler<ILevel>(
         startDate,
         endDate,
         organisation,
+        difficulty,
+        track,
+        isPractice,
       });
 
       if (!levelDoc) {

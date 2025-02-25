@@ -2,6 +2,10 @@ import { useState } from 'react';
 import Modal from '../../../../components/Modal';
 import { Level, OrganisationName } from '@edusoftware/core/src/types';
 
+// Add these types if not already defined elsewhere
+type Difficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+type Track = 'AUTOMATA' | 'REGEX';
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,6 +18,9 @@ export const CreateLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [organisation, setOrganisation] = useState(OrganisationName.PUBLIC);
+  const [difficulty, setDifficulty] = useState<Difficulty>('BEGINNER');
+  const [track, setTrack] = useState<Track>('AUTOMATA');
+  const [isPractice, setIsPractice] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +30,9 @@ export const CreateLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
       startDate,
       endDate,
       organisation,
+      difficulty,
+      track,
+      isPractice,
     });
   };
 
@@ -73,6 +83,58 @@ export const CreateLevelModal = ({ isOpen, onClose, onClick }: ModalProps) => {
           </div>
         </div>
 
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <label
+              htmlFor="difficulty"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Difficulty
+            </label>
+            <select
+              id="difficulty"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            >
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="ADVANCED">Advanced</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="track"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Track
+            </label>
+            <select
+              id="track"
+              value={track}
+              onChange={(e) => setTrack(e.target.value as Track)}
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            >
+              <option value="AUTOMATA">Automata</option>
+              <option value="REGEX">Regular Expressions</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex items-end">
+          <label className="relative inline-flex cursor-pointer items-center">
+            <input
+              type="checkbox"
+              checked={isPractice}
+              onChange={(e) => setIsPractice(e.target.checked)}
+              className="peer sr-only"
+            />
+            <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              Practice Mode
+            </span>
+          </label>
+        </div>
         <div>
           <label
             htmlFor="description"

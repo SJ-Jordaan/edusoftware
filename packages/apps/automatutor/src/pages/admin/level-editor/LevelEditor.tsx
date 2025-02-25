@@ -64,6 +64,9 @@ const LevelEditor = () => {
             startDate={formatDateForInput(level.startDate)}
             endDate={formatDateForInput(level.endDate)}
             organisation={level.organisation}
+            difficulty={level.difficulty}
+            track={level.track}
+            isPractice={level.isPractice}
           />
 
           {/* Questions Section with enhanced styling */}

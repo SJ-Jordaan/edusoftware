@@ -6,5 +6,9 @@
   "hosted-zone:account=471112981741:domainName=tutor.edusoftware.net:region=us-east-1": {
     "Id": "/hostedzone/Z022146737AASN25CAVEL",
     "Name": "tutor.edusoftware.net."
+  },
+  "hosted-zone:account=471112981741:domainName=api.edusoftware.net:region=us-east-1": {
+    "Id": "/hostedzone/Z0882384M6LVEK7CGJU9",
+    "Name": "api.edusoftware.net."
   }
 }

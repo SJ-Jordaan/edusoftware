@@ -1,13 +1,18 @@
-import { Badge, UserBadge } from '@edusoftware/core/types';
+import { Badge } from '@edusoftware/core/types';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { ApplicationError, LambdaResponse } from '@edusoftware/core/types';
 import { BadgeModel, UserBadgeModel } from '@edusoftware/core/databases';
+import { StrategyFactory } from '@edusoftware/core/badges';
 
 interface BadgeCheckRequest {
   userId: string;
   metric: string;
   value: number;
+}
+
+interface BadgeCheckRequest {
+  metric: string;
 }
 
 interface BadgeCheckResponse {
@@ -21,26 +26,32 @@ export const main = handler<BadgeCheckResponse>(
     }
 
     const { userId } = await useSessionWithRoles();
+    const { metric } = JSON.parse(event.body) as BadgeCheckRequest;
 
-    const { metric, value } = JSON.parse(event.body) as BadgeCheckRequest;
-
-    if (!metric || value === undefined) {
-      throw new ApplicationError('Missing required parameters', 400);
+    if (!metric) {
+      throw new ApplicationError('Missing metric parameter', 400);
     }
 
     await connectToDatabase();
 
     try {
-      // Find badges that match the metric and value requirement
+      // Get the appropriate strategy
+      const strategy = StrategyFactory.getStrategy(metric);
+      if (!strategy) {
+        throw new ApplicationError('Invalid metric', 400);
+      }
+
+      // Verify the achievement
+      const actualValue = await strategy.verify(userId);
+
+      // Find eligible badges
       const eligibleBadges = await BadgeModel.find({
         'criteria.requirement.metric': metric,
-        'criteria.requirement.value': { $lte: value },
+        'criteria.requirement.value': { $lte: actualValue },
       }).lean();
 
       // Check which badges haven't been earned yet
-      const userBadges = (await UserBadgeModel.find({
-        userId,
-      }).lean()) as UserBadge[];
+      const userBadges = await UserBadgeModel.find({ userId }).lean();
       const earnedBadgeIds = userBadges.map((ub) => ub.badgeId.toString());
 
       const newBadges = eligibleBadges.filter(
@@ -49,13 +60,11 @@ export const main = handler<BadgeCheckResponse>(
 
       // Award new badges
       if (newBadges.length > 0) {
-        const badgesToAward: Omit<UserBadge, '_id'>[] = newBadges.map(
-          (badge) => ({
-            userId,
-            badgeId: badge._id,
-            earnedAt: new Date(),
-          }),
-        );
+        const badgesToAward = newBadges.map((badge) => ({
+          userId,
+          badgeId: badge._id,
+          earnedAt: new Date(),
+        }));
 
         await UserBadgeModel.insertMany(badgesToAward);
       }
