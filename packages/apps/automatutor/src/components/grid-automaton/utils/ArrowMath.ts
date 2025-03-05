@@ -242,7 +242,7 @@ export function calculateStraightArrow(
     // Vertical arrow
     labelX = CELL_CENTER + LABEL_OFFSET;
     labelY = CELL_SIZE / 2;
-    labelRotate = 90;
+    labelRotate = 0;
   }
 
   // Generate path connecting start and end points
