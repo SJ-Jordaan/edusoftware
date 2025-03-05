@@ -17,7 +17,6 @@ import Login from './pages/Login.tsx';
 import LoginRedirect from './pages/LoginRedirect.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx';
 import StudentTemplate from './pages/student/StudentTemplate.tsx';
-import Home from './pages/student/home/Home.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
