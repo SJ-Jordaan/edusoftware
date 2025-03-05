@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../../slices/auth.slice';
+import { useAuth } from '../../../slices/auth.slice';
 import {
   ArrowRightEndOnRectangleIcon,
   Cog8ToothIcon,

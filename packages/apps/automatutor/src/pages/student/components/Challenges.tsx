@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import { useFetchLevelsQuery } from '../../../../slices/levelApi.slice';
+import { useFetchLevelsQuery } from '../../../slices/levelApi.slice';
 import {
   useGetProgressQuery,
   useStartLevelMutation,
-} from '../../../../slices/progressApi.slice';
+} from '../../../slices/progressApi.slice';
 import { TimeLineItem } from './TimelineItem';
 import { UserProgress } from '@edusoftware/core/src/types';
 import { TimelineLoader } from './TimelineLoader';
-import { PageLoader } from '../../../../components/loaders/PageLoader';
+import { PageLoader } from '../../../components/loaders/PageLoader';
 import { useState, useMemo } from 'react';
-import { FilterPill } from '../../../../components';
+import { FilterPill } from '../../../components';
 
 export const Challenges = () => {
   const navigate = useNavigate();

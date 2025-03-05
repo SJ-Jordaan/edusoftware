@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ObjectIdSchema, PopulatedQuestionSchema } from './Question';
+import { OrganisationName } from './Auth';
 
 export const LevelSchema = z.object({
   levelName: z.string(),
@@ -7,7 +8,7 @@ export const LevelSchema = z.object({
   questionIds: z.array(ObjectIdSchema).optional(),
   startDate: z.string(),
   endDate: z.string(),
-  organisation: z.string(),
+  organisation: z.nativeEnum(OrganisationName),
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   track: z.enum(['AUTOMATA', 'REGEX']),
@@ -20,7 +21,7 @@ export const PopulatedLevelSchema = z.object({
   questionIds: z.array(PopulatedQuestionSchema).optional(),
   startDate: z.string(),
   endDate: z.string(),
-  organisation: z.string(),
+  organisation: z.nativeEnum(OrganisationName),
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   track: z.enum(['AUTOMATA', 'REGEX']),

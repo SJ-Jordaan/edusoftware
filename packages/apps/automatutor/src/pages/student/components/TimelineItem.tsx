@@ -1,5 +1,5 @@
 import { UserProgress } from '@edusoftware/core/src/types';
-import { useAuth } from '../../../../slices/auth.slice';
+import { useAuth } from '../../../slices/auth.slice';
 
 interface TimelineItemProps {
   levelName: string;

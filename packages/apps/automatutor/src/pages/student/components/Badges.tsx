@@ -1,6 +1,6 @@
 import { Badge } from '@edusoftware/core/src/types';
-import { useFetchBadgesQuery } from '../../../../slices/badgeApi.slice';
-import Mailbox from '../../../../assets/mailbox.svg?react';
+import { useFetchBadgesQuery } from '../../../slices/badgeApi.slice';
+import Mailbox from '../../../assets/mailbox.svg?react';
 
 export const Badges = () => {
   const { data: badges, isLoading } = useFetchBadgesQuery();
@@ -34,7 +34,7 @@ export const Badges = () => {
   }
 
   return (
-    <div className="mx-4 my-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+    <div className="my-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {badges.map((badge: Badge) => (
         <div
           key={badge._id}

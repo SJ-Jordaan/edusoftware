@@ -28,6 +28,8 @@ import QuestionEditor from './pages/admin/question-editor/QuestionEditor.tsx';
 import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 import { PracticeLevels } from './pages/student/practice/Practice.tsx';
+import ChallengePage from './pages/student/challenges/Challenges.tsx';
+import BadgePage from './pages/student/badges/Badges.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,7 +49,8 @@ const router = createBrowserRouter(
       <Route path="/" element={<PrivateRoute />}>
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<ChallengePage />} />
+          <Route path="/badges" element={<BadgePage />} />
           <Route path="/practice" element={<PracticeLevels />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>

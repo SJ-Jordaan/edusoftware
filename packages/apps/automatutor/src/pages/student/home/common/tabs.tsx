@@ -1,6 +1,6 @@
-import { Badges } from '../components/Badges';
-import { Challenges } from '../components/Challenges';
-import { Options } from '../components/Options';
+import { Badges } from '../../components/Badges';
+import { Challenges } from '../../components/Challenges';
+import { Options } from '../../components/Options';
 
 export const TABS = [
   {
