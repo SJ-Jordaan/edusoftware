@@ -27,16 +27,23 @@ export const DraggableState = ({
     <div
       ref={drag}
       onClick={(e) => onClick?.(e)}
-      className={`flex h-full w-full items-center justify-center rounded-full border p-1 text-white opacity-${
-        isDragging ? '50' : '100'
+      className={`flex h-full w-full cursor-pointer items-center justify-center transition-all duration-200 ${
+        isDragging ? 'scale-110 opacity-70' : 'hover:scale-110'
       }`}
     >
+      {/* Outer circle - all states */}
       <div
-        className={`flex h-full w-full items-center justify-center rounded-full ${
-          isFinal ? 'border' : 'border-none'
-        }`}
+        className={
+          'flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400 bg-slate-800'
+        }
       >
-        {isStart && 'start'}
+        {/* Inner circle - final states have double circle */}
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-full border-emerald-400 bg-slate-800 text-sm font-medium text-white
+          ${isFinal ? 'border' : ''}`}
+        >
+          {isStart && 'q₀'}
+        </div>
       </div>
     </div>
   );

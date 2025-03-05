@@ -26,8 +26,10 @@ export const GridCell = ({ x, y, onDrop, children }: GridCellProps) => {
   return (
     <div
       ref={drop}
-      className={`box-border flex h-14 w-14 flex-col items-center justify-center justify-self-center border border-gray-700 ${
-        isOver && canDrop ? 'bg-green-100' : ''
+      className={`box-border flex h-14 w-14 flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
+        isOver && canDrop
+          ? 'border-emerald-400 bg-emerald-900/20'
+          : 'border-slate-700 hover:border-slate-500'
       }`}
     >
       {children}

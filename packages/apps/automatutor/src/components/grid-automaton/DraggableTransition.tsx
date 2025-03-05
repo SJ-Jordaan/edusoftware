@@ -27,7 +27,7 @@ export const DraggableTransition = ({
     <div
       ref={drag}
       onClick={(e) => onClick?.(e)}
-      className={`flex h-full w-full items-center justify-center transition-opacity duration-200 ${
+      className={`flex h-full w-full items-center justify-center transition-all duration-200 hover:scale-110 ${
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
       style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
@@ -59,14 +59,14 @@ export const DraggableTransition = ({
                 stroke="white"
                 strokeWidth="2"
                 fill="none"
-                className="transition-all duration-300"
+                className="stroke-emerald-400"
               />
 
               {/* Arrow head */}
               <polygon
                 points={arrowHead}
                 fill="white"
-                className="transition-all duration-300"
+                className="fill-emerald-400 stroke-emerald-400"
               />
 
               {/* Label */}
@@ -78,7 +78,7 @@ export const DraggableTransition = ({
                 fontSize="12"
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="select-none font-semibold transition-all duration-300"
+                className="select-none font-semibold"
               >
                 {label}
               </text>
