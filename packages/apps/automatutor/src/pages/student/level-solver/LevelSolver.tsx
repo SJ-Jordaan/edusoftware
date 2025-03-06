@@ -164,8 +164,8 @@ const LevelSolver = () => {
                   </div>
                 </div>
 
-                <div className="px-5 py-4">
-                  <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-300">
+                <div className="px-5 py-2">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-300">
                     {question?.questionContent}
                   </p>
                 </div>
