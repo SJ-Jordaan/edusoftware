@@ -17,4 +17,6 @@ export interface GetLevelProgressResponse {
   question?: PopulatedQuestion;
   timeRemaining?: number;
   isCompleted: boolean;
+  isPractice: boolean;
+  memo?: string;
 }

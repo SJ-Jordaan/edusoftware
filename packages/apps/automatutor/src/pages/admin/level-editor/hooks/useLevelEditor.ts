@@ -10,7 +10,7 @@ import {
   useUpdateLevelMutation,
   useUpdateQuestionMutation,
 } from '../../../../slices/levelApi.slice';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatDateForInput } from '../../common/time';
 import { useNavigate } from 'react-router-dom';
 
@@ -136,9 +136,13 @@ export const useLevelEditor = (id: string) => {
   };
 
   const updateEditableAttributes = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const newValue =
+      type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
 
     setEditableLevel((prevLevel) => {
       if (!prevLevel) {
@@ -147,7 +151,7 @@ export const useLevelEditor = (id: string) => {
 
       return {
         ...prevLevel,
-        [name]: value,
+        [name]: newValue,
       };
     });
   };
@@ -166,6 +170,10 @@ export const useLevelEditor = (id: string) => {
           startDate: new Date(editableLevel.startDate).toISOString(),
           endDate: new Date(editableLevel.endDate).toISOString(),
           questionIds: editableQuestions.map((q) => q._id),
+          difficulty: editableLevel.difficulty,
+          organisation: editableLevel.organisation,
+          track: editableLevel.track,
+          isPractice: editableLevel.isPractice,
         },
       });
     } catch (error) {

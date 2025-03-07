@@ -1,4 +1,5 @@
 import {
+  GetLevelsQueryParams,
   IUpdateLevel,
   Level,
   LevelObject,
@@ -22,8 +23,23 @@ interface UpdateQuestionPayload extends Question {
 
 export const levelApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    fetchLevels: builder.query<PopulatedLevelObject[], void>({
-      query: () => LEVEL_URL,
+    fetchLevels: builder.query<
+      PopulatedLevelObject[],
+      GetLevelsQueryParams | void
+    >({
+      query: (params) => {
+        if (!params) return LEVEL_URL;
+
+        const queryParams = new URLSearchParams();
+        if (params.isPractice !== undefined) {
+          queryParams.append('isPractice', params.isPractice.toString());
+        }
+        if (params.track) {
+          queryParams.append('track', params.track);
+        }
+
+        return `${LEVEL_URL}?${queryParams.toString()}`;
+      },
       providesTags: ['Level'],
     }),
     fetchLevel: builder.query<PopulatedLevelObject, string>({

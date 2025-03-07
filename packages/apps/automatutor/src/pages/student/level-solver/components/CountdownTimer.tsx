@@ -1,60 +1,69 @@
-import { useState, useEffect, useRef } from 'react';
-import { TimerContainer } from './TimerContainer';
+import { useState, useEffect } from 'react';
 
 interface TimerProps {
-  totalCount?: number; // Total countdown time
-  initialCount?: number; // Initial countdown time left
-  onEnd?: () => void;
+  initialCount: number;
+  onEnd: () => void;
 }
 
-export const CountdownTimer = ({
-  initialCount = 60 * 10, // default 10 minutes
-  totalCount = 60 * 10, // default total time also 10 minutes
-  onEnd,
-}: TimerProps) => {
+export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialCount);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMounted = useRef(true);
 
   useEffect(() => {
-    const clear = () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
+    if (timeLeft <= 0) {
+      onEnd();
+      return;
+    }
 
-    intervalRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        const newTime = prevTime - 1;
-        if (newTime <= 0) {
-          clear();
-          if (onEnd) {
-            onEnd();
-          }
-          return 0;
-        }
-
-        return newTime;
-      });
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
-    return () => {
-      isMounted.current = false;
-      clear();
-    };
-  }, [totalCount, onEnd]);
+    return () => clearInterval(timer);
+  }, [timeLeft, onEnd]);
 
-  useEffect(() => {
-    if (isMounted.current) {
-      setTimeLeft(initialCount);
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  const getTimerColor = () => {
+    if (timeLeft <= 30) {
+      return 'text-red-500';
+    } else if (timeLeft <= 120) {
+      return 'text-amber-500';
     }
-  }, [initialCount, totalCount]);
+    return 'text-emerald-500';
+  };
+
+  const getTimebarWidth = () => {
+    const maxTime = 600;
+    const percentage = Math.min(100, (timeLeft / maxTime) * 100);
+    return `${percentage}%`;
+  };
+
+  const getTimebarColor = () => {
+    if (timeLeft <= 30) {
+      return 'bg-red-500';
+    } else if (timeLeft <= 120) {
+      return 'bg-amber-500';
+    }
+    return 'bg-emerald-500';
+  };
 
   return (
-    <TimerContainer
-      minutes={Math.floor(timeLeft / 60)}
-      seconds={Math.floor(timeLeft % 60)}
-    />
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div
+          className={`text-2xl font-bold tracking-wide ${getTimerColor()} transition-colors duration-300`}
+        >
+          {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+        </div>
+      </div>
+
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-700">
+        <div
+          className={`h-full ${getTimebarColor()} transition-all duration-1000 ease-linear`}
+          style={{ width: getTimebarWidth() }}
+        ></div>
+      </div>
+    </div>
   );
 };

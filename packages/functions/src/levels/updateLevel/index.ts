@@ -6,6 +6,7 @@ import {
   LambdaResponse,
   Level as ILevel,
   UpdateLevelSchema,
+  OrganisationRole,
 } from '@edusoftware/core/types';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import { Level, connectToDatabase } from '@edusoftware/core/databases';
@@ -22,7 +23,10 @@ import { Level, connectToDatabase } from '@edusoftware/core/databases';
  */
 export const main = handler<ILevel>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
-    await useSessionWithRoles(['lecturer']);
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
 
     if (!event.body) {
       throw new BadRequestError('Request body is required');
@@ -56,7 +60,7 @@ export const main = handler<ILevel>(
       const updatedLevel = await level.save();
       return {
         statusCode: 200,
-        body: updatedLevel.toObject(), // Convert Mongoose document to object
+        body: updatedLevel.toObject(),
       };
     } catch (error: unknown) {
       if (error instanceof ApplicationError) {

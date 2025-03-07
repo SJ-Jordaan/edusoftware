@@ -30,7 +30,7 @@ export const main = handler<GetLevelProgressResponse>(
     }
 
     try {
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
 
       const [levelDoc, progress] = await Promise.all([
         Level.findById(levelId).populate(
@@ -56,6 +56,7 @@ export const main = handler<GetLevelProgressResponse>(
           statusCode: 200,
           body: {
             isCompleted: true,
+            isPractice: levelDoc.isPractice,
           },
         };
       }
@@ -64,12 +65,18 @@ export const main = handler<GetLevelProgressResponse>(
       const timeRemaining = calculateTimeRemaining(levelProgress, maxTime);
 
       if (timeRemaining <= 1) {
-        await completeLevel(levelProgress, userId, levelId);
+        await completeLevel(
+          levelProgress,
+          userId,
+          levelId,
+          levelDoc.isPractice,
+        );
 
         return {
           statusCode: 200,
           body: {
             isCompleted: true,
+            isPractice: levelDoc.isPractice,
           },
         };
       }
@@ -94,6 +101,7 @@ export const main = handler<GetLevelProgressResponse>(
           body: {
             question: levelDoc.questionIds[0].toObject(),
             isCompleted: false,
+            isPractice: levelDoc.isPractice,
           },
         };
       }
@@ -104,6 +112,7 @@ export const main = handler<GetLevelProgressResponse>(
           question: nextQuestion.toObject(),
           timeRemaining,
           isCompleted: false,
+          isPractice: levelDoc.isPractice,
         },
       };
     } catch (error: unknown) {

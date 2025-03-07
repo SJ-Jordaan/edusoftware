@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 import { useDrag } from 'react-dnd';
 import { automataTypes } from '@edusoftware/core/src/types/GridAutomaton';
-import { ARROW_PIECES } from './ArrowPieces';
 import { Transition } from '@edusoftware/core/src/types/GridAutomaton';
+import { getArrowCalculator, CELL_SIZE } from './utils/ArrowMath';
 
 interface DraggableTransitionProps {
   id?: string;
@@ -27,38 +27,58 @@ export const DraggableTransition = ({
     <div
       ref={drag}
       onClick={(e) => onClick?.(e)}
-      className={`flex h-full w-full items-center justify-center opacity-${
-        isDragging ? '50' : '100'
+      className={`flex h-full w-full items-center justify-center transition-all duration-200 hover:scale-110 ${
+        isDragging ? 'opacity-50' : 'opacity-100'
       }`}
-      style={{ width: '56px', height: '56px' }}
+      style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
     >
-      <svg width={56} height={56} viewBox={'0 0 56 56'}>
+      <svg
+        width={CELL_SIZE}
+        height={CELL_SIZE}
+        viewBox={`0 0 ${CELL_SIZE} ${CELL_SIZE}`}
+        className="overflow-visible" // Allow arrows to overflow cell boundaries
+      >
         {arrows.map((arrow, index) => {
           const { startSide, endSide, symbols } = arrow;
           const label = symbols.join(',');
           const key = `${startSide}-${endSide}`;
-          const { pathD, polygonPoints, textPosition } = ARROW_PIECES[key];
+
+          // Get mathematically precise arrow parameters
+          const calculator = getArrowCalculator(
+            startSide as 'left' | 'right' | 'top' | 'bottom',
+            endSide as 'left' | 'right' | 'top' | 'bottom',
+          );
+
+          const { path, arrowHead, labelPos } = calculator();
 
           return (
             <Fragment key={`${index}-${key}-${label}`}>
+              {/* Path */}
               <path
+                d={path}
                 stroke="white"
+                strokeWidth="2"
                 fill="none"
-                strokeWidth="1"
-                id={`path-${id}-${index}`}
-                d={pathD}
+                className="stroke-emerald-400"
               />
 
-              <polygon points={polygonPoints} fill="white" />
-              <text
-                x={textPosition?.x}
-                y={textPosition?.y}
-                transform={`rotate(${textPosition?.rotate || 0}, ${
-                  textPosition?.x
-                }, ${textPosition?.y})`}
-                key={`${index}-${key}-${label}-text-${startSide}-${endSide}`}
+              {/* Arrow head */}
+              <polygon
+                points={arrowHead}
                 fill="white"
-                fontSize="14"
+                className="fill-emerald-400 stroke-emerald-400"
+              />
+
+              {/* Label */}
+              <text
+                x={labelPos.x}
+                y={labelPos.y}
+                transform={`rotate(${labelPos.rotate}, ${labelPos.x}, ${labelPos.y})`}
+                fill="white"
+                fontSize="12"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="select-none font-semibold"
               >
                 {label}
               </text>

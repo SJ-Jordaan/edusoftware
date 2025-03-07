@@ -35,7 +35,7 @@ export const main = handler<AnswerEvaluation>(
 
     try {
       await connectToDatabase();
-      const { userId } = await useSessionWithRoles();
+      const { userId: userId } = await useSessionWithRoles();
       const currentProgress = await fetchCurrentQuestionProgress(
         userId,
         levelId,
@@ -55,7 +55,12 @@ export const main = handler<AnswerEvaluation>(
 
       if (!questionProgress) {
         if (finishLevel) {
-          await completeLevel(levelProgress, userId, levelId);
+          await completeLevel(
+            levelProgress,
+            userId,
+            levelId,
+            levelDoc.isPractice,
+          );
 
           return {
             statusCode: 200,
@@ -75,7 +80,12 @@ export const main = handler<AnswerEvaluation>(
         updateProgress(levelProgress, null, isCorrect, question);
 
         if (isLevelCompleted(levelDoc, levelProgress)) {
-          await completeLevel(levelProgress, userId, levelId);
+          await completeLevel(
+            levelProgress,
+            userId,
+            levelId,
+            levelDoc.isPractice,
+          );
 
           return {
             statusCode: 200,
@@ -111,7 +121,12 @@ export const main = handler<AnswerEvaluation>(
       }
 
       if (finishLevel) {
-        await completeLevel(levelProgress, userId, levelId);
+        await completeLevel(
+          levelProgress,
+          userId,
+          levelId,
+          levelDoc.isPractice,
+        );
 
         return {
           statusCode: 200,
@@ -128,7 +143,12 @@ export const main = handler<AnswerEvaluation>(
       updateProgress(levelProgress, questionProgress, isCorrect, question);
 
       if (isLevelCompleted(levelDoc, levelProgress)) {
-        await completeLevel(levelProgress, userId, levelId);
+        await completeLevel(
+          levelProgress,
+          userId,
+          levelId,
+          levelDoc.isPractice,
+        );
 
         return {
           statusCode: 200,

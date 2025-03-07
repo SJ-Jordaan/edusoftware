@@ -1,6 +1,7 @@
 import { UserSession } from '@edusoftware/core/src/types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../store';
+import { isPrivilegedUser } from '@edusoftware/core/src/organisations';
 
 interface AuthState {
   token: string | null;
@@ -31,6 +32,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
   },
 });
@@ -42,7 +44,7 @@ export function useAuth() {
     token: auth.token,
     user: auth.user,
     isAuthenticated: !!auth.token,
-    isAdmin: auth.user?.roles.includes('lecturer'),
+    isAdmin: isPrivilegedUser(auth.user?.roles),
     setCredentials: (token: string) =>
       dispatch(authSlice.actions.setCredentials(token)),
     setUser: (user: UserSession) => dispatch(authSlice.actions.setUser(user)),

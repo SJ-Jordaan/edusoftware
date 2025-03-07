@@ -1,58 +1,57 @@
 import { useSession } from 'sst/node/auth';
-import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { Table } from 'sst/node/table';
 import {
   UnauthorizedError,
   ForbiddenError,
   UserSession,
-  NotFoundError,
+  OrganisationRole,
+  OrganisationName,
 } from '../types';
 
+declare module 'sst/node/auth' {
+  export interface SessionTypes {
+    user: {
+      userId: string;
+      name: string;
+      picture: string;
+      email: string;
+      roles: OrganisationRole[];
+      organisations: OrganisationName[];
+    };
+  }
+}
 /**
  * Custom session hook that validates the user's authentication status and roles.
  * @param requiredRoles - An array of roles required to access the endpoint.
  * @returns The user session if the user is authenticated and authorized; otherwise, throws an error.
  */
 export async function useSessionWithRoles(
-  requiredRoles: string[] = [],
-): Promise<UserSession & { userId: string }> {
+  requiredRoles: OrganisationRole[] = [],
+): Promise<UserSession> {
   const session = useSession();
 
   if (session.type !== 'user') {
     throw new UnauthorizedError('Not authenticated');
   }
 
-  const ddb = new DynamoDBClient({});
-  const { Item } = await ddb.send(
-    new GetItemCommand({
-      TableName: Table.users.tableName,
-      Key: marshall({ userId: session.properties.userID }),
-    }),
-  );
-
-  if (!Item) {
-    throw new NotFoundError('User not found in DynamoDB');
-  }
-
-  const user = unmarshall(Item) as UserSession;
+  const user = session.properties as UserSession;
 
   if (requiredRoles.length === 0) {
     return {
       ...user,
-      userId: session.properties.userID,
+      userId: session.properties.userId,
     };
   }
 
   const hasRequiredRole = requiredRoles.some((role) =>
     user.roles?.includes(role),
   );
+
   if (!hasRequiredRole) {
     throw new ForbiddenError('User does not have the required role');
   }
 
   return {
     ...user,
-    userId: session.properties.userID,
+    userId: session.properties.userId,
   };
 }

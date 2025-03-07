@@ -15,7 +15,6 @@ export function ApiStack({ stack, app }: StackContext) {
     },
     routes: {
       'Get /session': 'packages/functions/src/auth/session.handler', // TODO: Fix up the path here, maybe create authApi
-      'GET /': 'packages/functions/src/lambda.main',
       'GET /levels': 'packages/functions/src/levels/getLevels/index.main',
       'GET /levels/{id}': 'packages/functions/src/levels/getLevel/index.main',
       'POST /levels': 'packages/functions/src/levels/createLevel/index.main',
@@ -44,6 +43,8 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/progress/getLevelProgress/index.main',
       'GET /report/dashboard':
         'packages/functions/src/reports/dashboard/index.main',
+      'POST /badges/check': 'packages/functions/src/badges/check/index.main',
+      'GET /badges': 'packages/functions/src/badges/get/index.main',
     },
   });
 

@@ -1,23 +1,8 @@
 import { StaticSite } from 'sst/node/site';
 import { AuthHandler, GoogleAdapter, Session } from 'sst/node/auth';
-import {
-  DynamoDBClient,
-  GetItemCommand,
-  PutItemCommand,
-} from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { Table } from 'sst/node/table';
 import { Config } from 'sst/node/config';
 import { UnauthorizedError } from '@edusoftware/core/types';
-
-declare module 'sst/node/auth' {
-  export interface SessionTypes {
-    user: {
-      userID: string;
-    };
-  }
-}
-
+import { UserService } from '@edusoftware/core/authentication';
 /**
  * The handler for Google OAuth authentication.
  * It checks if the user already exists in the database.
@@ -32,53 +17,8 @@ export const handler = AuthHandler({
       onSuccess: async (tokenset) => {
         try {
           const claims = tokenset.claims();
-          if (
-            !claims.email?.endsWith('@tuks.co.za') &&
-            !claims.email?.endsWith('@up.ac.za') &&
-            !claims.email?.endsWith('@cs.up.ac.za')
-          ) {
-            throw new UnauthorizedError('Email domain must be @tuks.co.za');
-          }
-          const userId = claims.sub;
-          const ddb = new DynamoDBClient({});
-          const userKey = marshall({ userId: userId });
-          // Check if user already exists
-          const existingUser = await ddb.send(
-            new GetItemCommand({
-              TableName: Table.users.tableName,
-              Key: userKey,
-            }),
-          );
-
-          if (existingUser.Item) {
-            const jsonUser = unmarshall(existingUser.Item);
-
-            await ddb.send(
-              new PutItemCommand({
-                TableName: Table.users.tableName,
-                Item: marshall({
-                  userId: userId,
-                  email: claims.email,
-                  picture: claims.picture,
-                  name: claims.given_name,
-                  roles: jsonUser.roles,
-                }),
-              }),
-            );
-          } else {
-            await ddb.send(
-              new PutItemCommand({
-                TableName: Table.users.tableName,
-                Item: marshall({
-                  userId: userId,
-                  email: claims.email,
-                  picture: claims.picture,
-                  name: claims.given_name,
-                  roles: ['student'],
-                }),
-              }),
-            );
-          }
+          const userService = new UserService();
+          const processedUser = await userService.processUser(claims);
 
           const redirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/callback`;
 
@@ -86,7 +26,12 @@ export const handler = AuthHandler({
             redirect,
             type: 'user',
             properties: {
-              userID: userId,
+              userId: processedUser.userId,
+              name: processedUser.userData!.name,
+              picture: processedUser.userData!.picture,
+              email: processedUser.userData!.email,
+              organisations: processedUser.userData!.organisations,
+              roles: processedUser.userData!.roles,
             },
           });
         } catch (error) {

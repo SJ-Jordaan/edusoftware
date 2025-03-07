@@ -10,6 +10,7 @@ import correct from '../../../../assets/correct.mp3';
 import incorrect from '../../../../assets/incorrect.mp3';
 import useSound from 'use-sound';
 import { toast } from 'react-toastify';
+import { FeedbackToast } from '../../../../components/toasts/FeedbackToast';
 
 export const useLevelSolver = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,6 +42,11 @@ export const useLevelSolver = () => {
     }
 
     if (level.isCompleted) {
+      if (level.isPractice) {
+        navigate('/practice');
+        return;
+      }
+
       navigate('/');
       return;
     }
@@ -69,7 +75,25 @@ export const useLevelSolver = () => {
 
     if (!isCorrect) {
       playIncorrect();
-      toast(message);
+      toast(
+        ({ closeToast }) => (
+          <FeedbackToast
+            isCorrect={false}
+            message={message || 'Incorrect answer. Try again.'}
+            hint={level.question?.hints?.[0]}
+            onClose={closeToast}
+          />
+        ),
+        {
+          toastId: `feedback-incorrect-${level.question._id}`,
+          autoClose: 6000,
+          closeButton: false,
+          position: 'bottom-center',
+          className: 'bg-transparent shadow-none',
+          bodyClassName: 'bg-transparent p-0',
+          style: { background: 'transparent', boxShadow: 'none' },
+        },
+      );
       return;
     }
 
@@ -82,16 +106,55 @@ export const useLevelSolver = () => {
     if (!response.isCorrect) {
       if (!response.isCompleted) {
         playIncorrect();
-        toast(message);
+        toast(
+          ({ closeToast }) => (
+            <FeedbackToast
+              isCorrect={false}
+              message={message || 'Incorrect answer. Try again.'}
+              hint={level.question?.hints?.[0]}
+              onClose={closeToast}
+            />
+          ),
+          {
+            toastId: `feedback-incorrect-${level.question._id}`,
+            autoClose: 6000,
+            closeButton: false,
+            position: 'bottom-center',
+            className: 'bg-transparent shadow-none',
+            bodyClassName: 'bg-transparent p-0',
+            style: { background: 'transparent', boxShadow: 'none' },
+          },
+        );
       }
-
       return;
     }
 
     playCorrect();
-    toast('Correct answer!');
+    toast(
+      ({ closeToast }) => (
+        <FeedbackToast
+          isCorrect={true}
+          message="Correct answer! Well done."
+          onClose={closeToast}
+        />
+      ),
+      {
+        toastId: `feedback-correct-${level.question._id}`,
+        autoClose: 6000,
+        closeButton: false,
+        position: 'bottom-center',
+        className: 'bg-transparent shadow-none',
+        bodyClassName: 'bg-transparent p-0',
+        style: { background: 'transparent', boxShadow: 'none' },
+      },
+    );
 
     if (response.isCompleted) {
+      if (level.isPractice) {
+        navigate('/practice');
+        return;
+      }
+
       navigate('/');
     }
   };
@@ -123,5 +186,6 @@ export const useLevelSolver = () => {
     handleSubmit,
     handleAnswerChange,
     handleEndLevel,
+    level,
   };
 };

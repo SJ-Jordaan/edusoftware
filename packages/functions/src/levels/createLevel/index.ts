@@ -6,6 +6,7 @@ import {
   Level as ILevel,
   LevelSchema,
   ApplicationError,
+  OrganisationRole,
 } from '@edusoftware/core/types';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
@@ -19,7 +20,10 @@ import { APIGatewayProxyEventV2 } from 'aws-lambda';
  */
 export const main = handler<ILevel>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<ILevel>> => {
-    await useSessionWithRoles(['lecturer']);
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
 
     if (!event.body) {
       throw new BadRequestError('Request body is required');
@@ -39,14 +43,27 @@ export const main = handler<ILevel>(
     await connectToDatabase();
 
     try {
-      const { levelName, description, questionIds, startDate, endDate } =
-        parsedData;
+      const {
+        levelName,
+        description,
+        questionIds,
+        startDate,
+        endDate,
+        organisation,
+        difficulty,
+        track,
+        isPractice,
+      } = parsedData;
       const levelDoc = await Level.create({
         levelName,
         description,
         questionIds,
         startDate,
         endDate,
+        organisation,
+        difficulty,
+        track,
+        isPractice,
       });
 
       if (!levelDoc) {

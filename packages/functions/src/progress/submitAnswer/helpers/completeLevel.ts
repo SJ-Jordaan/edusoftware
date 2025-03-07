@@ -11,11 +11,17 @@ import {
  * @param levelId - The ID of the level being completed.
  */
 export const completeLevel = async (
-  progress: IProgressDocumentPopulated, // Define this type based on your actual progress model
+  progress: IProgressDocumentPopulated,
   userId: string,
   levelId: string,
+  isPractice: boolean | undefined,
 ): Promise<void> => {
   progress.completedAt = new Date();
+
+  if (isPractice) {
+    await progress.save();
+    return;
+  }
 
   try {
     let score = await Score.findOne({ userId, levelId });
