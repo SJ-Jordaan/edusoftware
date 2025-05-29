@@ -3,12 +3,7 @@ import { AuthHandler, GoogleAdapter, Session } from 'sst/node/auth';
 import { Config } from 'sst/node/config';
 import { UnauthorizedError } from '@edusoftware/core/types';
 import { UserService } from '@edusoftware/core/authentication';
-/**
- * The handler for Google OAuth authentication.
- * It checks if the user already exists in the database.
- * If not, it adds the user along with the default roles.
- * If the user exists, it keeps the existing roles.
- */
+
 export const handler = AuthHandler({
   providers: {
     google: GoogleAdapter({
@@ -20,7 +15,17 @@ export const handler = AuthHandler({
           const userService = new UserService();
           const processedUser = await userService.processUser(claims);
 
-          const redirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/callback`;
+          // Use 'state' to identify app (must be set during login redirect)
+          const state = tokenset.state as string | undefined;
+          const app = state ?? 'automatutor';
+
+          const redirectBase = process.env.IS_LOCAL
+            ? 'http://localhost:5173'
+            : app === 'logictutor'
+              ? StaticSite.LogicTutor.url
+              : StaticSite.AutomaTutor.url;
+
+          const redirect = `${redirectBase}/login/callback`;
 
           return Session.parameter({
             redirect,
@@ -37,25 +42,29 @@ export const handler = AuthHandler({
         } catch (error) {
           console.error('Error handling Google OAuth authentication:', error);
 
-          if (error instanceof UnauthorizedError) {
-            const errorRedirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/unauthorized`;
-            return Session.parameter({
-              redirect: errorRedirect,
+          const state = tokenset.state as string | undefined;
+          const app = state ?? 'automatutor';
+
+          const base = process.env.IS_LOCAL
+            ? 'http://localhost:5173'
+            : app === 'logictutor'
+              ? StaticSite.LogicTutor.url
+              : StaticSite.AutomaTutor.url;
+
+          const fallbackRedirect = (path: string) =>
+            Session.parameter({
+              redirect: `${base}${path}`,
               type: 'public',
               properties: {
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
               },
             });
+
+          if (error instanceof UnauthorizedError) {
+            return fallbackRedirect('/login/unauthorized');
           }
 
-          const errorRedirect = `${process.env.IS_LOCAL ? 'http://localhost:5173' : StaticSite.AutomaTutor.url}/login/failed`;
-          return Session.parameter({
-            redirect: errorRedirect,
-            type: 'public',
-            properties: {
-              error: error instanceof Error ? error.message : error,
-            },
-          });
+          return fallbackRedirect('/login/failed');
         }
       },
     }),

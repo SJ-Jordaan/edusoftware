@@ -22,7 +22,7 @@ function Login() {
       {/* Login Options */}
       <div className="w-full max-w-sm space-y-4 rounded-xl bg-gray-800 p-6 shadow-xl">
         <a
-          href={`${import.meta.env.VITE_API_URL}/auth/google/authorize`}
+          href={`${import.meta.env.VITE_API_URL}/auth/google/authorize?state=logictutor`}
           rel="noreferrer"
           className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
         >
