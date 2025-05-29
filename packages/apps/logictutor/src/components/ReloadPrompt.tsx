@@ -13,7 +13,6 @@ export function ReloadPrompt() {
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
-      // eslint-disable-next-line prefer-template
       console.log('SW Registered: ' + r);
     },
     onRegisterError(error) {
@@ -76,8 +75,8 @@ export function ReloadPrompt() {
 
         <p className="mb-6 text-slate-300">
           {offlineReady
-            ? 'AutomaTutor has been installed on your device and can now work without an internet connection.'
-            : 'A new version of AutomaTutor is available. Reload to update and get the latest features.'}
+            ? 'LogicTutor has been installed on your device and can now work without an internet connection.'
+            : 'A new version of LogicTutor is available. Reload to update and get the latest features.'}
         </p>
 
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-end">

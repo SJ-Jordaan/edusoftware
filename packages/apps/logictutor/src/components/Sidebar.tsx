@@ -82,7 +82,7 @@ export const Sidebar = ({ items }: SidebarProps) => {
               <a href="https://edusoftware.net" className="ms-2 flex md:me-24">
                 <Edusoftware className="me-3 h-8 w-8" />
                 <span className="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl dark:text-white">
-                  AutomaTutor
+                  LogicTutor
                 </span>
               </a>
               <button

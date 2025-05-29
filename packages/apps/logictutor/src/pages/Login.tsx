@@ -11,7 +11,7 @@ function Login() {
       <div className="mb-12 text-center">
         <EduSoftware className="mx-auto h-24 w-24 sm:h-32 sm:w-32" />
         <h1 className="mt-6 text-3xl font-bold text-white sm:text-4xl">
-          Welcome to <span className="text-logo-primary">AutomaTutor</span>
+          Welcome to <span className="text-logo-primary">LogicTutor</span>
         </h1>
         <p className="mt-4 max-w-sm text-gray-400">
           Master automata theory through interactive challenges and hands-on

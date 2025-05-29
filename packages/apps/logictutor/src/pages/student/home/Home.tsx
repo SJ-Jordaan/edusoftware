@@ -23,7 +23,7 @@ function Home() {
           alt={user.name}
         />
         <div className="text-gray-900 dark:text-gray-50">
-          <i>Welcome back to AutomaTutor!</i>
+          <i>Welcome back to LogicTutor!</i>
           <p className="text-2xl">{user.name}</p>
           <p className="text-sm text-gray-400">{user.email}</p>
         </div>

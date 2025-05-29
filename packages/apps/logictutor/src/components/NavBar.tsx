@@ -127,7 +127,7 @@ export const NavBar = ({ routes }: { routes: Route[] }) => {
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
           <div className="flex items-center border-b border-slate-700 p-4">
-            <h1 className="text-xl font-bold text-white">AutomaTutor</h1>
+            <h1 className="text-xl font-bold text-white">LogicTutor</h1>
           </div>
 
           {/* User Welcome Section */}
@@ -290,7 +290,7 @@ export const NavBar = ({ routes }: { routes: Route[] }) => {
                       shadow-md lg:hidden"
       >
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-bold text-white">AutomaTutor</h1>
+          <h1 className="text-lg font-bold text-white">LogicTutor</h1>
           <div className="relative">
             <button
               ref={mobileProfileButtonRef}
