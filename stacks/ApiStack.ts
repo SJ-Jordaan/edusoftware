@@ -6,6 +6,18 @@ export function ApiStack({ stack, app }: StackContext) {
   const { userTable } = use(StorageStack);
   const { MONGO_URI } = use(SecretStack);
 
+  const logicTutorRoutes = {
+    'POST /logictutor/test':
+      'packages/functions/src/logictutor/create/index.main',
+    'PUT /logictutor/test':
+      'packages/functions/src/logictutor/update/index.main',
+    'GET /logictutor/test/{test}':
+      'packages/functions/src/logictutor/get/index.main',
+    'GET /logictutor/testAll':
+      'packages/functions/src/logictutor/getAll/index.main',
+    'DELETE /logictutor/test':
+      'packages/functions/src/logictutor/delete/index.main',
+  };
   const api = new Api(stack, 'Api', {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,
     defaults: {
@@ -45,6 +57,7 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/reports/dashboard/index.main',
       'POST /badges/check': 'packages/functions/src/badges/check/index.main',
       'GET /badges': 'packages/functions/src/badges/get/index.main',
+      ...logicTutorRoutes,
     },
   });
 
