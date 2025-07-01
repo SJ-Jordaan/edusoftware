@@ -15,7 +15,6 @@ import {
   TrophyIcon,
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
-import { TestCard } from '../../../components/test';
 
 const ChallengesPage = () => {
   const navigate = useNavigate();
@@ -284,7 +283,6 @@ const ChallengesPage = () => {
             />
           ))}
         </div>
-        <TestCard />
       </div>
 
       {/* Loading state */}

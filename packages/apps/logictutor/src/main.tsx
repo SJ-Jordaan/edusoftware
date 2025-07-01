@@ -29,6 +29,7 @@ import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 import { PracticeLevels } from './pages/student/practice/Practice.tsx';
 import ChallengePage from './pages/student/challenges/Challenges.tsx';
 import BadgePage from './pages/student/badges/Badges.tsx';
+import TestLevelSolver from './pages/student/level-solver/TestLevelSolver.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -56,6 +57,7 @@ const router = createBrowserRouter(
 
         {/* Level Solving routes */}
         <Route path="/level/:id" element={<LevelSolver />} />
+        <Route path="/level/circuit" element={<TestLevelSolver />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
