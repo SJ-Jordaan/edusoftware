@@ -20,7 +20,7 @@ const GridCircuit = () => {
 
   const [clickedGate, setClickedGate] = useState<Gate | null>(null);
   const [booleanExpression, setBooleanExpression] = useState<string>('');
-  const [truthTable, setTruthTable] = useState<string>('');
+  const [truthTable, setTruthTable] = useState<JSX.Element>();
 
   const renderCellContent = (x: number, y: number) => {
     const cellContent = pieces.find(
@@ -144,10 +144,13 @@ const GridCircuit = () => {
       .filter((gate) => gate.label !== undefined && gate.gateType === 'input')
       .sort((a, b) => a.id.localeCompare(b.id));
 
+    setTruthTable(
+      <div>{[...inputGates.map((gate) => gate.label), 'A'].join(' | ')}</div>,
+    );
     const numInputs = inputGates.length;
     const numTruth = 1 << numInputs;
 
-    let truthTable = '';
+    // let truthTable = '';
 
     for (let i = 0; i < numTruth; i++) {
       const inputMap: Record<string, boolean> = {};
@@ -156,9 +159,18 @@ const GridCircuit = () => {
         const label = inputGates[j].label!;
         inputMap[label] = !!(i & (1 << (numInputs - j - 1)));
       }
-      truthTable += testInput(booleanExpression, inputMap);
+      const answer = testInput(booleanExpression, inputMap);
+      // truthTable += answer;
+      const inputValues = Object.values(inputMap).map((v) => (v ? '1' : '0'));
+      const rowText = [...inputValues, answer].join(' | ');
+
+      setTruthTable((prev) => (
+        <>
+          {prev}
+          <div>{rowText}</div>
+        </>
+      ));
     }
-    setTruthTable(truthTable);
   };
 
   const testInput = (
