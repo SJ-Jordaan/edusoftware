@@ -7,7 +7,9 @@ export interface Gate {
   id: string;
   position: { x: number; y: number };
   gateType: GateType;
-  output: string; // ID of gate to which piece leads
+  inputs?: string[];
+  output?: string; // ID of gate to which piece leads
+  label?: string;
 }
 
 interface GridGateState {
@@ -23,6 +25,11 @@ interface MoveOrAddPiecePayload {
   type?: GateType;
 }
 
+interface ConnectPiecePayload {
+  pieceAId: string;
+  pieceBId: string;
+}
+
 const initialState: GridGateState = {
   isEditable: true,
   pieces: [
@@ -30,25 +37,45 @@ const initialState: GridGateState = {
       id: 'gate-1',
       position: { x: 0, y: 0 },
       gateType: 'and',
-      output: 'gate-3',
     },
     {
       id: 'gate-2',
       position: { x: 1, y: 0 },
       gateType: 'or',
-      output: 'gate-3',
     },
     {
       id: 'gate-3',
       position: { x: 2, y: 1 },
       gateType: 'not',
-      output: '',
     },
     {
       id: 'gate-4',
-      position: { x: 1, y: 2 },
+      position: { x: 1, y: 3 },
       gateType: 'xor',
-      output: 'gate-3',
+    },
+    {
+      id: 'gate-5',
+      position: { x: 1, y: 4 },
+      gateType: 'input',
+      label: 'X',
+    },
+    {
+      id: 'gate-6',
+      position: { x: 1, y: 5 },
+      gateType: 'input',
+      label: 'Y',
+    },
+    {
+      id: 'gate-7',
+      position: { x: 2, y: 5 },
+      gateType: 'input',
+      label: 'Z',
+    },
+    {
+      id: 'gate-8',
+      position: { x: 5, y: 3 },
+      gateType: 'output',
+      label: 'A',
     },
   ],
   toolbar: [
@@ -177,10 +204,96 @@ const gridCircuitSlice = createSlice({
         return { payload: prepareMoveOrAddPiecePayload(item, x, y, type) };
       },
     },
+    connectPieces: {
+      reducer(state, action: PayloadAction<ConnectPiecePayload>) {
+        const { pieceAId, pieceBId } = action.payload;
+        const updatedElements = [...state.pieces];
+
+        const pieceAIndex = updatedElements.findIndex(
+          (element) => element.id === pieceAId,
+        );
+        const pieceBIndex = updatedElements.findIndex(
+          (element) => element.id === pieceBId,
+        );
+
+        // Remove the gate as an input from all other gates
+        updatedElements.forEach((gate, i) => {
+          if (gate.inputs?.includes(pieceAId)) {
+            updatedElements[i] = {
+              ...gate,
+              inputs: gate.inputs.filter((id) => id !== pieceAId),
+            };
+          }
+        });
+
+        if (pieceAIndex !== -1 && pieceAId === pieceBId) {
+          const startElement = updatedElements[pieceAIndex];
+
+          updatedElements[pieceAIndex] = {
+            ...startElement,
+            output: undefined,
+          };
+
+          state.pieces = updatedElements;
+          return;
+        }
+
+        if (pieceAIndex !== -1 && pieceBIndex !== -1) {
+          const startElement = updatedElements[pieceAIndex];
+          const endElement = updatedElements[pieceBIndex];
+
+          let oldInputId: string | undefined;
+
+          updatedElements[pieceAIndex] = {
+            ...startElement,
+            output: pieceBId,
+          };
+
+          const toGateType = updatedElements[pieceBIndex].gateType;
+          if (toGateType === 'not' || toGateType === 'output') {
+            oldInputId = endElement.inputs?.at(0);
+            updatedElements[pieceBIndex] = {
+              ...endElement,
+              inputs: [pieceAId],
+            };
+          } else if (toGateType === 'input') {
+            state.pieces = updatedElements;
+            return;
+          } else {
+            const inputs = [...(updatedElements[pieceBIndex].inputs ?? [])];
+
+            if (inputs.length === 2) {
+              oldInputId = inputs[1];
+              inputs[1] = pieceAId;
+            } else {
+              inputs.push(pieceAId);
+            }
+            updatedElements[pieceBIndex] = {
+              ...endElement,
+              inputs,
+            };
+          }
+
+          updatedElements.forEach((gate, i) => {
+            if (gate.id === oldInputId) {
+              updatedElements[i] = {
+                ...gate,
+                output: undefined,
+              };
+            }
+          });
+        }
+
+        state.pieces = updatedElements;
+      },
+      prepare(pieceAId: string, pieceBId: string) {
+        return { payload: { pieceAId, pieceBId } };
+      },
+    },
   },
 });
 
-export const { initGrid, deletePiece, moveOrAddPiece } =
+export const { initGrid, deletePiece, moveOrAddPiece, connectPieces } =
   gridCircuitSlice.actions;
 
 export default gridCircuitSlice.reducer;

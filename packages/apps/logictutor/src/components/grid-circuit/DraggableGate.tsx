@@ -6,12 +6,14 @@ import { gateMap, GateType } from './LogicGates';
 interface DraggableGateProps {
   id?: string;
   gateType: GateType;
+  inputLabel?: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export const DraggableGate = ({
   id,
   gateType,
+  inputLabel,
   onClick,
 }: DraggableGateProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -30,7 +32,7 @@ export const DraggableGate = ({
         isDragging ? 'scale-110 opacity-70' : 'hover:scale-110'
       }`}
     >
-      {gateMap[gateType]}
+      {gateMap(gateType, inputLabel)}
     </div>
   );
 };

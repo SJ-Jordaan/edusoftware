@@ -8,9 +8,16 @@ interface GridCellProps {
   y: number;
   onDrop: (item: Gate, x: number, y: number, type: GateType) => void;
   children: React.ReactNode;
+  className?: string;
 }
 
-export const GridCell = ({ x, y, onDrop, children }: GridCellProps) => {
+export const GridCell = ({
+  x,
+  y,
+  onDrop,
+  children,
+  className,
+}: GridCellProps) => {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: [automataTypes.STATE, automataTypes.TRANSITION],
     drop: (item: Gate, monitor) =>
@@ -24,7 +31,7 @@ export const GridCell = ({ x, y, onDrop, children }: GridCellProps) => {
   return (
     <div
       ref={drop}
-      className={`box-border flex h-28 w-28 flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
+      className={`${className ?? ''} box-border flex h-28 w-28 flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
         isOver && canDrop
           ? 'border-emerald-400 bg-emerald-900/20'
           : 'border-slate-700 hover:border-slate-500'

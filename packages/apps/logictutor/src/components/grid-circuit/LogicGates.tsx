@@ -15,7 +15,7 @@ export const AndGate = () => {
         strokeWidth="2"
       />
       <line x1="0" y1="18" x2="11" y2="18" stroke="#34d399" strokeWidth="2" />
-      <line x1="0" y1="36" x2="11" y2="36" stroke="#34d399" strokeWidth="2" />
+      <line x1="0" y1="37" x2="11" y2="37" stroke="#34d399" strokeWidth="2" />
       <line x1="45" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
     </svg>
   );
@@ -31,7 +31,7 @@ export const OrGate = () => {
         strokeWidth="2"
       />
       <line x1="0" y1="18" x2="15" y2="18" stroke="#34d399" strokeWidth="2" />
-      <line x1="0" y1="36" x2="15" y2="36" stroke="#34d399" strokeWidth="2" />
+      <line x1="0" y1="37" x2="15" y2="37" stroke="#34d399" strokeWidth="2" />
       <line x1="45" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
     </svg>
   );
@@ -51,9 +51,8 @@ export const NotGate = () => {
         fill="none"
         strokeWidth="2"
       />
-      <line x1="0" y1="18" x2="11" y2="18" stroke="#34d399" strokeWidth="2" />
-      <line x1="0" y1="36" x2="11" y2="36" stroke="#34d399" strokeWidth="2" />
-      <line x1="47" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
+      <line x1="0" y1="28" x2="11" y2="28" stroke="#34d399" strokeWidth="2" />
+      <line x1="46" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
     </svg>
   );
 };
@@ -74,17 +73,84 @@ export const XorGate = () => {
         strokeWidth="2"
       />
       <line x1="0" y1="18" x2="12" y2="18" stroke="#34d399" strokeWidth="2" />
-      <line x1="0" y1="36" x2="12" y2="36" stroke="#34d399" strokeWidth="2" />
+      <line x1="0" y1="37" x2="12" y2="37" stroke="#34d399" strokeWidth="2" />
       <line x1="48" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
     </svg>
   );
 };
 
-export type GateType = 'and' | 'or' | 'not' | 'xor';
+export const InputGate: React.FC<{ label: string }> = ({ label }) => {
+  return (
+    <svg width={size * scale} height={size * scale} viewBox="0 0 56 56">
+      <circle
+        cx="43"
+        cy="28"
+        r="3"
+        stroke="#34d399"
+        fill="none"
+        strokeWidth="2"
+      />
+      <line x1="47" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
+      <text
+        x="28"
+        y="28"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        alignmentBaseline="middle"
+        fontSize="30"
+        fill="#34d399"
+      >
+        {label[0]}
+      </text>
+    </svg>
+  );
+};
 
-export const gateMap: Record<GateType, JSX.Element> = {
-  and: <AndGate />,
-  or: <OrGate />,
-  not: <NotGate />,
-  xor: <XorGate />,
+export const OutputGate: React.FC<{ label: string }> = ({ label }) => {
+  return (
+    <svg width={size * scale} height={size * scale} viewBox="0 0 56 56">
+      <circle
+        cx="13"
+        cy="28"
+        r="3"
+        stroke="#34d399"
+        fill="none"
+        strokeWidth="2"
+      />
+      <line x1="0" y1="28" x2="9" y2="28" stroke="#34d399" strokeWidth="2" />
+      <text
+        x="28"
+        y="28"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        alignmentBaseline="middle"
+        fontSize="30"
+        fill="#34d399"
+      >
+        {label[0]}
+      </text>
+    </svg>
+  );
+};
+
+export type GateType = 'and' | 'or' | 'not' | 'xor' | 'input' | 'output';
+
+export const gateMap = (
+  gateType: GateType,
+  inputLabel?: string,
+): JSX.Element => {
+  switch (gateType) {
+    case 'and':
+      return <AndGate />;
+    case 'or':
+      return <OrGate />;
+    case 'not':
+      return <NotGate />;
+    case 'xor':
+      return <XorGate />;
+    case 'input':
+      return <InputGate label={inputLabel ?? 'X'} />;
+    case 'output':
+      return <OutputGate label={inputLabel ?? 'X'} />;
+  }
 };
