@@ -66,6 +66,12 @@ const initialState: GridGateState = {
       label: 'Y',
     },
     {
+      id: 'gate-6.1',
+      position: { x: 3, y: 5 },
+      gateType: 'input',
+      label: 'W',
+    },
+    {
       id: 'gate-7',
       position: { x: 2, y: 5 },
       gateType: 'input',

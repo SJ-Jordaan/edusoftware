@@ -90,7 +90,7 @@ export const InputGate: React.FC<{ label: string }> = ({ label }) => {
         fill="none"
         strokeWidth="2"
       />
-      <line x1="47" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
+      <line x1="46" y1="28" x2="56" y2="28" stroke="#34d399" strokeWidth="2" />
       <text
         x="28"
         y="28"
@@ -117,7 +117,7 @@ export const OutputGate: React.FC<{ label: string }> = ({ label }) => {
         fill="none"
         strokeWidth="2"
       />
-      <line x1="0" y1="28" x2="9" y2="28" stroke="#34d399" strokeWidth="2" />
+      <line x1="0" y1="28" x2="10" y2="28" stroke="#34d399" strokeWidth="2" />
       <text
         x="28"
         y="28"

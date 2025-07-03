@@ -87,10 +87,13 @@ const GridCircuit = () => {
 
     if (!outputGate) return '';
 
-    setBooleanExpression(convertToExpression(outputGate).join(''));
+    setBooleanExpression(convertToExpression(outputGate, 'postfix').join(''));
   };
 
-  const convertToExpression = (currentGate: Gate): string[] => {
+  const convertToExpression = (
+    currentGate: Gate,
+    notation: 'postfix' | 'infix',
+  ): string[] => {
     if ((currentGate.inputs?.length ?? 1) > 2) {
       return [];
     }
@@ -112,11 +115,20 @@ const GridCircuit = () => {
 
       if (!leftGate || !rightGate) return [];
 
-      return [
-        ...convertToExpression(leftGate),
-        ...convertToExpression(rightGate),
-        expressionMap[currentGate.gateType],
-      ];
+      if (notation === 'infix')
+        return [
+          '(',
+          ...convertToExpression(leftGate, notation),
+          expressionMap[currentGate.gateType],
+          ...convertToExpression(rightGate, notation),
+          ')',
+        ];
+      else
+        return [
+          ...convertToExpression(leftGate, notation),
+          ...convertToExpression(rightGate, notation),
+          expressionMap[currentGate.gateType],
+        ];
     }
 
     if (currentGate.gateType === 'output' || currentGate.gateType === 'not') {
@@ -126,10 +138,18 @@ const GridCircuit = () => {
 
       if (!nextGate) return [];
 
-      return [
-        ...convertToExpression(nextGate),
-        expressionMap[currentGate.gateType],
-      ];
+      if (notation === 'infix')
+        return [
+          '(',
+          expressionMap[currentGate.gateType],
+          ...convertToExpression(nextGate, notation),
+          ')',
+        ];
+      else
+        return [
+          ...convertToExpression(nextGate, notation),
+          expressionMap[currentGate.gateType],
+        ];
     }
 
     if (currentGate.gateType === 'input') {
@@ -140,12 +160,16 @@ const GridCircuit = () => {
   };
 
   const generateTruthTable = () => {
-    const inputGates = pieces
+    const inputGatesTemp = pieces
       .filter((gate) => gate.label !== undefined && gate.gateType === 'input')
-      .sort((a, b) => a.id.localeCompare(b.id));
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map((gate) => gate.label);
+    const inputGates = Array.from(new Set(inputGatesTemp));
+    const outputGate = pieces.find((gate) => gate.gateType === 'output');
+    console.log(outputGate);
 
     setTruthTable(
-      <div>{[...inputGates.map((gate) => gate.label), 'A'].join(' | ')}</div>,
+      <div>{[...inputGates, outputGate?.label ?? ''].join(' | ')}</div>,
     );
     const numInputs = inputGates.length;
     const numTruth = 1 << numInputs;
@@ -156,7 +180,7 @@ const GridCircuit = () => {
       const inputMap: Record<string, boolean> = {};
 
       for (let j = 0; j < numInputs; j++) {
-        const label = inputGates[j].label!;
+        const label = inputGates[j]!;
         inputMap[label] = !!(i & (1 << (numInputs - j - 1)));
       }
       const answer = testInput(booleanExpression, inputMap);
