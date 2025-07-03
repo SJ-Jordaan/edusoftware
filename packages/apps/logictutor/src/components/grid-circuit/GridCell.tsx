@@ -1,6 +1,6 @@
 import { useDrop } from 'react-dnd';
 import { automataTypes } from '@edusoftware/core/src/types/GridAutomaton';
-import { Gate } from '../grid-automaton-builder/gridCircuitSlice';
+import { Gate } from './gridCircuitSlice';
 import { GateType } from './LogicGates';
 
 interface GridCellProps {

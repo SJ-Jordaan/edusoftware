@@ -1,7 +1,7 @@
 import { parseOrNull } from '@edusoftware/core/src/algorithms';
 
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
-import { GateType } from '../grid-circuit/LogicGates';
+import { GateType } from './LogicGates';
 
 export interface Gate {
   id: string;
@@ -140,16 +140,7 @@ const gridCircuitSlice = createSlice({
       const stringifiedPieces = action.payload;
       const pieces = parseOrNull(stringifiedPieces);
 
-      state.pieces = pieces ?? [
-        {
-          id: 'start',
-          type: 'state',
-          position: { x: 0, y: 0 },
-          isFinal: false,
-          isStart: true,
-          label: 'start',
-        },
-      ];
+      state.pieces = pieces;
     },
     // initToolbar(state, action: PayloadAction<Alphabet | undefined>) {
     //   state.toolbar = createPieces(action.payload);

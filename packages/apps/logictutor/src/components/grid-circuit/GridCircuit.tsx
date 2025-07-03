@@ -1,10 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../store';
 import { DraggableGate } from './DraggableGate';
-import {
-  Gate,
-  moveOrAddPiece,
-  connectPieces,
-} from '../grid-automaton-builder/gridCircuitSlice';
+import { Gate, moveOrAddPiece, connectPieces } from './gridCircuitSlice';
 import { GateType } from './LogicGates';
 import { GridCell } from './GridCell';
 import { useState } from 'react';
