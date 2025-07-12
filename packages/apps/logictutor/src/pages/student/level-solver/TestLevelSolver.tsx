@@ -108,7 +108,7 @@ const TestLevelSolver = () => {
                   <div className="flex w-full items-center justify-center">
                     <h2 className="text-md font-medium text-gray-100">
                       <span className="mr-2 text-xs font-normal text-indigo-400">
-                        Build Logic Circuit!
+                        Question Type
                       </span>
                     </h2>
                   </div>
@@ -116,7 +116,7 @@ const TestLevelSolver = () => {
 
                 <div className="px-5 py-2">
                   <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-300">
-                    Some content
+                    Question Content
                   </p>
                 </div>
 
@@ -126,7 +126,7 @@ const TestLevelSolver = () => {
               </div>
 
               <div className="mt-6 space-y-2">
-                Info
+                Question Info
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={() => console.log('SUBMIT!')}
@@ -149,7 +149,7 @@ const TestLevelSolver = () => {
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium text-white">
                         <span className="mr-2 text-sm font-normal text-indigo-400">
-                          Build Logic Circuit!
+                          Question Type
                         </span>
                       </h2>
                     </div>
@@ -157,7 +157,7 @@ const TestLevelSolver = () => {
 
                   <div className="px-6 py-5">
                     <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-200">
-                      Some content
+                      Question Content
                     </p>
                   </div>
 
@@ -181,7 +181,7 @@ const TestLevelSolver = () => {
                     onEnd={() => console.log('end')}
                   />
                 </div>
-                Info
+                Question Info
                 <button
                   className="w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none active:scale-[0.98] disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={() => console.log('OK')}
