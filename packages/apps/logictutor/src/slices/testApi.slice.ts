@@ -1,5 +1,5 @@
 import {
-  TestCreate,
+  LogictutorLevel,
   TestDelete,
   TestUpdate,
 } from '@edusoftware/core/src/types/logictutor';
@@ -7,12 +7,12 @@ import { apiSlice } from './api.slice';
 
 export const testApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    createTestEntry: builder.mutation<
-      TestCreate, // Response type
-      TestCreate // Request payload type
+    createLevel: builder.mutation<
+      LogictutorLevel, // Response type
+      LogictutorLevel // Request payload type
     >({
       query: (body) => ({
-        url: '/logictutor/test',
+        url: '/logictutor/level',
         method: 'POST',
         body,
       }),
@@ -43,16 +43,16 @@ export const testApiSlice = apiSlice.injectEndpoints({
     >({
       query: (testParam) => `/logictutor/test/${testParam}`,
     }),
-    getAllEntries: builder.query<{ testString: string }[], undefined>({
-      query: () => '/logictutor/testAll',
+    getAllLevels: builder.query<LogictutorLevel[], undefined>({
+      query: () => '/logictutor/level-previews',
     }),
   }),
 });
 
 export const {
-  useCreateTestEntryMutation,
+  useCreateLevelMutation,
   useUpdateTestEntryMutation,
   useDeleteTestEntryMutation,
   useGetTestEntryQuery,
-  useGetAllEntriesQuery,
+  useGetAllLevelsQuery,
 } = testApiSlice;

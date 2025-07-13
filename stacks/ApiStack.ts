@@ -7,17 +7,18 @@ export function ApiStack({ stack, app }: StackContext) {
   const { MONGO_URI } = use(SecretStack);
 
   const logicTutorRoutes = {
-    'POST /logictutor/test':
-      'packages/functions/src/logictutor/create/index.main',
-    'PUT /logictutor/test':
-      'packages/functions/src/logictutor/update/index.main',
-    'GET /logictutor/test/{test}':
-      'packages/functions/src/logictutor/get/index.main',
-    'GET /logictutor/testAll':
-      'packages/functions/src/logictutor/getAll/index.main',
-    'DELETE /logictutor/test':
-      'packages/functions/src/logictutor/delete/index.main',
+    'POST /logictutor/level':
+      'packages/functions/src/logictutor/level/create/index.main',
+    'PUT /logictutor/level':
+      'packages/functions/src/logictutor/level/update/index.main',
+    'GET /logictutor/level/{test}':
+      'packages/functions/src/logictutor/level/get/index.main',
+    'GET /logictutor/level-previews':
+      'packages/functions/src/logictutor/level/getAll/index.main',
+    'DELETE /logictutor/level':
+      'packages/functions/src/logictutor/level/delete/index.main',
   };
+
   const api = new Api(stack, 'Api', {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,
     defaults: {
