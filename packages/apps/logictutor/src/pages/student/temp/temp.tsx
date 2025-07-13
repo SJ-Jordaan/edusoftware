@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFetchLevelsQuery } from '../../../slices/levelApi.slice';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import {
   useGetProgressQuery,
@@ -9,58 +7,19 @@ import {
 import { UserProgress } from '@edusoftware/core/src/types';
 import { PracticeLoader } from '../practice/Practice.loader';
 import { LevelGroup } from '../practice/components/LevelGroup';
-
-type Track = 'AUTOMATA' | 'REGEX';
-
-const tracks: { id: Track; name: string; description: string }[] = [
-  {
-    id: 'AUTOMATA',
-    name: 'Automata Theory',
-    description:
-      'Learn about finite automata, state machines, and formal languages',
-  },
-  {
-    id: 'REGEX',
-    name: 'Regular Expressions',
-    description:
-      'Master pattern matching and text processing with regular expressions',
-  },
-];
-
-const TrackSelector = ({
-  selectedTrack,
-}: {
-  selectedTrack: Track;
-  onTrackChange: (track: Track) => void;
-}) => (
-  <div className="mb-8">
-    <div className="flex flex-col space-y-6">
-      {/* Description for selected track */}
-      <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Practice {tracks.find((t) => t.id === selectedTrack)?.name}
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {tracks.find((t) => t.id === selectedTrack)?.description}
-        </p>
-      </div>
-    </div>
-  </div>
-);
+import { TestCard } from '../../../components/test';
+import { useGetAllLevelsQuery } from '../../../slices/testApi.slice';
 
 export const Temp = () => {
-  const [selectedTrack, setSelectedTrack] = useState<Track>('AUTOMATA');
   const navigate = useNavigate();
 
   const {
     data: levels,
-    error: levelsError,
     isLoading: levelsLoading,
+    isError: levelsError,
     isFetching: levelsFetching,
-  } = useFetchLevelsQuery({
-    isPractice: true,
-    track: selectedTrack,
-  });
+    refetch,
+  } = useGetAllLevelsQuery(undefined);
   const [startLevel, { isLoading: startLevelLoading, error: startLevelError }] =
     useStartLevelMutation();
   const {
@@ -128,10 +87,7 @@ export const Temp = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <TrackSelector
-        selectedTrack={selectedTrack}
-        onTrackChange={setSelectedTrack}
-      />
+      <TestCard refetch={refetch} />
 
       {/* Level Groups */}
       <div className="space-y-4">
@@ -143,7 +99,7 @@ export const Temp = () => {
           Object.entries(levelsByDifficulty).map(
             ([difficulty, difficultyLevels]) => (
               <LevelGroup
-                key={`${selectedTrack}-${difficulty}`}
+                key={`Logic Gates-${difficulty}`}
                 difficulty={difficulty}
                 levels={difficultyLevels}
                 progress={progress}

@@ -1,4 +1,5 @@
 import {
+  LogictutorCreateLevelRequest,
   LogictutorLevel,
   TestDelete,
   TestUpdate,
@@ -7,9 +8,9 @@ import { apiSlice } from './api.slice';
 
 export const testApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    createLevel: builder.mutation<
-      LogictutorLevel, // Response type
-      LogictutorLevel // Request payload type
+    createLogictutorLevel: builder.mutation<
+      LogictutorCreateLevelRequest, // Response type
+      LogictutorCreateLevelRequest // Request payload type
     >({
       query: (body) => ({
         url: '/logictutor/level',
@@ -50,7 +51,7 @@ export const testApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useCreateLevelMutation,
+  useCreateLogictutorLevelMutation,
   useUpdateTestEntryMutation,
   useDeleteTestEntryMutation,
   useGetTestEntryQuery,

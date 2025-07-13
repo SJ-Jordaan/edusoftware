@@ -7,29 +7,21 @@ import {
 } from '@edusoftware/core/databases/logictutor';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import {
-  LevelSchema,
-  PopulatedLevel,
-  PopulatedQuestion,
-  QuestionSchema,
+  LogictutorCreateLevelRequest,
+  LogictutorLevelSchema,
+  LogictutorPopulatedLevel,
+  LogictutorQuestionSchema,
 } from '@edusoftware/core/types/logictutor';
-import mongoose from 'mongoose';
 
-type QuestionWithoutId = Omit<PopulatedQuestion, '_id'>;
-
-interface CreateLevelRequest
-  extends Omit<PopulatedLevel, 'questionIds' | '_id'> {
-  questions: QuestionWithoutId[];
-}
-
-export const main = handler<PopulatedLevel>(
+export const main = handler<LogictutorPopulatedLevel>(
   async (
     event: APIGatewayProxyEventV2,
-  ): Promise<LambdaResponse<PopulatedLevel>> => {
+  ): Promise<LambdaResponse<LogictutorPopulatedLevel>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
 
-    let parsedData: CreateLevelRequest;
+    let parsedData: LogictutorCreateLevelRequest;
     try {
       parsedData = JSON.parse(event.body);
     } catch {
@@ -38,7 +30,7 @@ export const main = handler<PopulatedLevel>(
 
     // Validate level fields (excluding questions)
     try {
-      LevelSchema.pick({
+      LogictutorLevelSchema.pick({
         levelName: true,
         description: true,
         difficulty: true,
@@ -53,7 +45,7 @@ export const main = handler<PopulatedLevel>(
     // Validate each question
     parsedData.questions.forEach((q, idx) => {
       try {
-        QuestionSchema.parse(q);
+        LogictutorQuestionSchema.parse(q);
       } catch (error: unknown) {
         const message =
           error instanceof Error
@@ -63,40 +55,24 @@ export const main = handler<PopulatedLevel>(
       }
     });
 
-    if (parsedData.questions.length !== 5) {
-      throw new BadRequestError('Exactly 5 questions are required');
-    }
-
     await connectToDatabase();
-
-    const session = await mongoose.startSession();
-    session.startTransaction();
 
     try {
       // Insert questions
       const questionDocs = await LogictutorQuestionModel.insertMany(
         parsedData.questions,
-        {
-          session,
-        },
       );
 
       // Create the level
-      const levelDoc = await LogictutorLevelModel.create(
-        [
-          {
-            levelName: parsedData.levelName,
-            description: parsedData.description,
-            difficulty: parsedData.difficulty,
-            updatedAt: parsedData.updatedAt ?? new Date().toISOString(),
-            questionIds: questionDocs.map((q) => q._id),
-          },
-        ],
-        { session },
-      );
-
-      await session.commitTransaction();
-      session.endSession();
+      const levelDoc = await LogictutorLevelModel.create([
+        {
+          levelName: parsedData.levelName,
+          description: parsedData.description,
+          difficulty: parsedData.difficulty,
+          updatedAt: parsedData.updatedAt ?? new Date().toISOString(),
+          questionIds: questionDocs.map((q) => q._id),
+        },
+      ]);
 
       return {
         statusCode: 201,
@@ -116,8 +92,6 @@ export const main = handler<PopulatedLevel>(
         },
       };
     } catch (err) {
-      await session.abortTransaction();
-      session.endSession();
       const message =
         err instanceof Error
           ? err.message

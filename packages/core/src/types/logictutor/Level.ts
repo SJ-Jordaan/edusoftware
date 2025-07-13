@@ -1,27 +1,46 @@
 import { z } from 'zod';
-import { ObjectIdSchema, PopulatedQuestionSchema } from './Question';
+import {
+  LogictutorObjectIdSchema,
+  LogictutorPopulatedQuestion,
+  LogictutorPopulatedQuestionSchema,
+} from './Question';
 
-export const LevelSchema = z.object({
+export const LogictutorLevelSchema = z.object({
   levelName: z.string(),
   description: z.string(),
-  questionIds: z.array(ObjectIdSchema).optional(),
+  questionIds: z.array(LogictutorObjectIdSchema).optional(),
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
 });
 
-export const PopulatedLevelSchema = z.object({
+export const LogictutorPopulatedLevelSchema = z.object({
   levelName: z.string(),
   description: z.string(),
-  questionIds: z.array(PopulatedQuestionSchema).optional(),
+  questionIds: z.array(LogictutorPopulatedQuestionSchema).optional(),
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
 });
 
-export const UpdateLevelSchema = LevelSchema.partial();
+export const LogictutorUpdateLevelSchema = LogictutorLevelSchema.partial();
 
 // TypeScript type derived from the Zod schema
-export type LogictutorLevel = z.infer<typeof LevelSchema>;
-export type PopulatedLevel = z.infer<typeof PopulatedLevelSchema>;
-export type IUpdateLevel = z.infer<typeof UpdateLevelSchema>;
-export type PopulatedLevelObject = PopulatedLevel & { _id: string };
+export type LogictutorLevel = z.infer<typeof LogictutorLevelSchema>;
+export type LogictutorPopulatedLevel = z.infer<
+  typeof LogictutorPopulatedLevelSchema
+>;
+export type LogictutorIUpdateLevel = z.infer<
+  typeof LogictutorUpdateLevelSchema
+>;
+export type LogictutorPopulatedLevelObject = LogictutorPopulatedLevel & {
+  _id: string;
+};
 export type LogictutorLevelObject = LogictutorLevel & { _id: string };
+
+type QuestionWithoutId = Omit<LogictutorPopulatedQuestion, '_id'>;
+
+export type LogictutorCreateLevelRequest = Omit<
+  LogictutorPopulatedLevel,
+  'questionIds' | '_id'
+> & {
+  questions: QuestionWithoutId[];
+};
