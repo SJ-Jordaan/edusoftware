@@ -18,7 +18,6 @@ import LoginRedirect from './pages/LoginRedirect.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx';
 import StudentTemplate from './pages/student/StudentTemplate.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
-import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
 import LevelManager from './pages/admin/level-manager/LevelManager.tsx';
 import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
@@ -28,8 +27,8 @@ import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 import { PracticeLevels } from './pages/student/practice/Practice.tsx';
 import ChallengePage from './pages/student/challenges/Challenges.tsx';
-import BadgePage from './pages/student/badges/Badges.tsx';
 import TestLevelSolver from './pages/student/level-solver/TestLevelSolver.tsx';
+import { Temp } from './pages/student/temp/temp.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,9 +49,8 @@ const router = createBrowserRouter(
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
           <Route path="/" element={<ChallengePage />} />
-          <Route path="/badges" element={<BadgePage />} />
           <Route path="/practice" element={<PracticeLevels />} />
-          <Route path="/leaderboard" element={<LeaderBoard />} />
+          <Route path="/temp" element={<Temp />} />
         </Route>
 
         {/* Level Solving routes */}

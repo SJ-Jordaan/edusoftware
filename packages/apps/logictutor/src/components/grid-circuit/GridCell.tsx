@@ -11,7 +11,7 @@ interface GridCellProps {
   className?: string;
 }
 
-export const GridCell = ({
+export const GridSquare = ({
   x,
   y,
   onDrop,
