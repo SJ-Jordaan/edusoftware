@@ -141,6 +141,7 @@ export const LevelGroup = ({
                 progress={progress?.find((p) => p.levelId === level._id)}
                 onClick={() => onStartPractice(level._id)}
                 onReset={() => onResetPractice(level._id)}
+                levelId={level._id}
               />
             </div>
           ))}

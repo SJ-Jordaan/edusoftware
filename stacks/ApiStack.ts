@@ -15,8 +15,8 @@ export function ApiStack({ stack, app }: StackContext) {
       'packages/functions/src/logictutor/level/get/index.main',
     'GET /logictutor/level-previews':
       'packages/functions/src/logictutor/level/getAll/index.main',
-    'GET /logictutor/question':
-      'packages/functions/src/logictutor/question/get/index.main',
+    'GET /logictutor/level':
+      'packages/functions/src/logictutor/level/get/index.main',
     'DELETE /logictutor/level':
       'packages/functions/src/logictutor/level/delete/index.main',
   };

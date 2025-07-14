@@ -25,6 +25,7 @@ export const main = handler<
         difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
         questionIds?: string[];
         updatedAt?: string;
+        _id: string;
       }>
     >
   > => {
@@ -39,6 +40,7 @@ export const main = handler<
         difficulty: level.difficulty,
         updatedAt: level.updatedAt,
         questionIds: level.questionIds?.map((id) => id.toString()),
+        _id: level._id,
       }));
 
       return {

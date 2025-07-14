@@ -1,36 +1,54 @@
-import { TestDelete, TestSchema } from '@edusoftware/core/types';
-import { connectToDatabase, TestEntry } from '@edusoftware/core/databases';
-import { handler } from '@edusoftware/core/handlers';
-import { BadRequestError, LambdaResponse } from '@edusoftware/core/types';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { handler } from '@edusoftware/core/handlers';
+import {
+  BadRequestError,
+  LambdaResponse,
+  ApplicationError,
+} from '@edusoftware/core/types';
+import {
+  LogictutorLevelModel,
+  LogictutorQuestionModel,
+} from '@edusoftware/core/databases/logictutor';
+import { connectToDatabase } from '@edusoftware/core/databases';
 
-export const main = handler<TestDelete>(
+export const main = handler<{ message: string }>(
   async (
     event: APIGatewayProxyEventV2,
-  ): Promise<LambdaResponse<TestDelete>> => {
-    if (!event.body) {
-      throw new BadRequestError('Request body is required');
-    }
+  ): Promise<LambdaResponse<{ message: string }>> => {
+    const levelId = event.queryStringParameters?.levelId;
 
-    let parsedData: TestDelete;
-    try {
-      parsedData = TestSchema.parse(JSON.parse(event.body));
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Invalid test data and could not parse error details';
-      throw new BadRequestError(message);
+    if (!levelId) {
+      throw new BadRequestError('Missing levelId parameter');
     }
 
     await connectToDatabase();
 
-    const { testString } = parsedData;
-    await TestEntry.deleteOne({ value: testString });
+    try {
+      const level = await LogictutorLevelModel.findByIdAndDelete(levelId);
 
-    return {
-      statusCode: 201,
-      body: { testString: testString },
-    };
+      if (!level) {
+        throw new BadRequestError(`Level with ID ${levelId} not found`);
+      }
+
+      // Delete associated questions if there are any
+      if (level.questionIds && level.questionIds.length > 0) {
+        await LogictutorQuestionModel.deleteMany({
+          _id: { $in: level.questionIds },
+        });
+      }
+
+      return {
+        statusCode: 200,
+        body: {
+          message: `Level ${levelId} and its associated questions deleted successfully`,
+        },
+      };
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Unknown error while deleting level';
+      throw new ApplicationError(message, 500);
+    }
   },
 );

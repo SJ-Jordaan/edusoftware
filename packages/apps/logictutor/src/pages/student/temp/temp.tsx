@@ -20,8 +20,10 @@ export const Temp = () => {
     isFetching: levelsFetching,
     refetch,
   } = useGetAllLevelsQuery(undefined);
+
   const [startLevel, { isLoading: startLevelLoading, error: startLevelError }] =
     useStartLevelMutation();
+
   const {
     data: userProgress,
     isLoading: userProgressLoading,
@@ -32,16 +34,14 @@ export const Temp = () => {
   const progress = userProgress as UserProgress[] | undefined;
 
   const handleStartPractice = async (levelId: string): Promise<void> => {
+    console.log(levelId);
     try {
       if (startLevelLoading) return;
 
-      if (progress?.find((p) => p.levelId === levelId)) {
+      if (levelId) {
         navigate(`/level/${levelId}`);
         return;
       }
-
-      await startLevel(levelId).unwrap();
-      navigate(`/level/${levelId}`);
     } catch (error: unknown) {
       console.error(error);
     }

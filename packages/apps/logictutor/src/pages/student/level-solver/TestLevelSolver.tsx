@@ -2,12 +2,32 @@ import { usePreventOverscroll } from '../../../hooks';
 import { CountdownTimer } from './components/CountdownTimer';
 import { DragAndDropProvider } from '../../../components/DragAndDropProvider';
 import { GridCircuitBuilder } from '../../../components/grid-circuit/GridCircuitBuilder';
+import { useEffect, useState } from 'react';
+import { useGetLogictutorLevelQuery } from '../../../slices/testApi.slice';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch } from '../../../store';
+import { initGrid } from '../../../components/grid-circuit/gridCircuitSlice';
 
 const renderSpecificInterface = () => {
   return <GridCircuitBuilder />;
 };
 
 const TestLevelSolver = () => {
+  const dispatch = useAppDispatch();
+
+  const { id } = useParams<{ id: string }>();
+
+  if (!id) throw new Error('No level id provided');
+
+  const { data: level } = useGetLogictutorLevelQuery(id);
+
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  useEffect(() => {
+    if (!level?.questions[currentQuestion].booleanExpression) return;
+    dispatch(initGrid(level?.questions[currentQuestion].booleanExpression));
+  }, [dispatch, level, currentQuestion]);
+
   usePreventOverscroll();
 
   //   if (isLoading) {
@@ -97,7 +117,7 @@ const TestLevelSolver = () => {
               <div className="mb-6 flex w-full items-center justify-between">
                 <div className="w-full text-sm text-gray-400">
                   <CountdownTimer
-                    initialCount={60000}
+                    initialCount={600}
                     onEnd={() => console.log('ok')}
                   />
                 </div>
@@ -108,7 +128,7 @@ const TestLevelSolver = () => {
                   <div className="flex w-full items-center justify-center">
                     <h2 className="text-md font-medium text-gray-100">
                       <span className="mr-2 text-xs font-normal text-indigo-400">
-                        Question Type
+                        Build Logic Circuit
                       </span>
                     </h2>
                   </div>
@@ -116,7 +136,7 @@ const TestLevelSolver = () => {
 
                 <div className="px-5 py-2">
                   <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-300">
-                    Question Content
+                    {level?.questions[currentQuestion].questionContent}
                   </p>
                 </div>
 
@@ -149,7 +169,7 @@ const TestLevelSolver = () => {
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium text-white">
                         <span className="mr-2 text-sm font-normal text-indigo-400">
-                          Question Type
+                          Build Logic Circuit
                         </span>
                       </h2>
                     </div>
@@ -157,7 +177,7 @@ const TestLevelSolver = () => {
 
                   <div className="px-6 py-5">
                     <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-200">
-                      Question Content
+                      {level?.questions[currentQuestion].questionContent}
                     </p>
                   </div>
 
@@ -177,7 +197,7 @@ const TestLevelSolver = () => {
                     Time Remaining
                   </h3>
                   <CountdownTimer
-                    initialCount={60000}
+                    initialCount={600}
                     onEnd={() => console.log('end')}
                   />
                 </div>

@@ -44,3 +44,7 @@ export type LogictutorCreateLevelRequest = Omit<
 > & {
   questions: QuestionWithoutId[];
 };
+
+export type LogictutorFullLevel = LogictutorPopulatedLevelObject & {
+  questions: LogictutorPopulatedQuestion[];
+};

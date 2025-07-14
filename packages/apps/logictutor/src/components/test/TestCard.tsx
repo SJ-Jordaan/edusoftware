@@ -95,7 +95,7 @@ export const TestCard = ({ refetch }: TestCardProps) => {
       await createLevel(level);
     } catch (error) {
       console.error(error);
-      createErrorToast('An error occured while creating the level');
+      createErrorToast('An error occurred while creating the level');
       return;
     } finally {
       setIsSubmitting(false);

@@ -21,7 +21,6 @@ import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
 import LevelManager from './pages/admin/level-manager/LevelManager.tsx';
 import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
-import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import QuestionEditor from './pages/admin/question-editor/QuestionEditor.tsx';
 import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
@@ -54,7 +53,7 @@ const router = createBrowserRouter(
         </Route>
 
         {/* Level Solving routes */}
-        <Route path="/level/:id" element={<LevelSolver />} />
+        <Route path="/level/:id" element={<TestLevelSolver />} />
         <Route path="/level/circuit" element={<TestLevelSolver />} />
 
         {/* Admin routes */}

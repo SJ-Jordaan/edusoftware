@@ -2,11 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Vite: Chrome Debug",
       "type": "pwa-chrome",
       "request": "launch",
-      "name": "Launch Vite Dev Server (http://localhost:5173)",
       "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}",
+      "webRoot": "${workspaceFolder}/packages/apps/logictutor",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/*": "${workspaceFolder}/*",
+        "webpack:///*": "${workspaceFolder}/*",
+        "vite:///*": "${workspaceFolder}/*"
+      },
       "runtimeArgs": ["--remote-debugging-port=9222"]
     }
   ]

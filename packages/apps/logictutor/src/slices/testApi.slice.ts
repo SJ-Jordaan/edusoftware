@@ -1,7 +1,7 @@
 import {
   LogictutorCreateLevelRequest,
-  LogictutorLevel,
-  TestDelete,
+  LogictutorFullLevel,
+  LogictutorLevelObject,
   TestUpdate,
 } from '@edusoftware/core/src/types/logictutor';
 import { apiSlice } from './api.slice';
@@ -18,14 +18,14 @@ export const testApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
-    deleteTestEntry: builder.mutation<
-      TestDelete, // Response type
-      TestDelete // Request payload type
+    deleteLogictutorLevel: builder.mutation<
+      string, // Response type
+      string // Request payload type
     >({
-      query: (body) => ({
-        url: '/logictutor/test',
+      query: (levelId) => ({
+        url: '/logictutor/level',
         method: 'DELETE',
-        body,
+        params: { levelId },
       }),
     }),
     updateTestEntry: builder.mutation<
@@ -38,13 +38,17 @@ export const testApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
-    getTestEntry: builder.query<
-      { testString: string }, // Response type
+    getLogictutorLevel: builder.query<
+      LogictutorFullLevel, // Response type
       string // Path param: test
     >({
-      query: (testParam) => `/logictutor/test/${testParam}`,
+      query: (levelId) => ({
+        url: '/logictutor/level',
+        method: 'GET',
+        params: { levelId },
+      }),
     }),
-    getAllLevels: builder.query<LogictutorLevel[], undefined>({
+    getAllLevels: builder.query<LogictutorLevelObject[], undefined>({
       query: () => '/logictutor/level-previews',
     }),
   }),
@@ -53,7 +57,7 @@ export const testApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateLogictutorLevelMutation,
   useUpdateTestEntryMutation,
-  useDeleteTestEntryMutation,
-  useGetTestEntryQuery,
+  useDeleteLogictutorLevelMutation,
+  useGetLogictutorLevelQuery,
   useGetAllLevelsQuery,
 } = testApiSlice;

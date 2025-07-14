@@ -1,5 +1,3 @@
-import { parseOrNull } from '@edusoftware/core/src/algorithms';
-
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import { GateType } from './LogicGates';
 
@@ -34,50 +32,6 @@ interface ConnectPiecePayload {
 const initialState: GridGateState = {
   isEditable: true,
   pieces: [
-    {
-      id: 'gate-1',
-      position: { x: 0, y: 0 },
-      gateType: 'and',
-    },
-    {
-      id: 'gate-2',
-      position: { x: 1, y: 0 },
-      gateType: 'or',
-    },
-    {
-      id: 'gate-3',
-      position: { x: 2, y: 1 },
-      gateType: 'not',
-    },
-    {
-      id: 'gate-4',
-      position: { x: 1, y: 3 },
-      gateType: 'xor',
-    },
-    {
-      id: 'gate-5',
-      position: { x: 1, y: 4 },
-      gateType: 'input',
-      label: 'X',
-    },
-    {
-      id: 'gate-6',
-      position: { x: 1, y: 5 },
-      gateType: 'input',
-      label: 'Y',
-    },
-    {
-      id: 'gate-6.1',
-      position: { x: 3, y: 5 },
-      gateType: 'input',
-      label: 'W',
-    },
-    {
-      id: 'gate-7',
-      position: { x: 2, y: 5 },
-      gateType: 'input',
-      label: 'Z',
-    },
     {
       id: 'gate-8',
       position: { x: 5, y: 3 },
@@ -139,10 +93,72 @@ const gridCircuitSlice = createSlice({
       state.isEditable = action.payload;
     },
     initGrid(state, action: PayloadAction<string>) {
-      const stringifiedPieces = action.payload;
-      const pieces = parseOrNull(stringifiedPieces);
+      const booleanExpression = action.payload;
 
-      state.pieces = pieces;
+      let numGates = 1;
+      const newPieces: Gate[] = [];
+
+      newPieces.push({
+        id: '0',
+        position: { x: 5, y: 3 },
+        gateType: 'output',
+        label: 'A',
+      });
+
+      for (const char of booleanExpression.split('')) {
+        let gateType: GateType | undefined;
+        let label: string | undefined;
+        if (/^[a-zA-Z]$/.test(char)) {
+          gateType = 'input';
+          label = char;
+        }
+
+        switch (char) {
+          case '!':
+          case '¬':
+            gateType = 'not';
+            break;
+          case '|':
+          case '+':
+            gateType = 'or';
+
+            break;
+          case '^':
+          case '⊕':
+            gateType = 'xor';
+            break;
+          case '&':
+          case '·':
+          case '.':
+            gateType = 'and';
+            break;
+        }
+
+        if (!gateType) throw 'Failed to load question';
+
+        let x = Math.floor(Math.random() * 6);
+        let y = Math.floor(Math.random() * 6);
+        while (
+          newPieces.filter(
+            (piece) => piece.position.x === x && piece.position.y === y,
+          ).length > 0
+        ) {
+          x = Math.floor(Math.random() * 6);
+          y = Math.floor(Math.random() * 6);
+        }
+
+        newPieces.push({
+          gateType,
+          label,
+          id: `${numGates++}`,
+          position: { x, y },
+        });
+      }
+
+      console.log('IMPORTANT', booleanExpression);
+      console.log('IMPORTANT', newPieces);
+
+      state.pieces = newPieces;
     },
     // initToolbar(state, action: PayloadAction<Alphabet | undefined>) {
     //   state.toolbar = createPieces(action.payload);

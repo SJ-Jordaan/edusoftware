@@ -5,7 +5,6 @@ export const LogictutorObjectIdSchema = z
 
 export const LogictutorQuestionSchema = z.object({
   questionContent: z.string().min(1, 'Question content is required'),
-  answer: z.string().min(1, 'Answer is required'),
   hints: z.array(z.string()).optional(),
   score: z.number().default(0),
   booleanExpression: z.string().min(1, 'Boolean Expression is required'),
