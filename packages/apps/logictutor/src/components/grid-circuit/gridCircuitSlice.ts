@@ -16,6 +16,7 @@ interface GridGateState {
   isEditable: boolean;
   pieces: Gate[];
   toolbar: Partial<Gate>[];
+  answer: string;
 }
 
 interface MoveOrAddPiecePayload {
@@ -106,6 +107,7 @@ const initialState: GridGateState = {
       output: '',
     },
   ],
+  answer: '',
 };
 
 function prepareMoveOrAddPiecePayload(

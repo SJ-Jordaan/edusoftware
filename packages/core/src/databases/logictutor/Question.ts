@@ -10,7 +10,6 @@ export interface QuestionDocument extends Document {
 
 const QuestionSchema = new Schema<QuestionDocument>({
   questionContent: { type: String, required: true },
-  answer: { type: String, required: true },
   hints: { type: [String], default: undefined }, // optional array
   score: { type: Number, default: 0 },
   booleanExpression: { type: String, required: true },

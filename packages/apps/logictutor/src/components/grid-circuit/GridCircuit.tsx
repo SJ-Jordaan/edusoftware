@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { DraggableGate } from './DraggableGate';
 import { Gate, moveOrAddPiece, connectPieces } from './gridCircuitSlice';
 import { GateType } from './LogicGates';
-import { GridSquare } from './GridCell';
+import { GridSquare } from './GridSquare';
 import { useState } from 'react';
 
 const GridCircuit = () => {
@@ -76,6 +76,15 @@ const GridCircuit = () => {
         y: inputGate.position.y * cellSize + cellSize * (2 / 3) - 1,
       };
     }
+  };
+
+  const expressionMap: Record<GateType, string> = {
+    and: '·',
+    or: '+',
+    xor: '⊕',
+    not: '¬',
+    input: 'token',
+    output: '',
   };
 
   const generateBooleanExpression = () => {
@@ -231,15 +240,6 @@ const GridCircuit = () => {
     }
 
     if (operationStack.length === 1) return operationStack[0];
-  };
-
-  const expressionMap: Record<GateType, string> = {
-    and: '·',
-    or: '+',
-    xor: '⊕',
-    not: '¬',
-    input: 'token',
-    output: '',
   };
 
   return (
