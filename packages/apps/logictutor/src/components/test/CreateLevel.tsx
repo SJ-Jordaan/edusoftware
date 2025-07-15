@@ -23,8 +23,6 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
   const [difficulty, setDifficulty] = useState<
     'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
   >('BEGINNER');
-  const [enableToolbar, setEnableToolbar] = useState(false);
-  const [showTruthTable, setShowTruthTable] = useState(false);
 
   const [questions, setQuestions] = useState<
     Array<{
@@ -32,6 +30,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       outputSymbol: string;
       questionContent: string;
       hints: string[];
+      enableToolbar: boolean;
+      showTruthTable: boolean;
     }>
   >([]);
 
@@ -50,6 +50,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
         questionContent: '',
         hints: [''],
         outputSymbol: '',
+        enableToolbar: false,
+        showTruthTable: false,
       },
     ]);
   };
@@ -62,6 +64,16 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
     index: number,
     field: 'booleanExpression' | 'questionContent' | 'outputSymbol',
     value: string,
+  ) => {
+    const updated = [...questions];
+    updated[index][field] = value;
+    setQuestions(updated);
+  };
+
+  const updateQuestionBoolField = (
+    index: number,
+    field: 'enableToolbar' | 'showTruthTable',
+    value: boolean,
   ) => {
     const updated = [...questions];
     updated[index][field] = value;
@@ -143,8 +155,6 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       description,
       difficulty,
       timeLimit: timeLimitSeconds !== 0 ? timeLimitSeconds : undefined,
-      showTruthTable: showTruthTable,
-      enableToolbar: enableToolbar,
       questions: questions.map((q) => ({ ...q })),
     };
 
@@ -156,8 +166,6 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       setDifficulty('BEGINNER');
       setQuestions([]);
       setTimeLimit('0:0');
-      setEnableToolbar(false);
-      setShowTruthTable(false);
     } catch (err) {
       console.error(err);
       createErrorToast('Error', 'An error occurred while creating the level');
@@ -262,28 +270,7 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <DifficultySelector />
-          <div className="flex items-center gap-4">
-            <p className="min-w-40">Enable Toolbar</p>
-            <input
-              type="checkbox"
-              checked={enableToolbar}
-              onChange={(e) => setEnableToolbar(e.target.checked)}
-              className="h-5 w-5 rounded-lg accent-indigo-500"
-            />
-          </div>
-
-          <div className="flex items-center gap-4">
-            <p className="min-w-40">Show Truth Table</p>
-            <input
-              type="checkbox"
-              checked={showTruthTable}
-              onChange={(e) => setShowTruthTable(e.target.checked)}
-              className="h-5 w-5 rounded-lg accent-indigo-500"
-            />
-          </div>
-        </div>
+        <DifficultySelector />
       </div>
 
       <div className="flex justify-center gap-4">
@@ -370,6 +357,27 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
             />
           </div>
           <div className="flex items-center gap-4">
+            <p className="min-w-40">Enable Toolbar</p>
+            <input
+              type="checkbox"
+              checked={question.enableToolbar}
+              onChange={(e) =>
+                updateQuestionBoolField(idx, 'enableToolbar', e.target.checked)
+              }
+              className="h-5 w-5 rounded-lg accent-indigo-500"
+            />
+            <div className="w-8"></div>
+            <p className="min-w-40">Show Truth Table</p>
+            <input
+              type="checkbox"
+              checked={question.showTruthTable}
+              onChange={(e) =>
+                updateQuestionBoolField(idx, 'showTruthTable', e.target.checked)
+              }
+              className="h-5 w-5 rounded-lg accent-indigo-500"
+            />
+          </div>
+          <div className="flex items-center gap-4">
             <p className="w-40">Hints</p>
             <button
               onClick={() => addHint(idx)}
@@ -379,6 +387,7 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
               <PlusIcon className="h-5 w-5" />
             </button>
           </div>
+
           {question.hints.map((_, hintIndex) => (
             <div className="flex gap-4" key={hintIndex}>
               <input

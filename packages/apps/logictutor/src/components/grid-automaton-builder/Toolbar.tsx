@@ -2,15 +2,19 @@ import { useAppSelector } from '../../store';
 import { DraggableGate } from '../grid-circuit/DraggableGate';
 import { DummyCell } from './DummyCell';
 
-export const Toolbar = () => {
+interface ToolbarProps {
+  cellScale: number;
+}
+
+export const Toolbar = ({ cellScale }: ToolbarProps) => {
   const toolbar = useAppSelector((state) => state.gridCircuit.toolbar);
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap justify-center gap-1">
       {toolbar.map(
         (item, index) =>
           item.gateType && (
-            <DummyCell key={`${item.gateType}-${index}`}>
+            <DummyCell key={`${item.gateType}-${index}`} cellScale={cellScale}>
               <DraggableGate
                 gateType={item.gateType}
                 inputLabel={item.label}

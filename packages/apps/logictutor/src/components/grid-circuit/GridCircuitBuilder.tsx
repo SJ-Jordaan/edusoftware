@@ -11,13 +11,13 @@ export const GridCircuitBuilder = ({
   enableToolbar,
 }: GridBuilderProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       <GridCircuit cellScale={cellScale} />
 
       {enableToolbar && (
         <>
           <TrashBin />
-          <Toolbar />
+          <Toolbar cellScale={cellScale} />
         </>
       )}
     </div>

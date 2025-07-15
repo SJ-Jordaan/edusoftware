@@ -23,10 +23,7 @@ export const TrashBin = () => {
   }));
 
   return (
-    <div
-      ref={drop}
-      className={'mb-2 flex h-12 w-full items-center justify-center'}
-    >
+    <div ref={drop} className={'flex h-12 w-full items-center justify-center'}>
       <div
         className={`flex h-full w-32 items-center justify-center rounded-full  transition-colors duration-300 ${
           isOver ? 'animate-pulse bg-red-500' : ''

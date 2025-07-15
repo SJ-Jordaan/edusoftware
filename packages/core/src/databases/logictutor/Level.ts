@@ -8,8 +8,6 @@ export interface LevelDocument extends Document {
   updatedAt?: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   timeLimit?: number;
-  enableToolbar: boolean;
-  showTruthTable: boolean;
 }
 
 const LevelSchema = new Schema<LevelDocument>({
@@ -18,8 +16,6 @@ const LevelSchema = new Schema<LevelDocument>({
   questionIds: [{ type: Schema.Types.ObjectId, ref: 'Question' }], // Optional populated field
   updatedAt: { type: String }, // Assuming ISO string; if you want timestamps, use Date type instead
   timeLimit: { type: Number },
-  enableToolbar: { type: Boolean, required: true },
-  showTruthTable: { type: Boolean, required: true },
   difficulty: {
     type: String,
     enum: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'],

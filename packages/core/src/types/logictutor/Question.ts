@@ -8,6 +8,8 @@ export const LogictutorQuestionSchema = z.object({
   hints: z.array(z.string()).optional(),
   booleanExpression: z.string().min(1, 'Boolean Expression is required'),
   outputSymbol: z.string().max(1, 'Output Symbol is required'),
+  enableToolbar: z.boolean(),
+  showTruthTable: z.boolean(),
 });
 
 export const LogictutorUpdateQuestionSchema =

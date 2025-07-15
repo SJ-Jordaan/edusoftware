@@ -22,13 +22,13 @@ export const main = handler<{
   description: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   timeLimit?: number;
-  enableToolbar: boolean;
-  showTruthTable: boolean;
   questions?: Array<{
     questionContent: string;
     booleanExpression: string;
     hints?: string[];
     outputSymbol: string;
+    enableToolbar: boolean;
+    showTruthTable: boolean;
   }>;
   updatedAt?: string;
   _id: string;
@@ -41,13 +41,13 @@ export const main = handler<{
       description: string;
       difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
       timeLimit?: number;
-      enableToolbar: boolean;
-      showTruthTable: boolean;
       questions?: Array<{
         questionContent: string;
         booleanExpression: string;
         hints?: string[];
         outputSymbol: string;
+        enableToolbar: boolean;
+        showTruthTable: boolean;
       }>;
       updatedAt?: string;
       _id: string;

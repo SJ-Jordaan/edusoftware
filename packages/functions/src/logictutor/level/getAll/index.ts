@@ -16,8 +16,6 @@ export const main = handler<
     questionIds?: string[];
     updatedAt?: string;
     timeLimit?: number;
-    enableToolbar: boolean;
-    showTruthTable: boolean;
   }>
 >(
   async (): Promise<
@@ -29,8 +27,6 @@ export const main = handler<
         questionIds?: string[];
         updatedAt?: string;
         timeLimit?: number;
-        enableToolbar: boolean;
-        showTruthTable: boolean;
         _id: string;
       }>
     >
@@ -45,8 +41,6 @@ export const main = handler<
         description: level.description,
         difficulty: level.difficulty,
         updatedAt: level.updatedAt,
-        enableToolbar: level.enableToolbar,
-        showTruthTable: level.showTruthTable,
         questionIds: level.questionIds?.map((id) => id.toString()),
         _id: level._id,
       }));

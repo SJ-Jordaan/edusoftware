@@ -183,6 +183,7 @@ const gridCircuitSlice = createSlice({
       });
 
       state.toolbar = newToolbar;
+      state.pieces = [];
     },
     deletePiece(state, action: PayloadAction<string>) {
       state.pieces = state.pieces.filter(

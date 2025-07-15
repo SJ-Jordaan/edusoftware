@@ -7,6 +7,8 @@ export interface QuestionDocument extends Document {
   score: number;
   booleanExpression: string;
   outputSymbol: string;
+  enableToolbar: boolean;
+  showTruthTable: boolean;
 }
 
 const QuestionSchema = new Schema<QuestionDocument>({
@@ -15,6 +17,8 @@ const QuestionSchema = new Schema<QuestionDocument>({
   score: { type: Number, default: 0 },
   booleanExpression: { type: String, required: true },
   outputSymbol: { type: String, required: true },
+  enableToolbar: { type: Boolean, required: true },
+  showTruthTable: { type: Boolean, required: true },
 });
 
 export const LogictutorQuestionModel = mongoose.model<QuestionDocument>(

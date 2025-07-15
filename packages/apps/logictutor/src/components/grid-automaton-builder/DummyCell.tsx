@@ -1,13 +1,12 @@
 interface DummyCellProps {
   children: React.ReactNode;
+  cellScale: number;
 }
 
-export const DummyCell = ({ children }: DummyCellProps) => {
+export const DummyCell = ({ children, cellScale }: DummyCellProps) => {
   return (
     <div
-      className={
-        'box-border flex h-14 w-14 flex-col items-center justify-center justify-self-center border border-gray-700'
-      }
+      className={`box-border flex h-${cellScale * 14} w-${cellScale * 14} flex-col items-center justify-center justify-self-center border border-gray-700`}
     >
       {children}
     </div>
