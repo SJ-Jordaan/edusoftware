@@ -1,14 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { PageLoader } from '../../../components/loaders/PageLoader';
-import {
-  useGetProgressQuery,
-  useStartLevelMutation,
-} from '../../../slices/progressApi.slice';
-import { UserProgress } from '@edusoftware/core/src/types';
 import { PracticeLoader } from '../practice/Practice.loader';
 import { LevelGroup } from '../practice/components/LevelGroup';
-import { TestCard } from '../../../components/test';
 import { useGetAllLevelsQuery } from '../../../slices/testApi.slice';
+import { CreateLevel } from '../../../components/test';
 
 export const Temp = () => {
   const navigate = useNavigate();
@@ -21,22 +16,10 @@ export const Temp = () => {
     refetch,
   } = useGetAllLevelsQuery(undefined);
 
-  const [startLevel, { isLoading: startLevelLoading, error: startLevelError }] =
-    useStartLevelMutation();
-
-  const {
-    data: userProgress,
-    isLoading: userProgressLoading,
-    error: userProgressError,
-    isFetching: userProgressFetching,
-  } = useGetProgressQuery();
-
-  const progress = userProgress as UserProgress[] | undefined;
-
   const handleStartPractice = async (levelId: string): Promise<void> => {
     console.log(levelId);
     try {
-      if (startLevelLoading) return;
+      if (levelsLoading) return;
 
       if (levelId) {
         navigate(`/level/${levelId}`);
@@ -47,25 +30,10 @@ export const Temp = () => {
     }
   };
 
-  const handleResetPractice = async (levelId: string) => {
-    try {
-      if (startLevelLoading) return;
+  const isLoading = levelsLoading || levelsFetching;
+  const isError = levelsError;
 
-      await startLevel(levelId).unwrap();
-      navigate(`/level/${levelId}`);
-    } catch (error: unknown) {
-      console.error(error);
-    }
-  };
-
-  const isLoading =
-    levelsLoading ||
-    userProgressLoading ||
-    levelsFetching ||
-    userProgressFetching;
-  const isError = levelsError || startLevelError || userProgressError;
-
-  if (startLevelLoading) {
+  if (isLoading) {
     return <PageLoader overlay />;
   }
 
@@ -87,7 +55,7 @@ export const Temp = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <TestCard refetch={refetch} />
+      <CreateLevel refetch={refetch} />
 
       {/* Level Groups */}
       <div className="space-y-4">
@@ -102,10 +70,9 @@ export const Temp = () => {
                 key={`Logic Gates-${difficulty}`}
                 difficulty={difficulty}
                 levels={difficultyLevels}
-                progress={progress}
                 onStartPractice={handleStartPractice}
-                onResetPractice={handleResetPractice}
                 isLoading={levelsFetching}
+                isAdmin
               />
             ),
           )

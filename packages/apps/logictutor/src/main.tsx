@@ -26,7 +26,7 @@ import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 import { PracticeLevels } from './pages/student/practice/Practice.tsx';
 import ChallengePage from './pages/student/challenges/Challenges.tsx';
-import TestLevelSolver from './pages/student/level-solver/TestLevelSolver.tsx';
+import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import { Temp } from './pages/student/temp/temp.tsx';
 
 const router = createBrowserRouter(
@@ -53,8 +53,8 @@ const router = createBrowserRouter(
         </Route>
 
         {/* Level Solving routes */}
-        <Route path="/level/:id" element={<TestLevelSolver />} />
-        <Route path="/level/circuit" element={<TestLevelSolver />} />
+        <Route path="/level/:id" element={<LevelSolver />} />
+        <Route path="/level/circuit" element={<LevelSolver />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>

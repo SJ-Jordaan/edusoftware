@@ -14,7 +14,7 @@ interface GridGateState {
   isEditable: boolean;
   pieces: Gate[];
   toolbar: Partial<Gate>[];
-  answer: string;
+  booleanExpression: string;
 }
 
 interface MoveOrAddPiecePayload {
@@ -61,7 +61,7 @@ const initialState: GridGateState = {
       output: '',
     },
   ],
-  answer: '',
+  booleanExpression: '',
 };
 
 function prepareMoveOrAddPiecePayload(
@@ -106,6 +106,7 @@ const gridCircuitSlice = createSlice({
       });
 
       for (const char of booleanExpression.split('')) {
+        if (char === ' ' || char === '(' || char === ')') continue;
         let gateType: GateType | undefined;
         let label: string | undefined;
         if (/^[a-zA-Z]$/.test(char)) {
@@ -155,9 +156,7 @@ const gridCircuitSlice = createSlice({
         });
       }
 
-      console.log('IMPORTANT', booleanExpression);
-      console.log('IMPORTANT', newPieces);
-
+      state.booleanExpression = booleanExpression;
       state.pieces = newPieces;
     },
     // initToolbar(state, action: PayloadAction<Alphabet | undefined>) {

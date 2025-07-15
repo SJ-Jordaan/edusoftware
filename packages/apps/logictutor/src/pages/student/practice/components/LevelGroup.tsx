@@ -1,25 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
-import { UserProgress } from '@edusoftware/core/src/types';
+import { LogictutorLevelObject } from '@edusoftware/core/src/types';
 import { PracticeCard } from './PracticeCard';
 
 const MAX_VISIBLE_INDICATORS = 5;
 
 interface LevelGroupProps {
   difficulty: string;
-  levels: any[];
-  progress?: UserProgress[];
+  levels: LogictutorLevelObject[];
   onStartPractice: (levelId: string) => void;
-  onResetPractice: (levelId: string) => void;
   isLoading?: boolean;
+  isAdmin: boolean;
 }
 
 export const LevelGroup = ({
   difficulty,
   levels,
-  progress,
   onStartPractice,
-  onResetPractice,
   isLoading,
+  isAdmin,
 }: LevelGroupProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -138,10 +136,9 @@ export const LevelGroup = ({
                 levelName={level.levelName}
                 description={level.description}
                 difficulty={level.difficulty}
-                progress={progress?.find((p) => p.levelId === level._id)}
                 onClick={() => onStartPractice(level._id)}
-                onReset={() => onResetPractice(level._id)}
                 levelId={level._id}
+                isAdmin={isAdmin}
               />
             </div>
           ))}

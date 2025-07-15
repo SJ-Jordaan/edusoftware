@@ -5,11 +5,12 @@ import { useState } from 'react';
 import { parseBooleanExpr } from '@edusoftware/core/src/algorithms';
 import { ErrorToast } from '../toasts/ErrorToast';
 import { toast } from 'react-toastify';
+import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 interface TestCardProps {
   refetch: () => void; // or Promise<void> if it's async
 }
 
-export const TestCard = ({ refetch }: TestCardProps) => {
+export const CreateLevel = ({ refetch }: TestCardProps) => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [levelName, setLevelName] = useState('');
@@ -22,14 +23,14 @@ export const TestCard = ({ refetch }: TestCardProps) => {
     Array<{
       booleanExpression: string;
       questionContent: string;
-      hints: string;
+      hints: string[];
     }>
   >([]);
 
   const addQuestion = () => {
     setQuestions([
       ...questions,
-      { booleanExpression: '', questionContent: '', hints: '' },
+      { booleanExpression: '', questionContent: '', hints: [''] },
     ]);
   };
 
@@ -39,11 +40,27 @@ export const TestCard = ({ refetch }: TestCardProps) => {
 
   const updateQuestionField = (
     index: number,
-    field: 'booleanExpression' | 'questionContent' | 'hints',
+    field: 'booleanExpression' | 'questionContent',
     value: string,
   ) => {
     const updated = [...questions];
     updated[index][field] = value;
+    setQuestions(updated);
+  };
+
+  const updateHintField = (index: number, hintIndex: number, value: string) => {
+    const updated = [...questions];
+    updated[index]['hints'][hintIndex] = value;
+    setQuestions(updated);
+  };
+  const addHint = (index: number) => {
+    const updated = [...questions];
+    updated[index]['hints'].push('');
+    setQuestions(updated);
+  };
+  const removeHint = (index: number, hintIndex: number) => {
+    const updated = [...questions];
+    updated[index]['hints'].splice(hintIndex, 1);
     setQuestions(updated);
   };
 
@@ -84,7 +101,7 @@ export const TestCard = ({ refetch }: TestCardProps) => {
       questions: questions.map((question) => {
         return {
           ...question,
-          hints: question.hints.split(','),
+          hints: question.hints,
           score: 5,
           answer: '',
         };
@@ -213,10 +230,12 @@ export const TestCard = ({ refetch }: TestCardProps) => {
         </div>
       )}
       {questions.map((question, idx) => (
-        <div className="flex items-center gap-4 text-white" key={idx}>
-          {idx + 1}.
-          <div className="flex items-center gap-4">
-            <p>Boolean Expression</p>
+        <div
+          className="flex flex-col gap-4 rounded-xl border-l-8 border-emerald-500 bg-gray-800 p-4 text-white"
+          key={idx}
+        >
+          <div className="flex items-center justify-evenly gap-4">
+            {idx + 1}.<p>Boolean Expression</p>
             <input
               className={inputClass}
               type="text"
@@ -226,8 +245,6 @@ export const TestCard = ({ refetch }: TestCardProps) => {
                 updateQuestionField(idx, 'booleanExpression', e.target.value)
               }
             />
-          </div>
-          <div className="flex items-center gap-4">
             <p>Question Instructions</p>
             <input
               className={inputClass}
@@ -238,25 +255,55 @@ export const TestCard = ({ refetch }: TestCardProps) => {
                 updateQuestionField(idx, 'questionContent', e.target.value)
               }
             />
-          </div>
-          <div className="flex items-center  gap-4">
-            <p>Hints (comma separated)</p>
-            <input
-              className={inputClass}
-              type="text"
-              placeholder="Hints"
-              value={question.hints}
-              onChange={(e) =>
-                updateQuestionField(idx, 'hints', e.target.value)
-              }
-            />
             <button
-              className="m-auto w-min  rounded-lg bg-red-500 px-4 py-2"
               onClick={() => removeQuestion(idx)}
+              className=" rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              aria-label="Delete"
             >
-              Remove
+              <TrashIcon className="h-5 w-5" />
             </button>
           </div>
+          <div className="flex items-center gap-4">
+            <p>Hints</p>
+            <button
+              onClick={() => addHint(idx)}
+              className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-label="Add Hint"
+            >
+              <PlusIcon className="h-5 w-5" />
+            </button>
+          </div>
+          {question.hints.map((_, hintIndex) => (
+            <div className="flex gap-4" key={hintIndex}>
+              <input
+                className={inputClass}
+                type="text"
+                placeholder="Hint"
+                value={question.hints[hintIndex]}
+                onChange={(e) =>
+                  updateHintField(idx, hintIndex, e.target.value)
+                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    addHint(idx);
+                  }
+                  if (
+                    e.key === 'Backspace' &&
+                    question.hints[hintIndex] === ''
+                  ) {
+                    removeHint(idx, hintIndex);
+                  }
+                }}
+              />
+              <button
+                onClick={() => removeHint(idx, hintIndex)}
+                className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label="Delete Hint"
+              >
+                <MinusIcon className="h-5 w-5" />
+              </button>
+            </div>
+          ))}
         </div>
       ))}
 

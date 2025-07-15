@@ -3,11 +3,34 @@ import { DraggableGate } from './DraggableGate';
 import { Gate, moveOrAddPiece, connectPieces } from './gridCircuitSlice';
 import { GateType } from './LogicGates';
 import { GridSquare } from './GridSquare';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const GridCircuit = () => {
   const dispatch = useAppDispatch();
   const pieces = useAppSelector((state) => state.gridCircuit.pieces);
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+
+      setMousePosition({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
 
   const handleDrop = (item: Gate, x: number, y: number, type: GateType) => {
     setClickedGate(null);
@@ -15,8 +38,6 @@ const GridCircuit = () => {
   };
 
   const [clickedGate, setClickedGate] = useState<Gate | null>(null);
-  const [booleanExpression, setBooleanExpression] = useState<string>('');
-  const [truthTable, setTruthTable] = useState<JSX.Element>();
 
   const renderCellContent = (x: number, y: number) => {
     const cellContent = pieces.find(
@@ -78,182 +99,29 @@ const GridCircuit = () => {
     }
   };
 
-  const expressionMap: Record<GateType, string> = {
-    and: '·',
-    or: '+',
-    xor: '⊕',
-    not: '¬',
-    input: 'token',
-    output: '',
-  };
-
-  const generateBooleanExpression = () => {
-    const outputGate = pieces.find((gate) => gate.gateType === 'output');
-
-    if (!outputGate) return '';
-
-    setBooleanExpression(convertToExpression(outputGate, 'postfix').join(''));
-  };
-
-  const convertToExpression = (
-    currentGate: Gate,
-    notation: 'postfix' | 'infix',
-  ): string[] => {
-    if ((currentGate.inputs?.length ?? 1) > 2) {
-      return [];
-    }
-
-    if (
-      currentGate.gateType !== 'input' &&
-      (!currentGate.inputs || currentGate.inputs.length === 0)
-    ) {
-      return [];
-    }
-
-    if (currentGate.inputs?.length === 2) {
-      const leftGate = pieces.find(
-        (gate) => gate.id === currentGate.inputs?.at(0),
-      );
-      const rightGate = pieces.find(
-        (gate) => gate.id === currentGate.inputs?.at(1),
-      );
-
-      if (!leftGate || !rightGate) return [];
-
-      if (notation === 'infix')
-        return [
-          '(',
-          ...convertToExpression(leftGate, notation),
-          expressionMap[currentGate.gateType],
-          ...convertToExpression(rightGate, notation),
-          ')',
-        ];
-      else
-        return [
-          ...convertToExpression(leftGate, notation),
-          ...convertToExpression(rightGate, notation),
-          expressionMap[currentGate.gateType],
-        ];
-    }
-
-    if (currentGate.gateType === 'output' || currentGate.gateType === 'not') {
-      const nextGate = pieces.find(
-        (gate) => gate.id === currentGate.inputs?.at(0),
-      );
-
-      if (!nextGate) return [];
-
-      if (notation === 'infix')
-        return [
-          '(',
-          expressionMap[currentGate.gateType],
-          ...convertToExpression(nextGate, notation),
-          ')',
-        ];
-      else
-        return [
-          ...convertToExpression(nextGate, notation),
-          expressionMap[currentGate.gateType],
-        ];
-    }
-
-    if (currentGate.gateType === 'input') {
-      return [currentGate.label ?? '?'];
-    }
-
-    return [];
-  };
-
-  const generateTruthTable = () => {
-    const inputGatesTemp = pieces
-      .filter((gate) => gate.label !== undefined && gate.gateType === 'input')
-      .sort((a, b) => a.id.localeCompare(b.id))
-      .map((gate) => gate.label);
-    const inputGates = Array.from(new Set(inputGatesTemp));
-    const outputGate = pieces.find((gate) => gate.gateType === 'output');
-    console.log(outputGate);
-
-    setTruthTable(
-      <div>{[...inputGates, outputGate?.label ?? ''].join(' | ')}</div>,
-    );
-    const numInputs = inputGates.length;
-    const numTruth = 1 << numInputs;
-
-    // let truthTable = '';
-
-    for (let i = 0; i < numTruth; i++) {
-      const inputMap: Record<string, boolean> = {};
-
-      for (let j = 0; j < numInputs; j++) {
-        const label = inputGates[j]!;
-        inputMap[label] = !!(i & (1 << (numInputs - j - 1)));
-      }
-      const answer = testInput(booleanExpression, inputMap);
-      // truthTable += answer;
-      const inputValues = Object.values(inputMap).map((v) => (v ? '1' : '0'));
-      const rowText = [...inputValues, answer].join(' | ');
-
-      setTruthTable((prev) => (
-        <>
-          {prev}
-          <div>{rowText}</div>
-        </>
-      ));
-    }
-  };
-
-  const testInput = (
-    booleanExpression: string,
-    boolMap: Record<string, boolean>,
-  ) => {
-    const operationStack: boolean[] = [];
-    const isLetter = /^[a-zA-Z]$/.test(booleanExpression[0]);
-
-    if (!isLetter) return;
-
-    for (let i = 0; i < booleanExpression.length; i++) {
-      const char = booleanExpression[i];
-      if (/^[a-zA-Z]$/.test(char)) {
-        operationStack.push(boolMap[char]);
-      } else {
-        if (char === '·') {
-          const right = operationStack.pop();
-          const left = operationStack.pop();
-          if (right === undefined || left === undefined) return;
-          operationStack.push(left && right);
-        } else if (char === '+') {
-          const right = operationStack.pop();
-          const left = operationStack.pop();
-          if (right === undefined || left === undefined) return;
-          operationStack.push(left || right);
-        } else if (char === '⊕') {
-          const right = operationStack.pop();
-          const left = operationStack.pop();
-          if (right === undefined || left === undefined) return;
-          operationStack.push(left !== right);
-        } else if (char === '¬') {
-          const val = operationStack.pop();
-          if (val === undefined) return;
-          operationStack.push(!val);
-        }
-      }
-    }
-
-    if (operationStack.length === 1) return operationStack[0];
-  };
-
   return (
-    <div className="relative">
-      <div className="absolute left-0 top-0">
-        <button onClick={generateBooleanExpression}>
-          Generate Boolean Expression
-        </button>
-        <div>{booleanExpression}</div>
-      </div>
-      <div className="absolute right-0 top-0">
-        <button onClick={generateTruthTable}>Generate Truth Table</button>
-        <div>{truthTable}</div>
-      </div>
+    <div ref={containerRef} className="relative">
+      {clickedGate &&
+        (() => {
+          const from = getCellOutputPosition(
+            clickedGate.position.x,
+            clickedGate.position.y,
+          );
+          return (
+            <svg className="pointer-events-none absolute left-0 top-0 h-full w-full">
+              <line
+                key={clickedGate.id + 'clicked'}
+                x1={from.x}
+                y1={from.y}
+                x2={mousePosition.x}
+                y2={mousePosition.y}
+                stroke="#34d399"
+                strokeWidth="2"
+              />
+            </svg>
+          );
+        })()}
+
       <svg className="pointer-events-none absolute left-0 top-0 h-full w-full">
         {pieces.map((gate) => {
           const from = getCellOutputPosition(gate.position.x, gate.position.y);
@@ -287,7 +155,7 @@ const GridCircuit = () => {
               x={x}
               y={y}
               onDrop={handleDrop}
-              className={isSelected ? 'bg-red-600' : ''}
+              className={isSelected ? 'bg-white/20' : ''}
             >
               {renderCellContent(x, y)}
             </GridSquare>
