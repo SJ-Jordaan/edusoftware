@@ -16,6 +16,7 @@ import { FeedbackToast } from '../../../components/toasts/FeedbackToast';
 import { toast } from 'react-toastify';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ErrorToast } from '../../../components/toasts/ErrorToast';
 
 const LevelSolver = () => {
   const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ const LevelSolver = () => {
 
   usePreventOverscroll();
 
-  const [hintNum, setHintNum] = useState(-1);
+  const [hintNum, setHintNum] = useState(0);
   const submitAnswer = () => {
     if (!level?.questions[currentQuestion].booleanExpression) return;
     const answerPostFix = infixToPostfix(
@@ -75,7 +76,7 @@ const LevelSolver = () => {
           style: { background: 'transparent', boxShadow: 'none' },
         },
       );
-      if (level.questions.length === currentQuestion + 1) navigate('/temp');
+      if (level.questions.length === currentQuestion + 1) navigate('/practice');
       else setCurrentQuestion(currentQuestion + 1);
     } else {
       setHintNum(
@@ -134,6 +135,26 @@ const LevelSolver = () => {
     );
   }
 
+  const createFailedToast = () => {
+    toast(
+      ({ closeToast }) => (
+        <ErrorToast
+          errorTitle="Times Up!"
+          message="The time limit expired"
+          onClose={closeToast}
+        />
+      ),
+      {
+        autoClose: 6000,
+        closeButton: false,
+        position: 'bottom-center',
+        className: 'bg-transparent shadow-none',
+        bodyClassName: 'bg-transparent p-0',
+        style: { background: 'transparent', boxShadow: 'none' },
+      },
+    );
+  };
+
   // const QuestionInfo = () => (
   //   <div className="hidden rounded-lg bg-gray-800/70 p-4 shadow-lg backdrop-blur-sm transition-all hover:bg-gray-800 lg:block">
   //     <h3 className="mb-3 flex items-center text-sm font-medium text-indigo-400">
@@ -188,10 +209,22 @@ const LevelSolver = () => {
             <div className="mx-auto max-w-3xl">
               <div className="mb-6 flex w-full items-center justify-between">
                 <div className="w-full text-sm text-gray-400">
-                  <CountdownTimer
-                    initialCount={600}
-                    onEnd={() => console.log('ok')}
-                  />
+                  {level?.timeLimit ? (
+                    <CountdownTimer
+                      initialCount={level.timeLimit}
+                      onEnd={() => {
+                        createFailedToast();
+                        navigate('/practice');
+                      }}
+                    />
+                  ) : (
+                    <h3 className="mb-3 flex items-center text-sm font-medium text-gray-400">
+                      <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs">
+                        ⏱
+                      </span>
+                      {level?.timeLimit ? 'Time Remaining' : 'No Time Limit'}
+                    </h3>
+                  )}
                 </div>
               </div>
 
@@ -213,7 +246,7 @@ const LevelSolver = () => {
                 </div>
 
                 <div className="border-t border-gray-700/70 bg-gray-800/50 px-5 py-4">
-                  <GridCircuitBuilder />
+                  <GridCircuitBuilder cellScale={1} />
                 </div>
               </div>
 
@@ -254,7 +287,7 @@ const LevelSolver = () => {
                   </div>
 
                   <div className="border-t border-gray-700/70 bg-gray-800/50 px-6 py-6">
-                    <GridCircuitBuilder />
+                    <GridCircuitBuilder cellScale={2} />
                   </div>
                 </div>
               </div>
@@ -266,12 +299,17 @@ const LevelSolver = () => {
                     <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-xs">
                       ⏱
                     </span>
-                    Time Remaining
+                    {level?.timeLimit ? 'Time Remaining' : 'No Time Limit'}
                   </h3>
-                  <CountdownTimer
-                    initialCount={600}
-                    onEnd={() => console.log('end')}
-                  />
+                  {level?.timeLimit && (
+                    <CountdownTimer
+                      initialCount={level.timeLimit}
+                      onEnd={() => {
+                        createFailedToast();
+                        navigate('/practice');
+                      }}
+                    />
+                  )}
                 </div>
                 Question Info
                 <button

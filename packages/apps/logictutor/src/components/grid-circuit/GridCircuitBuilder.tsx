@@ -1,9 +1,12 @@
 import GridCircuit from './GridCircuit';
 
-export const GridCircuitBuilder = () => {
+interface GridBuilderProps {
+  cellScale: 1 | 2;
+}
+export const GridCircuitBuilder = ({ cellScale }: GridBuilderProps) => {
   return (
     <div className="flex flex-col">
-      <GridCircuit />
+      <GridCircuit cellScale={cellScale} />
 
       {/* {isEditable && (
         <>

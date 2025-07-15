@@ -9,6 +9,7 @@ interface GridCellProps {
   onDrop: (item: Gate, x: number, y: number, type: GateType) => void;
   children: React.ReactNode;
   className?: string;
+  cellScale: 1 | 2;
 }
 
 export const GridSquare = ({
@@ -17,6 +18,7 @@ export const GridSquare = ({
   onDrop,
   children,
   className,
+  cellScale,
 }: GridCellProps) => {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: [automataTypes.STATE, automataTypes.TRANSITION],
@@ -31,7 +33,7 @@ export const GridSquare = ({
   return (
     <div
       ref={drop}
-      className={`${className ?? ''} box-border flex h-28 w-28 flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
+      className={`${className ?? ''} box-border flex h-${cellScale * 14} w-${cellScale * 14} flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
         isOver && canDrop
           ? 'border-emerald-400 bg-emerald-900/20'
           : 'border-slate-700 hover:border-slate-500'

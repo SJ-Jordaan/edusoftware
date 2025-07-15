@@ -6,6 +6,7 @@ export interface QuestionDocument extends Document {
   hints?: string[];
   score: number;
   booleanExpression: string;
+  outputSymbol: string;
 }
 
 const QuestionSchema = new Schema<QuestionDocument>({
@@ -13,6 +14,7 @@ const QuestionSchema = new Schema<QuestionDocument>({
   hints: { type: [String], default: undefined }, // optional array
   score: { type: Number, default: 0 },
   booleanExpression: { type: String, required: true },
+  outputSymbol: { type: String, required: true },
 });
 
 export const LogictutorQuestionModel = mongoose.model<QuestionDocument>(

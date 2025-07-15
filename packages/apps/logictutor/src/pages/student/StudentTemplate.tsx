@@ -15,9 +15,9 @@ const routes: Route[] = [
     label: 'Practice',
   },
   {
-    path: '/temp',
+    path: '/admin/levels',
     icon: Practice,
-    label: 'Temp',
+    label: 'View/Edit Levels',
   },
 ];
 

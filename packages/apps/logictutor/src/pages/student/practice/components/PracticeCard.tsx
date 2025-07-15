@@ -70,7 +70,7 @@ export const PracticeCard = ({
               <>
                 <button
                   onClick={async () => {
-                    await deleteLevel(levelId);
+                    console.warn('TODO');
                     refetch();
                   }}
                   disabled={isDeleting}
@@ -120,7 +120,8 @@ export const PracticeCard = ({
           <div className="flex gap-3">
             <button
               onClick={onClick}
-              className="flex-1 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:hover:bg-indigo-400"
+              className={`flex-1 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition-colors ${isDeleting ? 'cursor-not-allowed opacity-70' : 'hover:bg-indigo-600 dark:hover:bg-indigo-400'}  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+              disabled={isDeleting}
             >
               {isAdmin ? 'Test Level' : 'Start Practice'}
             </button>

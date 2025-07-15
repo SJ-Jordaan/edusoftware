@@ -7,6 +7,7 @@ export interface LevelDocument extends Document {
   questionIds?: Types.ObjectId[] | QuestionDocument[];
   updatedAt?: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  timeLimit?: number;
 }
 
 const LevelSchema = new Schema<LevelDocument>({
@@ -14,6 +15,7 @@ const LevelSchema = new Schema<LevelDocument>({
   description: { type: String, required: true },
   questionIds: [{ type: Schema.Types.ObjectId, ref: 'Question' }], // Optional populated field
   updatedAt: { type: String }, // Assuming ISO string; if you want timestamps, use Date type instead
+  timeLimit: { type: String },
   difficulty: {
     type: String,
     enum: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'],

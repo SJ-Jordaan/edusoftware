@@ -19,15 +19,13 @@ import PrivateRoute from './components/PrivateRoute.tsx';
 import StudentTemplate from './pages/student/StudentTemplate.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
-import LevelManager from './pages/admin/level-manager/LevelManager.tsx';
 import LevelEditor from './pages/admin/level-editor/LevelEditor.tsx';
 import QuestionEditor from './pages/admin/question-editor/QuestionEditor.tsx';
 import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
-import { PracticeLevels } from './pages/student/practice/Practice.tsx';
 import ChallengePage from './pages/student/challenges/Challenges.tsx';
 import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
-import { Temp } from './pages/student/temp/temp.tsx';
+import { LevelView } from './pages/student/practice/LevelView.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,8 +46,8 @@ const router = createBrowserRouter(
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
           <Route path="/" element={<ChallengePage />} />
-          <Route path="/practice" element={<PracticeLevels />} />
-          <Route path="/temp" element={<Temp />} />
+          <Route path="/practice" element={<LevelView isAdmin={false} />} />
+          <Route path="/admin/levels" element={<LevelView isAdmin={true} />} />
         </Route>
 
         {/* Level Solving routes */}
@@ -59,7 +57,7 @@ const router = createBrowserRouter(
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
           <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/levels" element={<LevelManager />} />
+          {/* <Route path="/admin/levels" element={<LevelManager />} /> */}
           <Route path="/admin/levels/:id" element={<LevelEditor />} />
           <Route
             path="/admin/levels/:levelId/:questionId"

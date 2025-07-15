@@ -88,6 +88,7 @@ export const main = handler<LogictutorPopulatedLevel>(
             hints: q.hints,
             score: q.score,
             booleanExpression: q.booleanExpression,
+            outputSymbol: q.outputSymbol,
           })),
         },
       };

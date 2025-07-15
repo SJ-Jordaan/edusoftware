@@ -21,11 +21,12 @@ export const main = handler<{
   levelName: string;
   description: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  timeLimit?: number;
   questions?: Array<{
     questionContent: string;
     booleanExpression: string;
     hints?: string[];
-    score: number;
+    outputSymbol: string;
   }>;
   updatedAt?: string;
   _id: string;
@@ -37,11 +38,12 @@ export const main = handler<{
       levelName: string;
       description: string;
       difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+      timeLimit?: number;
       questions?: Array<{
         questionContent: string;
         booleanExpression: string;
         hints?: string[];
-        score: number;
+        outputSymbol: string;
       }>;
       updatedAt?: string;
       _id: string;

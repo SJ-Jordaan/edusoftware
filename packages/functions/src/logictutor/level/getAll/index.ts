@@ -15,6 +15,7 @@ export const main = handler<
     difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
     questionIds?: string[];
     updatedAt?: string;
+    timeLimit?: number;
   }>
 >(
   async (): Promise<
@@ -25,6 +26,7 @@ export const main = handler<
         difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
         questionIds?: string[];
         updatedAt?: string;
+        timeLimit?: number;
         _id: string;
       }>
     >

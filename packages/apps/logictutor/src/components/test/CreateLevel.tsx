@@ -5,16 +5,21 @@ import { useState } from 'react';
 import { parseBooleanExpr } from '@edusoftware/core/src/algorithms';
 import { ErrorToast } from '../toasts/ErrorToast';
 import { toast } from 'react-toastify';
-import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  MinusIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 interface TestCardProps {
   refetch: () => void; // or Promise<void> if it's async
 }
 
 export const CreateLevel = ({ refetch }: TestCardProps) => {
   const [showInstructions, setShowInstructions] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [levelName, setLevelName] = useState('');
   const [description, setDescription] = useState('');
+  const [timeLimit, setTimeLimit] = useState('0:0');
   const [difficulty, setDifficulty] = useState<
     'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
   >('BEGINNER');
@@ -22,15 +27,28 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
   const [questions, setQuestions] = useState<
     Array<{
       booleanExpression: string;
+      outputSymbol: string;
       questionContent: string;
       hints: string[];
     }>
   >([]);
 
   const addQuestion = () => {
+    if (questions.length === 5) {
+      createErrorToast(
+        'Invalid',
+        'A maximum of 5 questions are allowed per level',
+      );
+      return;
+    }
     setQuestions([
       ...questions,
-      { booleanExpression: '', questionContent: '', hints: [''] },
+      {
+        booleanExpression: '',
+        questionContent: '',
+        hints: [''],
+        outputSymbol: '',
+      },
     ]);
   };
 
@@ -40,7 +58,7 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
 
   const updateQuestionField = (
     index: number,
-    field: 'booleanExpression' | 'questionContent',
+    field: 'booleanExpression' | 'questionContent' | 'outputSymbol',
     value: string,
   ) => {
     const updated = [...questions];
@@ -64,70 +82,86 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
     setQuestions(updated);
   };
 
-  const submitLevel = async () => {
-    if (!levelName) {
-      createErrorToast('A level is required');
-      return;
-    }
-    if (!description) {
-      createErrorToast('A level description is required');
-      return;
-    }
-    if (questions.length === 0) {
-      createErrorToast('At least one question is required');
-      return;
-    }
+  const validateLevel = () => {
+    if (!levelName) return 'A level name is required';
+    if (!description) return 'A level description is required';
+
+    if (!/^\d+:\d+$/.test(timeLimit)) return 'Time must be in MM:SS format';
+
+    const [minutes, seconds] = timeLimit.split(':').map(Number);
+    if (isNaN(minutes) || isNaN(seconds)) return 'Invalid time entered';
+
+    if (questions.length === 0) return 'At least one question is required';
+    if (questions.length > 5)
+      return 'A maximum of 5 questions are allowed per level';
+
     for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+
+      if (!q.outputSymbol)
+        return `Output symbol for question ${i + 1} must not be empty`;
+
       try {
-        parseBooleanExpr(questions[i].booleanExpression.split(''));
-      } catch (errorMessage) {
-        createErrorToast(
-          `Failed to parse boolean expression for question ${i + 1} \n${errorMessage}`,
-        );
-        return;
+        parseBooleanExpr(q.booleanExpression.split(''));
+      } catch (err) {
+        return `Failed to parse boolean expression for question ${i + 1}: ${err}`;
       }
-      if (!questions[i].questionContent) {
-        createErrorToast(
-          `Question instruction for question ${i + 1} must not be empty`,
-        );
-        return;
+
+      if (q.booleanExpression.includes(q.outputSymbol)) {
+        return `Boolean expression must not contain the output symbol for question ${i + 1}`;
       }
+
+      if (!q.questionContent)
+        return `Question instruction for question ${i + 1} must not be empty`;
+
+      if (q.hints.some((hint) => hint === ''))
+        return `Empty hints found in question ${i + 1}`;
     }
 
-    const level: LogictutorCreateLevelRequest = {
-      levelName: levelName,
-      description: description,
-      difficulty: difficulty,
-      questions: questions.map((question) => {
-        return {
-          ...question,
-          hints: question.hints,
-          score: 5,
-          answer: '',
-        };
-      }),
-    };
-    setIsSubmitting(true);
-    try {
-      await createLevel(level);
-    } catch (error) {
-      console.error(error);
-      createErrorToast('An error occurred while creating the level');
-      return;
-    } finally {
-      setIsSubmitting(false);
-    }
-
-    refetch();
-    setLevelName('');
-    setDescription('');
-    setDifficulty('BEGINNER');
-    setQuestions([]);
+    return null; // No errors
   };
 
-  const createErrorToast = (message: string) => {
+  const submitLevel = async () => {
+    const error = validateLevel();
+    if (error) {
+      createErrorToast('Invalid', error);
+      return;
+    }
+
+    const [minutes, seconds] = timeLimit.split(':').map(Number);
+    const timeLimitSeconds = minutes * 60 + seconds;
+
+    const level: LogictutorCreateLevelRequest = {
+      levelName,
+      description,
+      difficulty,
+      timeLimit: timeLimitSeconds !== 0 ? timeLimitSeconds : undefined,
+      questions: questions.map((q) => ({ ...q })),
+    };
+
+    try {
+      await createLevel(level);
+      refetch();
+      setLevelName('');
+      setDescription('');
+      setDifficulty('BEGINNER');
+      setQuestions([]);
+      setTimeLimit('0:0');
+    } catch (err) {
+      console.error(err);
+      createErrorToast('Error', 'An error occurred while creating the level');
+    }
+  };
+
+  const createErrorToast = (errorTitle: string, message: string) => {
     toast(
-      ({ closeToast }) => <ErrorToast message={message} onClose={closeToast} />,
+      ({ closeToast }) => (
+        <ErrorToast
+          message={message}
+          errorTitle={errorTitle}
+          onClose={closeToast}
+        />
+      ),
       {
         autoClose: 6000,
         closeButton: false,
@@ -168,11 +202,10 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
   return (
     <div className="flex flex-col gap-4 text-white">
       {createError && <div>{createError.toString()}</div>}
-      {isCreating && <div>Creating...</div>}
       <div className="flex h-min justify-between">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <p className="w-40">Level Name</p>
+            <p className="min-w-40">Level Name</p>
             <input
               className={inputClass}
               type="text"
@@ -181,8 +214,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
               onChange={(e) => setLevelName(e.target.value)}
             />
           </div>
-          <div className="flex gap-4">
-            <p className="w-40">Description</p>
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">Description</p>
             <input
               className={inputClass}
               type="text"
@@ -191,10 +224,34 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">
+              Time Limit <span className="text-sm text-gray-500">(0 = ∞)</span>
+            </p>
+            <input
+              className={`${inputClass} !w-32`}
+              type="number"
+              placeholder="Minutes"
+              value={timeLimit.split(':')[0]}
+              onChange={(e) => {
+                const seconds = timeLimit.split(':')[1];
+                setTimeLimit(`${e.target.value}:${seconds}`);
+              }}
+            />
+            :
+            <input
+              className={`${inputClass} !w-32`}
+              type="number"
+              placeholder="Seconds"
+              value={timeLimit.split(':')[1]}
+              onChange={(e) => {
+                const minutes = timeLimit.split(':')[0];
+                setTimeLimit(`${minutes}:${e.target.value}`);
+              }}
+            />
+          </div>
         </div>
-        <div className="flex gap-4">
-          <DifficultySelector />
-        </div>
+        <DifficultySelector />
       </div>
 
       <div className="flex justify-center gap-4">
@@ -234,27 +291,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
           className="flex flex-col gap-4 rounded-xl border-l-8 border-emerald-500 bg-gray-800 p-4 text-white"
           key={idx}
         >
-          <div className="flex items-center justify-evenly gap-4">
-            {idx + 1}.<p>Boolean Expression</p>
-            <input
-              className={inputClass}
-              type="text"
-              placeholder="Boolean Expression"
-              value={question.booleanExpression}
-              onChange={(e) =>
-                updateQuestionField(idx, 'booleanExpression', e.target.value)
-              }
-            />
-            <p>Question Instructions</p>
-            <input
-              className={inputClass}
-              type="text"
-              placeholder="Question Instructions"
-              value={question.questionContent}
-              onChange={(e) =>
-                updateQuestionField(idx, 'questionContent', e.target.value)
-              }
-            />
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">Question {idx + 1}</p>
             <button
               onClick={() => removeQuestion(idx)}
               className=" rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -264,7 +302,43 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
             </button>
           </div>
           <div className="flex items-center gap-4">
-            <p>Hints</p>
+            <p className="min-w-40">Boolean Expression</p>
+            <input
+              className={`${inputClass} !w-32`}
+              type="text"
+              maxLength={1}
+              placeholder="Output Symbol"
+              value={question.outputSymbol}
+              onChange={(e) => {
+                if (/[a-zA-Z]/.test(e.target.value) || e.target.value === '')
+                  updateQuestionField(idx, 'outputSymbol', e.target.value);
+              }}
+            />
+            =
+            <input
+              className={inputClass}
+              type="text"
+              placeholder="Boolean Expression"
+              value={question.booleanExpression}
+              onChange={(e) =>
+                updateQuestionField(idx, 'booleanExpression', e.target.value)
+              }
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">Question Instructions</p>
+            <input
+              className={inputClass}
+              type="text"
+              placeholder="Question Instructions"
+              value={question.questionContent}
+              onChange={(e) =>
+                updateQuestionField(idx, 'questionContent', e.target.value)
+              }
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <p className="w-40">Hints</p>
             <button
               onClick={() => addHint(idx)}
               className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -310,9 +384,13 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       <button
         className="m-auto w-min text-nowrap rounded-lg bg-indigo-500 px-4 py-2"
         onClick={submitLevel}
-        disabled={isSubmitting}
+        disabled={isCreating}
       >
-        Submit Level
+        {isCreating ? (
+          <ArrowPathIcon className="h-5 w-5 animate-spin" />
+        ) : (
+          'Submit Level'
+        )}
       </button>
     </div>
   );

@@ -2,10 +2,15 @@ import { FC } from 'react';
 
 interface ErrorToastProps {
   message: string;
+  errorTitle: string;
   onClose: () => void;
 }
 
-export const ErrorToast: FC<ErrorToastProps> = ({ message, onClose }) => {
+export const ErrorToast: FC<ErrorToastProps> = ({
+  message,
+  errorTitle,
+  onClose,
+}) => {
   return (
     <div className="flex rounded-lg  bg-gray-700 p-4 shadow-md">
       <div className="inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-red-500">
@@ -27,7 +32,7 @@ export const ErrorToast: FC<ErrorToastProps> = ({ message, onClose }) => {
 
       <div className="ml-3 text-sm font-normal">
         <span className="mb-1 block text-sm font-semibold text-white">
-          An Error Occurred
+          {errorTitle}
         </span>
         <div className="mb-2 text-sm font-medium text-gray-400">{message}</div>
 
