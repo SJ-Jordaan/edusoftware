@@ -34,7 +34,11 @@ export const ErrorToast: FC<ErrorToastProps> = ({
         <span className="mb-1 block text-sm font-semibold text-white">
           {errorTitle}
         </span>
-        <div className="mb-2 text-sm font-medium text-gray-400">{message}</div>
+        <div className="mb-2 text-sm font-medium text-gray-400">
+          {message.split('\n').map((line, lIndex) => (
+            <p key={lIndex}>{line}</p>
+          ))}
+        </div>
 
         <div className="mt-3">
           <button

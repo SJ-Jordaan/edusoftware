@@ -23,6 +23,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
   const [difficulty, setDifficulty] = useState<
     'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
   >('BEGINNER');
+  const [enableToolbar, setEnableToolbar] = useState(false);
+  const [showTruthTable, setShowTruthTable] = useState(false);
 
   const [questions, setQuestions] = useState<
     Array<{
@@ -101,6 +103,11 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       if (!q.outputSymbol)
         return `Output symbol for question ${i + 1} must not be empty`;
 
+      const numTokens = q.booleanExpression.replace(/[()\s]/g, '').length;
+      if (numTokens > 35) {
+        return `Boolean expression for question ${i + 1} exceeds maximum token length.\n Current tokens: ${numTokens}\n Max tokens: 35`;
+      }
+
       try {
         parseBooleanExpr(q.booleanExpression.split(''));
       } catch (err) {
@@ -136,6 +143,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       description,
       difficulty,
       timeLimit: timeLimitSeconds !== 0 ? timeLimitSeconds : undefined,
+      showTruthTable: showTruthTable,
+      enableToolbar: enableToolbar,
       questions: questions.map((q) => ({ ...q })),
     };
 
@@ -147,6 +156,8 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
       setDifficulty('BEGINNER');
       setQuestions([]);
       setTimeLimit('0:0');
+      setEnableToolbar(false);
+      setShowTruthTable(false);
     } catch (err) {
       console.error(err);
       createErrorToast('Error', 'An error occurred while creating the level');
@@ -251,7 +262,28 @@ export const CreateLevel = ({ refetch }: TestCardProps) => {
             />
           </div>
         </div>
-        <DifficultySelector />
+        <div className="flex flex-col gap-4">
+          <DifficultySelector />
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">Enable Toolbar</p>
+            <input
+              type="checkbox"
+              checked={enableToolbar}
+              onChange={(e) => setEnableToolbar(e.target.checked)}
+              className="h-5 w-5 rounded-lg accent-indigo-500"
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <p className="min-w-40">Show Truth Table</p>
+            <input
+              type="checkbox"
+              checked={showTruthTable}
+              onChange={(e) => setShowTruthTable(e.target.checked)}
+              className="h-5 w-5 rounded-lg accent-indigo-500"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-center gap-4">

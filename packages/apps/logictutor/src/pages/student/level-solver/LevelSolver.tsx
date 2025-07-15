@@ -6,7 +6,10 @@ import { useEffect, useState } from 'react';
 import { useGetLogictutorLevelQuery } from '../../../slices/testApi.slice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { initGrid } from '../../../components/grid-circuit/gridCircuitSlice';
+import {
+  initGrid,
+  initToolbar,
+} from '../../../components/grid-circuit/gridCircuitSlice';
 import {
   generateBooleanExpression,
   generateTruthTable,
@@ -39,7 +42,22 @@ const LevelSolver = () => {
 
   useEffect(() => {
     if (!level?.questions[currentQuestion].booleanExpression) return;
-    dispatch(initGrid(level?.questions[currentQuestion].booleanExpression));
+    if (level.enableToolbar)
+      dispatch(
+        initToolbar({
+          booleanExpression:
+            level?.questions[currentQuestion].booleanExpression,
+          outputSymbol: level?.questions[currentQuestion].outputSymbol,
+        }),
+      );
+    else
+      dispatch(
+        initGrid({
+          booleanExpression:
+            level?.questions[currentQuestion].booleanExpression,
+          outputSymbol: level?.questions[currentQuestion].outputSymbol,
+        }),
+      );
   }, [dispatch, level, currentQuestion]);
 
   usePreventOverscroll();
@@ -157,50 +175,38 @@ const LevelSolver = () => {
     );
   };
 
-  // const QuestionInfo = () => (
-  //   <div className="hidden rounded-lg bg-gray-800/70 p-4 shadow-lg backdrop-blur-sm transition-all hover:bg-gray-800 lg:block">
-  //     <h3 className="mb-3 flex items-center text-sm font-medium text-indigo-400">
-  //       <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/20 text-xs">
-  //         i
-  //       </span>
-  //       Question Info
-  //     </h3>
-  //     <div className="space-y-4">
-  //       {question?.alphabet && (
-  //         <div>
-  //           <h4 className="mb-2 text-xs font-medium text-gray-400">Alphabet</h4>
-  //           <div className="flex flex-wrap gap-2">
-  //             {question.alphabet.split('').map((char) => (
-  //               <span
-  //                 key={char}
-  //                 className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-700 text-xs text-white shadow-inner transition-transform hover:scale-110"
-  //               >
-  //                 {char}
-  //               </span>
-  //             ))}
-  //           </div>
-  //         </div>
-  //       )}
-  //       {question?.operators && question.operators.length > 0 && (
-  //         <div>
-  //           <h4 className="mb-2 text-xs font-medium text-gray-400">
-  //             Operators
-  //           </h4>
-  //           <div className="flex flex-wrap gap-2">
-  //             {question.operators.map((op) => (
-  //               <span
-  //                 key={op}
-  //                 className="rounded-lg bg-gray-700 px-3 py-1.5 text-xs font-medium text-white shadow-inner transition-transform hover:scale-105"
-  //               >
-  //                 {op}
-  //               </span>
-  //             ))}
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //   </div>
-  // );
+  const QuestionInfo = () => (
+    <div className="hidden rounded-lg bg-gray-800/70 p-4 shadow-lg backdrop-blur-sm transition-all hover:bg-gray-800 lg:block">
+      <h3 className="mb-3 flex items-center text-sm font-medium text-indigo-400">
+        <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/20 text-xs">
+          i
+        </span>
+        Question Info
+      </h3>
+      <div className="space-y-4">
+        {level?.questions[currentQuestion].booleanExpression && (
+          <div>
+            <h4 className="mb-2 text-xs font-medium text-gray-400">
+              Boolean Expression
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {level?.questions[currentQuestion].questionContent
+                .split('')
+                .filter((char) => !/[\s]/g.test(char))
+                .map((char) => (
+                  <span
+                    key={char}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-700 text-xs text-white shadow-inner transition-transform hover:scale-110"
+                  >
+                    {char}
+                  </span>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <DragAndDropProvider>
@@ -248,12 +254,15 @@ const LevelSolver = () => {
                 </div>
 
                 <div className="border-t border-gray-700/70 bg-gray-800/50 px-5 py-4">
-                  <GridCircuitBuilder cellScale={1} />
+                  <GridCircuitBuilder
+                    cellScale={1}
+                    enableToolbar={level?.enableToolbar ?? false}
+                  />
                 </div>
               </div>
 
               <div className="mt-6 space-y-2">
-                Question Info
+                <QuestionInfo />
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={submitAnswer}
@@ -289,7 +298,10 @@ const LevelSolver = () => {
                   </div>
 
                   <div className="border-t border-gray-700/70 bg-gray-800/50 px-6 py-6">
-                    <GridCircuitBuilder cellScale={2} />
+                    <GridCircuitBuilder
+                      cellScale={2}
+                      enableToolbar={level?.enableToolbar ?? false}
+                    />
                   </div>
                 </div>
               </div>
@@ -313,7 +325,7 @@ const LevelSolver = () => {
                     />
                   )}
                 </div>
-                Question Info
+                <QuestionInfo />
                 <button
                   className="w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none active:scale-[0.98] disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={submitAnswer}

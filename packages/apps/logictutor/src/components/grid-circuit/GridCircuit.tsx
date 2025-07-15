@@ -36,9 +36,15 @@ const GridCircuit = ({ cellScale }: GridCircuitProps) => {
     };
   }, []);
 
-  const handleDrop = (item: Gate, x: number, y: number, type: GateType) => {
+  const handleDrop = (
+    item: Gate,
+    x: number,
+    y: number,
+    type: GateType,
+    label?: string,
+  ) => {
     setClickedGate(null);
-    dispatch(moveOrAddPiece(item, x, y, type));
+    dispatch(moveOrAddPiece(item, x, y, type, label));
   };
 
   const [clickedGate, setClickedGate] = useState<Gate | null>(null);
@@ -56,6 +62,7 @@ const GridCircuit = ({ cellScale }: GridCircuitProps) => {
         gateType={cellContent.gateType}
         inputLabel={cellContent.label}
         onClick={() => handleGateClick(cellContent)}
+        isNew={false}
       />
     );
   };

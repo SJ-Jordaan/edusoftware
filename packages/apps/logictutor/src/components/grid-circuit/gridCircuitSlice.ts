@@ -22,6 +22,7 @@ interface MoveOrAddPiecePayload {
   x: number;
   y: number;
   type?: GateType;
+  label?: string;
 }
 
 interface ConnectPiecePayload {
@@ -31,44 +32,31 @@ interface ConnectPiecePayload {
 
 const initialState: GridGateState = {
   isEditable: true,
-  pieces: [
-    {
-      id: 'gate-8',
-      position: { x: 5, y: 3 },
-      gateType: 'output',
-      label: 'A',
-    },
-  ],
-  toolbar: [
-    {
-      position: { x: 0, y: 0 },
-      gateType: 'and',
-      output: '',
-    },
-    {
-      position: { x: 0, y: 0 },
-      gateType: 'or',
-      output: '',
-    },
-    {
-      position: { x: 0, y: 0 },
-      gateType: 'not',
-      output: '',
-    },
-    {
-      position: { x: 0, y: 0 },
-      gateType: 'xor',
-      output: '',
-    },
-  ],
+  pieces: [],
+  toolbar: [],
   booleanExpression: '',
 };
 
+const toolbarGates: Partial<Gate>[] = [
+  {
+    gateType: 'and',
+  },
+  {
+    gateType: 'not',
+  },
+  {
+    gateType: 'or',
+  },
+  {
+    gateType: 'xor',
+  },
+];
 function prepareMoveOrAddPiecePayload(
   item: Omit<Gate, 'id'> & Partial<Pick<Gate, 'id'>>,
   x: number,
   y: number,
   type: GateType,
+  label?: string,
 ) {
   const isExistingPiece = item.id !== undefined;
 
@@ -80,6 +68,7 @@ function prepareMoveOrAddPiecePayload(
     x,
     y,
     type,
+    label,
   };
 
   return payload;
@@ -89,11 +78,15 @@ const gridCircuitSlice = createSlice({
   name: 'circuit',
   initialState,
   reducers: {
-    setEdit(state, action: PayloadAction<boolean>) {
-      state.isEditable = action.payload;
-    },
-    initGrid(state, action: PayloadAction<string>) {
-      const booleanExpression = action.payload;
+    initGrid(
+      state,
+      action: PayloadAction<{
+        booleanExpression: string;
+        outputSymbol: string;
+      }>,
+    ) {
+      const booleanExpression = action.payload.booleanExpression;
+      const outputSymbol = action.payload.outputSymbol;
 
       let numGates = 1;
       const newPieces: Gate[] = [];
@@ -102,7 +95,7 @@ const gridCircuitSlice = createSlice({
         id: '0',
         position: { x: 5, y: 3 },
         gateType: 'output',
-        label: 'A',
+        label: outputSymbol,
       });
 
       for (const char of booleanExpression.split('')) {
@@ -159,9 +152,38 @@ const gridCircuitSlice = createSlice({
       state.booleanExpression = booleanExpression;
       state.pieces = newPieces;
     },
-    // initToolbar(state, action: PayloadAction<Alphabet | undefined>) {
-    //   state.toolbar = createPieces(action.payload);
-    // },
+    initToolbar(
+      state,
+      action: PayloadAction<{
+        booleanExpression: string;
+        outputSymbol: string;
+      }>,
+    ) {
+      const booleanExpression = action.payload.booleanExpression;
+      const outputSymbol = action.payload.outputSymbol;
+
+      const newToolbar: Partial<Gate>[] = [];
+
+      const uniqueExpr = Array.from(new Set(booleanExpression.split('')));
+
+      for (const symbol of uniqueExpr) {
+        if (/^[a-zA-Z]$/.test(symbol)) {
+          newToolbar.push({
+            gateType: 'input',
+            label: symbol,
+          });
+        }
+      }
+
+      newToolbar.push(...toolbarGates);
+
+      newToolbar.push({
+        gateType: 'output',
+        label: outputSymbol,
+      });
+
+      state.toolbar = newToolbar;
+    },
     deletePiece(state, action: PayloadAction<string>) {
       state.pieces = state.pieces.filter(
         (piece) => piece.id !== action.payload,
@@ -169,7 +191,7 @@ const gridCircuitSlice = createSlice({
     },
     moveOrAddPiece: {
       reducer(state, action: PayloadAction<MoveOrAddPiecePayload>) {
-        const { item, x, y, type } = action.payload;
+        const { item, x, y, type, label } = action.payload;
         const updatedElements = [...state.pieces];
 
         const movingElementIndex = updatedElements.findIndex(
@@ -198,6 +220,7 @@ const gridCircuitSlice = createSlice({
             ...item,
             type: type,
             position: { x, y },
+            label,
           } as Gate);
         } else {
           // Move the existing piece to a new position
@@ -214,8 +237,11 @@ const gridCircuitSlice = createSlice({
         x: number,
         y: number,
         type: GateType,
+        label?: string,
       ) {
-        return { payload: prepareMoveOrAddPiecePayload(item, x, y, type) };
+        return {
+          payload: prepareMoveOrAddPiecePayload(item, x, y, type, label),
+        };
       },
     },
     connectPieces: {
@@ -307,7 +333,12 @@ const gridCircuitSlice = createSlice({
   },
 });
 
-export const { initGrid, deletePiece, moveOrAddPiece, connectPieces } =
-  gridCircuitSlice.actions;
+export const {
+  initGrid,
+  initToolbar,
+  deletePiece,
+  moveOrAddPiece,
+  connectPieces,
+} = gridCircuitSlice.actions;
 
 export default gridCircuitSlice.reducer;

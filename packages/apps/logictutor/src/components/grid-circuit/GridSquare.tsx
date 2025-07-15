@@ -6,7 +6,13 @@ import { GateType } from './LogicGates';
 interface GridCellProps {
   x: number;
   y: number;
-  onDrop: (item: Gate, x: number, y: number, type: GateType) => void;
+  onDrop: (
+    item: Gate,
+    x: number,
+    y: number,
+    type: GateType,
+    label?: string,
+  ) => void;
   children: React.ReactNode;
   className?: string;
   cellScale: 1 | 2;
@@ -23,7 +29,7 @@ export const GridSquare = ({
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: [automataTypes.STATE, automataTypes.TRANSITION],
     drop: (item: Gate, monitor) =>
-      onDrop(item, x, y, monitor.getItemType() as GateType),
+      onDrop(item, x, y, monitor.getItemType() as GateType, item.label),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),

@@ -8,6 +8,7 @@ interface DraggableGateProps {
   gateType: GateType;
   inputLabel?: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  isNew: boolean;
 }
 
 export const DraggableGate = ({
@@ -18,7 +19,7 @@ export const DraggableGate = ({
 }: DraggableGateProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: automataTypes.STATE,
-    item: { id, gateType },
+    item: { id, gateType, label: inputLabel },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),

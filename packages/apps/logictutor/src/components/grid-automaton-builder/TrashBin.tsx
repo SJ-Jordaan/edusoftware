@@ -4,8 +4,8 @@ import {
   Piece,
   automataTypes,
 } from '@edusoftware/core/src/types/GridAutomaton';
-import { deletePiece } from './gridAutomaton.slice';
 import { useAppDispatch } from '../../store';
+import { deletePiece } from '../grid-circuit/gridCircuitSlice';
 
 export const TrashBin = () => {
   const dispatch = useAppDispatch();
