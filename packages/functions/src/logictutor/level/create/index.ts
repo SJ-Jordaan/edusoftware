@@ -35,6 +35,7 @@ export const main = handler<LogictutorPopulatedLevel>(
         description: true,
         difficulty: true,
         updatedAt: true,
+        timeLimit: true,
       }).parse(parsedData);
     } catch (error: unknown) {
       const message =
@@ -70,6 +71,7 @@ export const main = handler<LogictutorPopulatedLevel>(
           description: parsedData.description,
           difficulty: parsedData.difficulty,
           updatedAt: parsedData.updatedAt ?? new Date().toISOString(),
+          timeLimit: parsedData.timeLimit ?? undefined,
           questionIds: questionDocs.map((q) => q._id),
         },
       ]);
@@ -81,6 +83,7 @@ export const main = handler<LogictutorPopulatedLevel>(
           description: levelDoc[0].description,
           difficulty: levelDoc[0].difficulty,
           updatedAt: levelDoc[0].updatedAt,
+          timeLimit: levelDoc[0].timeLimit,
           questionIds: questionDocs.map((q) => ({
             _id: q._id.toString(),
             questionContent: q.questionContent,

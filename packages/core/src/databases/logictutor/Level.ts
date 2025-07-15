@@ -15,7 +15,7 @@ const LevelSchema = new Schema<LevelDocument>({
   description: { type: String, required: true },
   questionIds: [{ type: Schema.Types.ObjectId, ref: 'Question' }], // Optional populated field
   updatedAt: { type: String }, // Assuming ISO string; if you want timestamps, use Date type instead
-  timeLimit: { type: String },
+  timeLimit: { type: Number },
   difficulty: {
     type: String,
     enum: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'],

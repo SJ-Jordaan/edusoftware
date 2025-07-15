@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface TimerProps {
   initialCount: number;
@@ -7,42 +7,54 @@ interface TimerProps {
 
 export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialCount);
+  const onEndRef = useRef(onEnd);
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      onEnd();
-      return;
-    }
+    onEndRef.current = onEnd;
+  }, [onEnd]);
+
+  useEffect(() => {
+    if (initialCount === 0) return;
 
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+        const next = prev - 1;
+
+        if (next <= 0) {
+          clearInterval(timer);
+          onEndRef.current();
+          return 0;
+        }
+
+        return next;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, onEnd]);
+  }, [initialCount]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
   const getTimerColor = () => {
-    if (timeLeft <= 30) {
+    if (timeLeft <= initialCount * 0.05) {
       return 'text-red-500';
-    } else if (timeLeft <= 120) {
+    } else if (timeLeft <= initialCount * 0.2) {
       return 'text-amber-500';
     }
     return 'text-emerald-500';
   };
 
   const getTimebarWidth = () => {
-    const maxTime = 600;
-    const percentage = Math.min(100, (timeLeft / maxTime) * 100);
-    return `${percentage}%`;
+    if (initialCount === 0) return '0%';
+    const percentage = (timeLeft / initialCount) * 100;
+    return `${Math.max(0, Math.min(100, percentage))}%`;
   };
 
   const getTimebarColor = () => {
-    if (timeLeft <= 30) {
+    if (timeLeft <= initialCount * 0.05) {
       return 'bg-red-500';
-    } else if (timeLeft <= 120) {
+    } else if (timeLeft <= initialCount * 0.2) {
       return 'bg-amber-500';
     }
     return 'bg-emerald-500';

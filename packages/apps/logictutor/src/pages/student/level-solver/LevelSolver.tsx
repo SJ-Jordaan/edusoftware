@@ -135,11 +135,13 @@ const LevelSolver = () => {
     );
   }
 
+  let numCalls = 0;
   const createFailedToast = () => {
+    if (numCalls++ !== 0) return;
     toast(
       ({ closeToast }) => (
         <ErrorToast
-          errorTitle="Times Up!"
+          errorTitle="Time's Up!"
           message="The time limit expired"
           onClose={closeToast}
         />
