@@ -232,8 +232,8 @@ const LevelSolver = () => {
                   outputSymbol={question.outputSymbol}
                 />
               ) : (
-                <div className="flex flex-wrap items-center rounded-lg text-base text-white shadow-inner transition-transform hover:scale-110">
-                  {`${question.outputSymbol} = ${question.booleanExpression}`
+                <div className="flex flex-wrap items-center rounded-lg text-base text-white shadow-inner transition-transform">
+                  {`${question.booleanExpression} = ${question.outputSymbol}`
                     .split('')
                     .filter((char) => !/[\s]/g.test(char))
                     .join(' ')}
@@ -298,15 +298,22 @@ const LevelSolver = () => {
                   />
                 </div>
               </div>
-              <div className="h-6"></div>
+              <div className="h-4"></div>
               <QuestionInfo collapsedDefault />
-              <div className="mt-6">
+              <div className="mt-4 flex flex-col gap-4">
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={submitAnswer}
                 >
                   Submit Answer
                 </button>
+                {showCounterExample && (
+                  <CounterExample
+                    correctExpr={question.booleanExpression}
+                    incorrectExpr={incorrectExpr}
+                    outputSymbol={question.outputSymbol}
+                  />
+                )}
               </div>
             </div>
           </div>

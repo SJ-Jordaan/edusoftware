@@ -15,6 +15,8 @@ import { toast } from 'react-toastify';
 import {
   ArrowPathIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   InformationCircleIcon,
   MinusIcon,
   PlusIcon,
@@ -129,6 +131,23 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
     setQuestions(questions.filter((_, index) => idx !== index));
   };
 
+  const moveQuestionUp = (idx: number) => {
+    const newQuestionOrder = [...questions];
+    const tempQuestion = newQuestionOrder[idx];
+    newQuestionOrder[idx] = newQuestionOrder[idx - 1];
+    newQuestionOrder[idx - 1] = tempQuestion;
+
+    setQuestions(newQuestionOrder);
+  };
+  const moveQuestionDown = (idx: number) => {
+    const newQuestionOrder = [...questions];
+    const tempQuestion = newQuestionOrder[idx];
+    newQuestionOrder[idx] = newQuestionOrder[idx + 1];
+    newQuestionOrder[idx + 1] = tempQuestion;
+
+    setQuestions(newQuestionOrder);
+  };
+
   const updateQuestionField = (
     index: number,
     field: 'booleanExpression' | 'questionContent' | 'outputSymbol',
@@ -154,6 +173,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
     updated[index]['hints'][hintIndex] = value;
     setQuestions(updated);
   };
+
   const addHint = (index: number) => {
     if (questions[index].hints.length === 3) {
       createToast('Invalid', 'A maximum of 3 hints are allowed per question.');
@@ -163,6 +183,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
     updated[index]['hints'].push('');
     setQuestions(updated);
   };
+
   const removeHint = (index: number, hintIndex: number) => {
     const updated = [...questions];
     updated[index]['hints'].splice(hintIndex, 1);
@@ -443,12 +464,25 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
           <p>X|Y&(Z^!W)</p>
         </div>
       )}
-      <div className="grid max-h-96 gap-4 overflow-y-auto">
+      <div
+        className="grid max-h-[48rem] gap-4 overflow-y-auto"
+        style={{ maxHeight: 'min(48rem, 40vh)' }}
+      >
         {questions.map((question, idx) => (
           <div
             className="relative flex flex-col gap-4 rounded-xl bg-gray-800 p-4 text-white"
             key={idx}
           >
+            {idx !== 0 && (
+              <div className="flex justify-center">
+                <button
+                  className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onClick={() => moveQuestionUp(idx)}
+                >
+                  <ChevronUpIcon className="h-5 w-5" />
+                </button>
+              </div>
+            )}
             <div
               className={`absolute left-0 top-0 h-full w-2 rounded-l-xl transition-all ${difficulties[difficulty].background}`}
             ></div>
@@ -456,7 +490,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
               <p className="min-w-40">Question {idx + 1}</p>
               <button
                 onClick={() => removeQuestion(idx)}
-                className=" rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 aria-label="Delete"
               >
                 <TrashIcon className="h-5 w-5" />
@@ -569,6 +603,16 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
                 </button>
               </div>
             ))}
+            {idx !== questions.length - 1 && (
+              <div className="flex justify-center">
+                <button
+                  className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onClick={() => moveQuestionDown(idx)}
+                >
+                  <ChevronDownIcon className="h-5 w-5" />
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

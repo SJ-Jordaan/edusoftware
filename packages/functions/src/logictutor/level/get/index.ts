@@ -77,9 +77,25 @@ export const main = handler<{
         questions: questions.map((q) => q.toObject()),
       };
 
+      const sortedQuestionIds = level.questionIds?.map((id) => id.toString());
+
+      const questionsMap = new Map(
+        result.questions.map((q) => [q._id.toString(), q]),
+      );
+
+      const sortedQuestions = sortedQuestionIds?.map((id) => {
+        const question = questionsMap.get(id);
+        if (!question) {
+          throw new Error(
+            `Question with ID ${id} not found in result.questions`,
+          );
+        }
+        return question;
+      });
+
       return {
         statusCode: 200,
-        body: result,
+        body: { ...result, questions: sortedQuestions },
       };
     } catch (error: unknown) {
       if (error instanceof Error) {

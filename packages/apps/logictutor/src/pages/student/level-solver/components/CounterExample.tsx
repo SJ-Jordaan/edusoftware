@@ -116,6 +116,7 @@ export const CounterExample = ({
   // Render the component
   return (
     <div className="flex flex-col rounded-lg bg-gray-800/70 p-4 font-mono text-sm text-white shadow-lg backdrop-blur-sm transition-all hover:bg-gray-800">
+      <p className="mb-2 text-base font-bold">Counter Example</p>
       <p className="mb-2 font-medium text-green-600">✅ Target Output:</p>
 
       {/* Always show header */}

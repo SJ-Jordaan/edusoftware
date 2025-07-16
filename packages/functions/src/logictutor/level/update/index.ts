@@ -51,78 +51,23 @@ export const main = handler<string>(
     const existingQuestionIds = existingLevel.questionIds?.map((id) =>
       id.toString(),
     );
-    const submittedIds = parsedData.questions
-      .filter((q) => q._id)
-      .map((q) => q._id!);
 
-    // Find and delete removed questions
-    const removedIds = existingQuestionIds?.filter(
-      (id) => !submittedIds.includes(id),
-    );
-    if (removedIds && removedIds.length > 0) {
-      await LogictutorQuestionModel.deleteMany({ _id: { $in: removedIds } });
+    if (existingQuestionIds && existingQuestionIds.length > 0) {
+      await LogictutorQuestionModel.deleteMany({
+        _id: { $in: existingQuestionIds },
+      });
     }
 
     // Upsert questions with better error handling
     const updatedQuestionIds = [];
 
     for (const q of parsedData.questions) {
-      try {
-        if (q._id) {
-          // For updates, validate the question data
-          // Remove _id from validation as it's not part of the schema
-          const { _id, ...questionData } = q;
-
-          try {
-            LogictutorQuestionSchema.parse(questionData);
-          } catch (error: unknown) {
-            const message =
-              error instanceof Error ? error.message : 'Invalid question data';
-            throw new BadRequestError(
-              `Question validation failed for ID ${_id}: ${message}`,
-            );
-          }
-
-          // Update existing question
-          const updatedQuestion =
-            await LogictutorQuestionModel.findByIdAndUpdate(_id, questionData, {
-              new: true,
-              runValidators: true, // This ensures mongoose validators run
-            });
-
-          if (!updatedQuestion) {
-            throw new BadRequestError(
-              `Question with ID ${_id} not found for update`,
-            );
-          }
-
-          updatedQuestionIds.push(_id);
-        } else {
-          // For new questions, validate the entire object
-          try {
-            LogictutorQuestionSchema.parse(q);
-          } catch (error: unknown) {
-            const message =
-              error instanceof Error ? error.message : 'Invalid question data';
-            throw new BadRequestError(
-              `New question validation failed: ${message}`,
-            );
-          }
-
-          const newQuestion = await LogictutorQuestionModel.create(q);
-          updatedQuestionIds.push(newQuestion._id);
-        }
-      } catch (error) {
-        // Re-throw BadRequestError, wrap others
-        if (error instanceof BadRequestError) {
-          throw error;
-        }
-        throw new BadRequestError(
-          `Failed to process question: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        );
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { _id, ...questionData } = q;
+      LogictutorQuestionSchema.parse(questionData);
+      const newQuestion = await LogictutorQuestionModel.create(q);
+      updatedQuestionIds.push(newQuestion._id.toString());
     }
-
     // Update level fields
     existingLevel.levelName = parsedData.levelName;
     existingLevel.description = parsedData.description;
