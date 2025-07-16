@@ -2,13 +2,11 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/auth.slice';
 import { apiSlice } from './slices/api.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import gridAutomatonReducer from './components/grid-automaton-builder/gridAutomaton.slice';
 import gridCircuitReducer from './components/grid-circuit/gridCircuitSlice';
 
 const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
-    gridAutomaton: gridAutomatonReducer,
     gridCircuit: gridCircuitReducer,
     auth: authReducer,
   },

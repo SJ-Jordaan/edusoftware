@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../store';
-import { DraggableGate } from '../grid-circuit/DraggableGate';
+import { DraggableGate } from './DraggableGate';
 import { DummyCell } from './DummyCell';
 
 interface ToolbarProps {

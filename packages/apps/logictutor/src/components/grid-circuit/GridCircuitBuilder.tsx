@@ -1,5 +1,5 @@
-import { Toolbar } from '../grid-automaton-builder/Toolbar';
-import { TrashBin } from '../grid-automaton-builder/TrashBin';
+import { Toolbar } from './Toolbar';
+import { TrashBin } from './TrashBin';
 import GridCircuit from './GridCircuit';
 
 interface GridBuilderProps {

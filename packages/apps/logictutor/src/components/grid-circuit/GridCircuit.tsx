@@ -114,7 +114,10 @@ const GridCircuit = ({ cellScale }: GridCircuitProps) => {
     <div className="flex justify-center">
       <div
         ref={containerRef}
-        className={`relative grid grid-cols-[repeat(6,_${3.5 * cellScale}rem)]`}
+        className="relative grid"
+        style={{
+          gridTemplateColumns: `repeat(6, ${3.5 * cellScale}rem)`,
+        }}
       >
         {clickedGate &&
           (() => {
