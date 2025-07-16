@@ -8,6 +8,7 @@ interface LevelGroupProps {
   difficulty: string;
   levels: LogictutorLevelObject[];
   onStartPractice: (levelId: string) => void;
+  editLevel: (levelId: string) => void;
   isLoading?: boolean;
   isAdmin: boolean;
 }
@@ -16,6 +17,7 @@ export const LevelGroup = ({
   difficulty,
   levels,
   onStartPractice,
+  editLevel,
   isLoading,
   isAdmin,
 }: LevelGroupProps) => {
@@ -139,6 +141,7 @@ export const LevelGroup = ({
                 onClick={() => onStartPractice(level._id)}
                 levelId={level._id}
                 isAdmin={isAdmin}
+                editLevel={editLevel}
               />
             </div>
           ))}

@@ -39,12 +39,22 @@ export type LogictutorPopulatedLevelObject = LogictutorPopulatedLevel & {
 export type LogictutorLevelObject = LogictutorLevel & { _id: string };
 
 type QuestionWithoutId = Omit<LogictutorPopulatedQuestion, '_id'>;
+type QuestionWithOrWIthoutId = Omit<LogictutorPopulatedQuestion, '_id'> & {
+  _id?: string;
+};
 
 export type LogictutorCreateLevelRequest = Omit<
   LogictutorPopulatedLevel,
   'questionIds' | '_id'
 > & {
   questions: QuestionWithoutId[];
+};
+
+export type LogictutorUpdateLevelRequest = Omit<
+  LogictutorPopulatedLevel & { _id: string },
+  'questionIds'
+> & {
+  questions: QuestionWithOrWIthoutId[];
 };
 
 export type LogictutorFullLevel = LogictutorPopulatedLevelObject & {

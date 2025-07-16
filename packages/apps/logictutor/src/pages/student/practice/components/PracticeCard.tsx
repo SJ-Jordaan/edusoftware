@@ -13,6 +13,7 @@ interface PracticeCardProps {
   levelId: string;
   description: string;
   onClick: () => void;
+  editLevel: (levelId) => void;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   isAdmin: boolean;
 }
@@ -43,6 +44,7 @@ export const PracticeCard = ({
   levelId,
   description,
   onClick,
+  editLevel,
   difficulty,
   isAdmin,
 }: PracticeCardProps) => {
@@ -70,8 +72,7 @@ export const PracticeCard = ({
               <>
                 <button
                   onClick={async () => {
-                    console.warn('TODO');
-                    refetch();
+                    editLevel(levelId);
                   }}
                   disabled={isDeleting}
                   className={`rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition ${isDeleting ? 'cursor-not-allowed opacity-70' : 'hover:bg-indigo-500 hover:text-white'} focus:outline-none focus:ring-2 focus:ring-indigo-500`}

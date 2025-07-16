@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-interface ModalProps {
+interface CreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
 }
 
-const useModal = () => {
+const useCreateModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -21,15 +21,26 @@ const useModal = () => {
   return { isOpen, openModal, closeModal };
 };
 
-const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+const CreateModal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: CreateModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="relative w-full max-w-md p-4">
-          <div className="relative rounded-lg bg-white shadow dark:bg-gray-700">
-            <div className="flex items-start justify-between rounded-t border-b p-4 dark:border-gray-600">
+    <div className="fixed inset-0 z-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-800/50  shadow-lg backdrop-blur-md">
+        <div className="relative p-4">
+          <div
+            className="relative flex flex-col rounded-lg bg-slate-900 shadow"
+            style={{
+              maxHeight: 'calc(100vh - 200px)',
+              minHeight: 'min(600px, 100vh - 40px)',
+            }}
+          >
+            <div className="sticky top-0 flex items-start justify-between rounded-t-lg border-b border-gray-600 bg-slate-900 p-4">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {title}
               </h3>
@@ -51,7 +62,7 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
                 <span className="sr-only">Close</span>
               </button>
             </div>
-            <div className="p-6">{children}</div>
+            <div className="h-full overflow-y-auto p-6">{children}</div>
           </div>
         </div>
       </div>
@@ -59,5 +70,5 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   );
 };
 
-export { useModal };
-export default Modal;
+export { useCreateModal };
+export default CreateModal;

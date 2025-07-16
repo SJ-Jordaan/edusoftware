@@ -11,8 +11,6 @@ export function ApiStack({ stack, app }: StackContext) {
       'packages/functions/src/logictutor/level/create/index.main',
     'PUT /logictutor/level':
       'packages/functions/src/logictutor/level/update/index.main',
-    'GET /logictutor/level/{test}':
-      'packages/functions/src/logictutor/level/get/index.main',
     'GET /logictutor/level-previews':
       'packages/functions/src/logictutor/level/getAll/index.main',
     'GET /logictutor/level':

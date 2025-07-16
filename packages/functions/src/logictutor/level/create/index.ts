@@ -9,14 +9,11 @@ import { connectToDatabase } from '@edusoftware/core/databases';
 import {
   LogictutorCreateLevelRequest,
   LogictutorLevelSchema,
-  LogictutorPopulatedLevel,
   LogictutorQuestionSchema,
 } from '@edusoftware/core/types/logictutor';
 
-export const main = handler<LogictutorPopulatedLevel>(
-  async (
-    event: APIGatewayProxyEventV2,
-  ): Promise<LambdaResponse<LogictutorPopulatedLevel>> => {
+export const main = handler<string>(
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<string>> => {
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
@@ -65,7 +62,7 @@ export const main = handler<LogictutorPopulatedLevel>(
       );
 
       // Create the level
-      const levelDoc = await LogictutorLevelModel.create([
+      await LogictutorLevelModel.create([
         {
           levelName: parsedData.levelName,
           description: parsedData.description,
@@ -78,24 +75,7 @@ export const main = handler<LogictutorPopulatedLevel>(
 
       return {
         statusCode: 201,
-        body: {
-          levelName: levelDoc[0].levelName,
-          description: levelDoc[0].description,
-          difficulty: levelDoc[0].difficulty,
-          updatedAt: levelDoc[0].updatedAt,
-          timeLimit: levelDoc[0].timeLimit,
-          questionIds: questionDocs.map((q) => ({
-            _id: q._id.toString(),
-            questionContent: q.questionContent,
-            answer: q.answer,
-            hints: q.hints,
-            score: q.score,
-            booleanExpression: q.booleanExpression,
-            outputSymbol: q.outputSymbol,
-            enableToolbar: q.enableToolbar,
-            showTruthTable: q.showTruthTable,
-          })),
-        },
+        body: 'Successfully created level',
       };
     } catch (err) {
       const message =

@@ -19,7 +19,7 @@ import { FeedbackToast } from '../../../components/toasts/FeedbackToast';
 import { toast } from 'react-toastify';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { ErrorToast } from '../../../components/toasts/ErrorToast';
+import { InfoToast } from '../../../components/toasts/InfoToast';
 import { TruthTable } from './components/TruthTable';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
@@ -155,7 +155,8 @@ const LevelSolver = () => {
     if (numCalls++ !== 0) return;
     toast(
       ({ closeToast }) => (
-        <ErrorToast
+        <InfoToast
+          severity="error"
           errorTitle="Time's Up!"
           message="The time limit expired"
           onClose={closeToast}
