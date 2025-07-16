@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useGetLogictutorLevelQuery } from '../../../slices/testApi.slice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import correct from '../../../assets/correct.mp3';
+import incorrect from '../../../assets/incorrect.mp3';
 import {
   initGrid,
   initToolbar,
@@ -22,6 +24,8 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { InfoToast } from '../../../components/toasts/InfoToast';
 import { TruthTable } from './components/TruthTable';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import useSound from 'use-sound';
+import { CounterExample } from './components/CounterExample';
 
 const LevelSolver = () => {
   const dispatch = useAppDispatch();
@@ -60,9 +64,14 @@ const LevelSolver = () => {
       );
   }, [dispatch, question]);
 
+  const [playCorrect] = useSound(correct, { volume: 0.25 });
+  const [playIncorrect] = useSound(incorrect, { volume: 0.25 });
+
   usePreventOverscroll();
 
   const [hintNum, setHintNum] = useState(0);
+  const [showCounterExample, setShowCounterExample] = useState(false);
+  const [incorrectExpr, setIncorrectExpr] = useState('');
 
   if (isLoading || isFetching || !question) {
     return (
@@ -107,6 +116,8 @@ const LevelSolver = () => {
     const studentTruthTable = generateTruthTable(studentAnswerPostFix);
 
     if (answerTruthTable === studentTruthTable) {
+      setShowCounterExample(false);
+      playCorrect();
       toast(
         ({ closeToast }) => (
           <FeedbackToast
@@ -128,6 +139,7 @@ const LevelSolver = () => {
       if (level.questions.length === currentQuestion + 1) navigate('/practice');
       else setCurrentQuestion(currentQuestion + 1);
     } else {
+      playIncorrect();
       setHintNum((hintNum + 1) % (question.hints?.length ?? 1));
       toast(
         ({ closeToast }) => (
@@ -147,6 +159,8 @@ const LevelSolver = () => {
           style: { background: 'transparent', boxShadow: 'none' },
         },
       );
+      setShowCounterExample(true);
+      setIncorrectExpr(studentAnswerPostFix);
     }
   };
 
@@ -356,6 +370,13 @@ const LevelSolver = () => {
                 >
                   Submit Answer
                 </button>
+                {showCounterExample && (
+                  <CounterExample
+                    correctExpr={question.booleanExpression}
+                    incorrectExpr={incorrectExpr}
+                    outputSymbol={question.outputSymbol}
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -39,11 +39,15 @@ export const GridSquare = ({
   return (
     <div
       ref={drop}
-      className={`${className ?? ''} box-border flex h-${cellScale * 14} w-${cellScale * 14} flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
+      className={`${className ?? ''} box-border flex flex-col items-center justify-center justify-self-center border transition-all duration-200 ${
         isOver && canDrop
           ? 'border-emerald-400 bg-emerald-900/20'
           : 'border-slate-700 hover:border-slate-500'
       }`}
+      style={{
+        height: `${cellScale * 14 * 0.25}rem`, // 0.25rem = 4px (Tailwind's base unit)
+        width: `${cellScale * 14 * 0.25}rem`,
+      }}
     >
       {children}
     </div>
