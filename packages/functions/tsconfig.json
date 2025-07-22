@@ -5,8 +5,10 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@edusoftware/core/*": ["../core/src/*"],
-      "@edusoftware/functions/*": ["src/*"]
+      "@edusoftware/core/*": ["../core/src/*"], //TODO: Change to correct path
+      "@edusoftware/functions/*": ["src/automatutor/*"],
+      "@ltlearn/core/*": ["../core/src/*"], //TODO: Change to correct path
+      "@ltlearn/functions/*": ["src/ltlearn/*"]
     }
   }
 }

@@ -1,4 +1,4 @@
-import { isAnswerCorrect } from './../../../../core/src/evaluation/helpers/isAnswerCorrect';
+import { isAnswerCorrect } from '@edusoftware/core/evaluation/helpers/isAnswerCorrect';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   AnswerEvaluation,
