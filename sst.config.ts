@@ -1,5 +1,5 @@
 import { SSTConfig } from 'sst';
-import { StorageStack, ApiStack, FrontendStack, AuthStack } from './stacks';
+import { StorageStack, ApiStack, FrontendStack, AuthStack, LtlApiStack } from "./stacks";
 import { SecretStack } from './stacks/SecretStack';
 import { LtlFrontendStack } from "./stacks/LtlFrontendStack";
 
@@ -15,6 +15,7 @@ export default {
       .stack(SecretStack)
       .stack(StorageStack)
       .stack(ApiStack)
+      .stack(LtlApiStack)
       .stack(FrontendStack)
       .stack(LtlFrontendStack)
       .stack(AuthStack);

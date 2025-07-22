@@ -11,10 +11,10 @@ function Login() {
       <div className="mb-12 text-center">
         <EduSoftware className="mx-auto h-24 w-24 sm:h-32 sm:w-32" />
         <h1 className="mt-6 text-3xl font-bold text-white sm:text-4xl">
-          Welcome to <span className="text-logo-primary">AutomaTutor</span>
+          Welcome to <span className="text-logo-primary">LTLearn</span>
         </h1>
         <p className="mt-4 max-w-sm text-gray-400">
-          Master automata theory through interactive challenges and hands-on
+          Master linear temporal logic through interactive challenges and hands-on
           learning
         </p>
       </div>
@@ -22,7 +22,7 @@ function Login() {
       {/* Login Options */}
       <div className="w-full max-w-sm space-y-4 rounded-xl bg-gray-800 p-6 shadow-xl">
         <a
-          href={`${import.meta.env.VITE_API_URL}/auth/google/authorize`}
+          href={`${import.meta.env.VITE_LTL_API_URL}/auth2/google/authorize`}
           rel="noreferrer"
           className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
         >

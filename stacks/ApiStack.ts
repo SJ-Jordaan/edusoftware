@@ -14,37 +14,37 @@ export function ApiStack({ stack, app }: StackContext) {
       },
     },
     routes: {
-      'Get /session': 'packages/functions/src/auth/session.handler', // TODO: Fix up the path here, maybe create authApi
-      'GET /levels': 'packages/functions/src/levels/getLevels/index.main',
-      'GET /levels/{id}': 'packages/functions/src/levels/getLevel/index.main',
-      'POST /levels': 'packages/functions/src/levels/createLevel/index.main',
+      'Get /session': 'packages/functions/src/automatutor/auth/session.handler', // TODO: Fix up the path here, maybe create authApi
+      'GET /levels': 'packages/functions/src/automatutor/levels/getLevels/index.main',
+      'GET /levels/{id}': 'packages/functions/src/automatutor/levels/getLevel/index.main',
+      'POST /levels': 'packages/functions/src/automatutor/levels/createLevel/index.main',
       'PUT /levels/{id}':
-        'packages/functions/src/levels/updateLevel/index.main',
+        'packages/functions/src/automatutor/levels/updateLevel/index.main',
       'DELETE /levels/{id}':
-        'packages/functions/src/levels/deleteLevel/index.main',
+        'packages/functions/src/automatutor/levels/deleteLevel/index.main',
       'GET /questions/{id}':
-        'packages/functions/src/questions/getQuestion/index.main',
+        'packages/functions/src/automatutor/questions/getQuestion/index.main',
       'POST /questions':
-        'packages/functions/src/questions/createQuestion/index.main',
+        'packages/functions/src/automatutor/questions/createQuestion/index.main',
       'DELETE /questions/{id}':
-        'packages/functions/src/questions/deleteQuestion/index.main',
+        'packages/functions/src/automatutor/questions/deleteQuestion/index.main',
       'PUT /questions/{id}':
-        'packages/functions/src/questions/updateQuestion/index.main',
-      'GET /scores': 'packages/functions/src/score/getLeaderboard/index.main',
+        'packages/functions/src/automatutor/questions/updateQuestion/index.main',
+      'GET /scores': 'packages/functions/src/automatutor/score/getLeaderboard/index.main',
       'POST /progress/{levelId}/{questionId}':
-        'packages/functions/src/progress/submitAnswer/index.main',
+        'packages/functions/src/automatutor/progress/submitAnswer/index.main',
       'GET /progress/{id}':
-        'packages/functions/src/progress/getUserProgress/index.main',
+        'packages/functions/src/automatutor/progress/getUserProgress/index.main',
       'GET /progress':
-        'packages/functions/src/progress/getUserProgress/index.main',
+        'packages/functions/src/automatutor/progress/getUserProgress/index.main',
       'POST /progress/{id}':
-        'packages/functions/src/progress/startLevel/index.main',
+        'packages/functions/src/automatutor/progress/startLevel/index.main',
       'GET /progress/level/{id}':
-        'packages/functions/src/progress/getLevelProgress/index.main',
+        'packages/functions/src/automatutor/progress/getLevelProgress/index.main',
       'GET /report/dashboard':
-        'packages/functions/src/reports/dashboard/index.main',
-      'POST /badges/check': 'packages/functions/src/badges/check/index.main',
-      'GET /badges': 'packages/functions/src/badges/get/index.main',
+        'packages/functions/src/automatutor/reports/dashboard/index.main',
+      'POST /badges/check': 'packages/functions/src/automatutor/badges/check/index.main',
+      'GET /badges': 'packages/functions/src/automatutor/badges/get/index.main',
     },
   });
 

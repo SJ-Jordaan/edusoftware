@@ -8,7 +8,7 @@ import {
 import { logout } from './auth.slice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL,
+  baseUrl: import.meta.env.VITE_LTL_API_URL,
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
     const token = state?.auth?.token;
