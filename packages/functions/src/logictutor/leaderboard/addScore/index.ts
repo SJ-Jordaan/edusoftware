@@ -1,0 +1,99 @@
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
+import { BadRequestError, LambdaResponse } from '@edusoftware/core/types';
+import { connectToDatabase } from '@edusoftware/core/databases';
+import {
+  LogictutorLeaderboardModel,
+  LogictutorLevelModel,
+} from '@edusoftware/core/databases/logictutor';
+import mongoose from 'mongoose';
+
+export const main = handler<string>(
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<string>> => {
+    if (!event.body) {
+      throw new BadRequestError('Request body is required');
+    }
+
+    let parsedBody: { levelId: string; score: number };
+    try {
+      parsedBody = JSON.parse(event.body);
+    } catch {
+      throw new BadRequestError('Invalid JSON');
+    }
+
+    const { levelId, score } = parsedBody;
+
+    if (!levelId || typeof levelId !== 'string') {
+      throw new BadRequestError('levelId is required and must be a string');
+    }
+
+    if (typeof score !== 'number' || isNaN(score)) {
+      throw new BadRequestError('score is required and must be a valid number');
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(levelId)) {
+      throw new BadRequestError('Invalid levelId format');
+    }
+
+    await connectToDatabase();
+
+    // Get user session
+    const { userId, name } = await useSessionWithRoles(); // Securely fetched
+
+    try {
+      const leaderboard = await LogictutorLeaderboardModel.findOne({
+        levelId: new mongoose.Types.ObjectId(levelId),
+      });
+
+      if (!leaderboard) {
+        const level = await LogictutorLevelModel.findById(levelId).lean();
+        await LogictutorLeaderboardModel.create({
+          levelId: new mongoose.Types.ObjectId(levelId),
+          levelName: level?.levelName, // Add logic to fetch name/desc if needed
+          description: level?.description,
+          userScores: [
+            {
+              userId,
+              userName: name,
+              score,
+            },
+          ],
+        });
+
+        return {
+          statusCode: 201,
+          body: 'Leaderboard created and score added',
+        };
+      }
+
+      // Check if this user already submitted a score
+      const existingScore = leaderboard.userScores?.find(
+        (entry) => entry.userId === userId,
+      );
+
+      if (existingScore) {
+        throw new BadRequestError(
+          'User has already submitted a score for this level',
+        );
+      }
+
+      // Push new score and save
+      leaderboard.userScores?.push({
+        userId,
+        userName: name,
+        score,
+      });
+
+      await leaderboard.save();
+
+      return {
+        statusCode: 200,
+        body: 'Score successfully added',
+      };
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Error while adding score';
+      throw new BadRequestError(message);
+    }
+  },
+);
