@@ -42,7 +42,7 @@ export const main = handler<string>(
     await connectToDatabase();
 
     // Get user session
-    const { userId, name } = await useSessionWithRoles(); // Securely fetched
+    const { userId, name, picture, email } = await useSessionWithRoles(); // Securely fetched
 
     try {
       const leaderboard = await LogictutorLeaderboardModel.findOne({
@@ -85,6 +85,8 @@ export const main = handler<string>(
       leaderboard.userScores?.push({
         userId,
         userName: name,
+        picture,
+        email,
         score,
       });
 

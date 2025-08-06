@@ -3,10 +3,12 @@ import { useState, useMemo } from 'react';
 import First from '../../../assets/first-icon.svg?react';
 import Second from '../../../assets/second-icon.svg?react';
 import Third from '../../../assets/third-icon.svg?react';
-import { useFetchLeaderboardQuery } from '../../../slices/scoreApi.slice';
-import { useFetchLevelsQuery } from '../../../slices/levelApi.slice';
 import ErrorPage from '../../ErrorPage';
 import { LeaderboardLoader } from './components/LeaderboardLoader';
+import { useGetLogictutorLeaderboardQuery } from '../../../slices/leaderboard.slice';
+import { useGetAllLevelsQuery } from '../../../slices/testApi.slice';
+import { LogictutorScore } from '@edusoftware/core/src/types';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 // Add these helper functions at the top of the file
 const getInitials = (name: string | undefined | null): string => {
@@ -50,15 +52,16 @@ const AvatarFallback = ({
 
 export const LeaderBoard = () => {
   const [selectedLevelId, setSelectedLevelId] = useState('');
-  const { data: leaderboard, error, isLoading } = useFetchLeaderboardQuery({});
-  const { data: levels } = useFetchLevelsQuery({ isPractice: false });
+  const {
+    data: leaderboard,
+    error,
+    isLoading,
+  } = useGetLogictutorLeaderboardQuery(selectedLevelId || skipToken);
+  const { data: levels } = useGetAllLevelsQuery(undefined);
 
   const currentLeaderboard = useMemo(() => {
     if (!leaderboard) return [];
-    return selectedLevelId
-      ? leaderboard.perLevel.find((level) => level.levelId === selectedLevelId)
-          ?.scores || []
-      : leaderboard.overall;
+    return selectedLevelId ? (leaderboard.userScores ?? []) : [];
   }, [leaderboard, selectedLevelId]);
 
   if (isLoading) return <LeaderboardLoader />;
@@ -66,13 +69,13 @@ export const LeaderBoard = () => {
 
   const [first, second, third, ...rest] = currentLeaderboard;
 
-  const renderScores = (entry: any) => {
+  const renderScores = (entry: LogictutorScore) => {
     if (!entry) return null;
 
     return (
       <div className="flex flex-col items-center">
         <p className="text-lg font-semibold text-orange-400">
-          {entry.totalScore.toLocaleString()} pts
+          {entry.score.toLocaleString()} pts
         </p>
       </div>
     );
@@ -85,7 +88,7 @@ export const LeaderBoard = () => {
           <div className="text-center">
             <h1 className="text-3xl font-bold text-white">Leaderboard</h1>
             <p className="mt-2 text-gray-400">
-              See who's leading the pack in learning achievements
+              See who&#39;s leading the pack in learning achievements
             </p>
           </div>
 
@@ -138,21 +141,20 @@ export const LeaderBoard = () => {
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    {second?.userDetails?.picture ? (
+                    {second?.picture ? (
                       <img
-                        src={second.userDetails.picture}
-                        alt={second.userDetails.name}
+                        src={second.picture}
+                        alt={second.userName}
                         className="border-silver h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
                       />
                     ) : (
-                      <AvatarFallback name={second?.userDetails?.name} />
+                      <AvatarFallback name={second?.userName} />
                     )}
                     <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
-                      {second?.userDetails?.name ?? 'None'}
+                      {second?.userName ?? 'None'}
                     </p>
                     <p className="text-xs text-gray-400 sm:text-sm">
-                      {extractStudentNumber(second?.userDetails?.email) ??
-                        'None'}
+                      {extractStudentNumber(second?.email) ?? 'None'}
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(second)}</div>
@@ -166,21 +168,20 @@ export const LeaderBoard = () => {
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    {first?.userDetails?.picture ? (
+                    {first?.picture ? (
                       <img
-                        src={first.userDetails.picture}
-                        alt={first.userDetails.name}
+                        src={first.picture}
+                        alt={first.userName}
                         className="border-gold h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
                       />
                     ) : (
-                      <AvatarFallback name={first?.userDetails?.name} />
+                      <AvatarFallback name={first?.userName} />
                     )}
                     <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
-                      {first?.userDetails?.name ?? 'None'}
+                      {first?.userName ?? 'None'}
                     </p>
                     <p className="text-xs text-gray-400 sm:text-sm">
-                      {extractStudentNumber(first?.userDetails?.email) ??
-                        'None'}
+                      {extractStudentNumber(first?.email) ?? 'None'}
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(first)}</div>
@@ -194,21 +195,20 @@ export const LeaderBoard = () => {
                 </div>
                 <div className="flex h-full flex-col items-center justify-between">
                   <div className="flex flex-col items-center">
-                    {third?.userDetails?.picture ? (
+                    {third?.picture ? (
                       <img
-                        src={third.userDetails.picture}
-                        alt={third.userDetails.name}
+                        src={third.picture}
+                        alt={third.userName}
                         className="border-bronze h-10 w-10 rounded-full border-2 sm:h-12 sm:w-12"
                       />
                     ) : (
-                      <AvatarFallback name={third?.userDetails?.name} />
+                      <AvatarFallback name={third?.userName} />
                     )}
                     <p className="mt-1 line-clamp-1 text-sm font-medium text-white sm:mt-2 sm:text-base">
-                      {third?.userDetails?.name ?? 'None'}
+                      {third?.userName ?? 'None'}
                     </p>
                     <p className="text-xs text-gray-400 sm:text-sm">
-                      {extractStudentNumber(third?.userDetails?.email) ??
-                        'None'}
+                      {extractStudentNumber(third?.email) ?? 'None'}
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(third)}</div>
@@ -228,29 +228,27 @@ export const LeaderBoard = () => {
                   </div>
 
                   <div className="flex flex-1 items-center gap-4">
-                    {entry.userDetails?.picture ? (
+                    {entry.picture ? (
                       <img
-                        src={entry.userDetails.picture}
-                        alt={entry.userDetails.name}
+                        src={entry.picture}
+                        alt={entry.userName}
                         className="h-10 w-10 rounded-full"
                       />
                     ) : (
-                      <AvatarFallback name={entry.userDetails?.name} />
+                      <AvatarFallback name={entry.userName} />
                     )}
 
                     <div>
-                      <p className="font-medium text-white">
-                        {entry.userDetails?.name}
-                      </p>
+                      <p className="font-medium text-white">{entry.userName}</p>
                       <p className="text-sm text-gray-400">
-                        {extractStudentNumber(entry.userDetails?.email)}
+                        {extractStudentNumber(entry.email)}
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right">
                     <p className="text-lg font-semibold text-orange-300">
-                      {entry.totalScore.toLocaleString()} pts
+                      {entry.score.toLocaleString()} pts
                     </p>
                   </div>
                 </div>

@@ -3,6 +3,8 @@ import { z } from 'zod';
 export const LogictutorScoreSchema = z.object({
   userId: z.string(),
   userName: z.string(),
+  picture: z.string(),
+  email: z.string(),
   score: z.number(),
 });
 

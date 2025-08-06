@@ -3,6 +3,8 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 export interface LogictutorScore {
   userId: string;
   userName: string;
+  email: string;
+  picture: string;
   score: number;
 }
 
@@ -17,6 +19,8 @@ const ScoreSchema = new Schema<LogictutorScore>(
   {
     userId: { type: String, required: true },
     userName: { type: String, required: true },
+    picture: { type: String, required: true },
+    email: { type: String, required: true },
     score: { type: Number, required: true },
   },
   { _id: false }, // Don't create a separate _id for subdocuments

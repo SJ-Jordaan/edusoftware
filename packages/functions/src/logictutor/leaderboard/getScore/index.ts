@@ -11,7 +11,6 @@ import {
   LogictutorLeaderboardModel,
   LogictutorLevelModel,
 } from '@edusoftware/core/databases/logictutor';
-import mongoose from 'mongoose';
 
 export const main = handler<LogictutorUserScoreResponse>(
   async (
@@ -23,10 +22,6 @@ export const main = handler<LogictutorUserScoreResponse>(
       throw new BadRequestError('Query parameter "levelId" is required');
     }
 
-    if (!mongoose.Types.ObjectId.isValid(levelId)) {
-      throw new BadRequestError('Invalid levelId format');
-    }
-
     await connectToDatabase();
 
     const { userId } = await useSessionWithRoles();
@@ -34,7 +29,7 @@ export const main = handler<LogictutorUserScoreResponse>(
     try {
       // Get the Level info regardless
       const level = await LogictutorLevelModel.findOne({
-        _id: new mongoose.Types.ObjectId(levelId),
+        _id: levelId,
       }).lean();
 
       if (!level) {
@@ -43,7 +38,7 @@ export const main = handler<LogictutorUserScoreResponse>(
 
       // Check if leaderboard exists
       const leaderboard = await LogictutorLeaderboardModel.findOne({
-        levelId: new mongoose.Types.ObjectId(levelId),
+        levelId: levelId,
       }).lean();
 
       const userScore = leaderboard?.userScores?.find(

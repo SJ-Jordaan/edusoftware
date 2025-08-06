@@ -11,7 +11,6 @@ import {
   LogictutorLeaderboardModel,
   LogictutorLevelModel,
 } from '@edusoftware/core/databases/logictutor';
-import mongoose from 'mongoose';
 
 export const main = handler<LogictutorLeaderboard>(
   async (
@@ -23,16 +22,11 @@ export const main = handler<LogictutorLeaderboard>(
       throw new BadRequestError('Query parameter "levelId" is required');
     }
 
-    // Validate if levelId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(levelId)) {
-      throw new BadRequestError('Invalid levelId format');
-    }
-
     await connectToDatabase();
 
     try {
       const leaderboard = await LogictutorLeaderboardModel.findOne({
-        levelId: new mongoose.Types.ObjectId(levelId),
+        levelId: levelId,
       });
 
       if (!leaderboard) {
