@@ -1,6 +1,10 @@
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
-import { BadRequestError, LambdaResponse } from '@edusoftware/core/types';
+import {
+  BadRequestError,
+  LambdaResponse,
+  LogictutorAddScoreRequest,
+} from '@edusoftware/core/types';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import {
   LogictutorLeaderboardModel,
@@ -14,7 +18,7 @@ export const main = handler<string>(
       throw new BadRequestError('Request body is required');
     }
 
-    let parsedBody: { levelId: string; score: number };
+    let parsedBody: LogictutorAddScoreRequest;
     try {
       parsedBody = JSON.parse(event.body);
     } catch {

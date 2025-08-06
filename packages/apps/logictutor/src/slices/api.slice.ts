@@ -48,6 +48,7 @@ export const apiSlice = createApi({
     'LevelProgress',
     'Dashboard',
     'LogictutorLevel',
+    'LogictutorLeaderboard',
   ],
   endpoints: () => ({}),
 });

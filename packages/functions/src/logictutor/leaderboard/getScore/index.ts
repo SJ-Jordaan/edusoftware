@@ -4,6 +4,7 @@ import {
   BadRequestError,
   NotFoundError,
   LambdaResponse,
+  LogictutorUserScoreResponse,
 } from '@edusoftware/core/types';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import {
@@ -12,30 +13,10 @@ import {
 } from '@edusoftware/core/databases/logictutor';
 import mongoose from 'mongoose';
 
-export const main = handler<{
-  levelId: string;
-  levelName: string;
-  description: string;
-  userScore: {
-    userId: string;
-    userName: string;
-    score: number;
-  } | null;
-}>(
+export const main = handler<LogictutorUserScoreResponse>(
   async (
     event: APIGatewayProxyEventV2,
-  ): Promise<
-    LambdaResponse<{
-      levelId: string;
-      levelName: string;
-      description: string;
-      userScore: {
-        userId: string;
-        userName: string;
-        score: number;
-      } | null;
-    }>
-  > => {
+  ): Promise<LambdaResponse<LogictutorUserScoreResponse>> => {
     const levelId = event.queryStringParameters?.levelId;
 
     if (!levelId) {
@@ -65,9 +46,9 @@ export const main = handler<{
         levelId: new mongoose.Types.ObjectId(levelId),
       }).lean();
 
-      const userScore =
-        leaderboard?.userScores?.find((entry) => entry.userId === userId) ??
-        null;
+      const userScore = leaderboard?.userScores?.find(
+        (entry) => entry.userId === userId,
+      );
 
       return {
         statusCode: 200,

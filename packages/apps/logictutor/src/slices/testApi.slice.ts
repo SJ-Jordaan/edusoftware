@@ -38,7 +38,7 @@ export const testApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body,
       }),
-      invalidatesTags: (result, error, body) => [
+      invalidatesTags: (_result, _error, body) => [
         { type: 'LogictutorLevel', id: body._id },
         'LogictutorLevel',
       ],
@@ -52,7 +52,7 @@ export const testApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
         params: { levelId },
       }),
-      providesTags: (result, error, levelId) => [
+      providesTags: (_result, _error, levelId) => [
         { type: 'LogictutorLevel', id: levelId },
       ],
     }),

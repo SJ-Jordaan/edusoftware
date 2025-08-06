@@ -4,6 +4,7 @@ import {
   BadRequestError,
   NotFoundError,
   LambdaResponse,
+  LogictutorLeaderboard,
 } from '@edusoftware/core/types';
 import { connectToDatabase } from '@edusoftware/core/databases';
 import {
@@ -12,30 +13,10 @@ import {
 } from '@edusoftware/core/databases/logictutor';
 import mongoose from 'mongoose';
 
-export const main = handler<{
-  levelId: string;
-  levelName: string;
-  description: string;
-  userScores: Array<{
-    userId: string;
-    userName: string;
-    score: number;
-  }>;
-}>(
+export const main = handler<LogictutorLeaderboard>(
   async (
     event: APIGatewayProxyEventV2,
-  ): Promise<
-    LambdaResponse<{
-      levelId: string;
-      levelName: string;
-      description: string;
-      userScores: Array<{
-        userId: string;
-        userName: string;
-        score: number;
-      }>;
-    }>
-  > => {
+  ): Promise<LambdaResponse<LogictutorLeaderboard>> => {
     const levelId = event.queryStringParameters?.levelId;
 
     if (!levelId) {
