@@ -56,6 +56,7 @@ export const LeaderBoard = () => {
     data: leaderboard,
     error,
     isLoading,
+    isFetching,
   } = useGetLogictutorLeaderboardQuery(
     selectedLevelId === null ? skipToken : selectedLevelId,
     {
@@ -70,7 +71,7 @@ export const LeaderBoard = () => {
     return selectedLevelId ? (leaderboard.userScores ?? []) : [];
   }, [leaderboard, selectedLevelId]);
 
-  if (isLoading) return <LeaderboardLoader />;
+  if (isLoading || isFetching) return <LeaderboardLoader />;
   if (error) return <ErrorPage />;
 
   const [first, second, third, ...rest] = currentLeaderboard;
@@ -133,7 +134,7 @@ export const LeaderBoard = () => {
             <p className="text-lg text-gray-400">
               {selectedLevelId
                 ? 'No scores recorded for this level yet'
-                : 'No scores recorded yet'}
+                : 'Select a level to view scores'}
             </p>
           </div>
         ) : (

@@ -47,13 +47,11 @@ const router = createBrowserRouter(
           <Route path="/" element={<ChallengePage />} />
           <Route path="/practice" element={<LevelView isAdmin={false} />} />
           <Route path="/admin/levels" element={<LevelView isAdmin={true} />} />
+          <Route path="/leaderboard" element={<LeaderBoard />} />
         </Route>
 
         {/* Level Solving routes */}
         <Route path="/level/:id" element={<LevelSolver />} />
-
-        {/* Level Solving routes */}
-        <Route path="/leaderboard" element={<LeaderBoard />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
