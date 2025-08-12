@@ -26,10 +26,14 @@ import { TruthTable } from './components/TruthTable';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import useSound from 'use-sound';
 import { CounterExample } from './components/CounterExample';
+import { useAddScoreMutation } from '../../../slices/leaderboard.slice';
 
 const LevelSolver = () => {
   const dispatch = useAppDispatch();
   const pieces = useAppSelector((state) => state.gridCircuit.pieces);
+  const [addScore] = useAddScoreMutation();
+
+  const [remaining, setRemaining] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -66,6 +70,22 @@ const LevelSolver = () => {
 
   const [playCorrect] = useSound(correct, { volume: 0.25 });
   const [playIncorrect] = useSound(incorrect, { volume: 0.25 });
+
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Count-up logic
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setElapsed((prev) => prev + 1);
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  });
 
   usePreventOverscroll();
 
@@ -105,7 +125,7 @@ const LevelSolver = () => {
     );
   }
 
-  const submitAnswer = () => {
+  const submitAnswer = async () => {
     if (!question.booleanExpression) return;
     const answerPostFix = infixToPostfix(question.booleanExpression.split(''));
 
@@ -136,8 +156,11 @@ const LevelSolver = () => {
           style: { background: 'transparent', boxShadow: 'none' },
         },
       );
-      if (level.questions.length === currentQuestion + 1) navigate('/practice');
-      else setCurrentQuestion(currentQuestion + 1);
+      if (level.questions.length === currentQuestion + 1) {
+        const score = level?.timeLimit ? remaining : 1000 - elapsed;
+        await addScore({ levelId: level._id, score });
+        navigate('/practice');
+      } else setCurrentQuestion(currentQuestion + 1);
     } else {
       playIncorrect();
       setHintNum((hintNum + 1) % (question.hints?.length ?? 1));
@@ -262,6 +285,7 @@ const LevelSolver = () => {
                         createFailedToast();
                         navigate('/practice');
                       }}
+                      onTick={(time) => setRemaining(time)}
                     />
                   ) : (
                     <h3 className="mb-3 flex items-center text-sm font-medium text-gray-400">
@@ -367,6 +391,7 @@ const LevelSolver = () => {
                         createFailedToast();
                         navigate('/practice');
                       }}
+                      onTick={(time) => setRemaining(time)}
                     />
                   )}
                 </div>

@@ -3,15 +3,21 @@ import { useState, useEffect, useRef } from 'react';
 interface TimerProps {
   initialCount: number;
   onEnd: () => void;
+  onTick?: (timeLeft: number) => void;
 }
 
-export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
+export const CountdownTimer = ({ initialCount, onEnd, onTick }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialCount);
   const onEndRef = useRef(onEnd);
+  const onTickRef = useRef(onTick);
 
   useEffect(() => {
     onEndRef.current = onEnd;
   }, [onEnd]);
+
+  useEffect(() => {
+    onTickRef.current = onTick;
+  }, [onTick]);
 
   useEffect(() => {
     if (initialCount === 0) return;
@@ -19,6 +25,7 @@ export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         const next = prev - 1;
+        onTickRef.current?.(next);
 
         if (next <= 0) {
           clearInterval(timer);
@@ -37,26 +44,19 @@ export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
   const seconds = timeLeft % 60;
 
   const getTimerColor = () => {
-    if (timeLeft <= initialCount * 0.05) {
-      return 'text-red-500';
-    } else if (timeLeft <= initialCount * 0.2) {
-      return 'text-amber-500';
-    }
+    if (timeLeft <= initialCount * 0.05) return 'text-red-500';
+    if (timeLeft <= initialCount * 0.2) return 'text-amber-500';
     return 'text-emerald-500';
   };
 
   const getTimebarWidth = () => {
     if (initialCount === 0) return '0%';
-    const percentage = (timeLeft / initialCount) * 100;
-    return `${Math.max(0, Math.min(100, percentage))}%`;
+    return `${Math.max(0, Math.min(100, (timeLeft / initialCount) * 100))}%`;
   };
 
   const getTimebarColor = () => {
-    if (timeLeft <= initialCount * 0.05) {
-      return 'bg-red-500';
-    } else if (timeLeft <= initialCount * 0.2) {
-      return 'bg-amber-500';
-    }
+    if (timeLeft <= initialCount * 0.05) return 'bg-red-500';
+    if (timeLeft <= initialCount * 0.2) return 'bg-amber-500';
     return 'bg-emerald-500';
   };
 

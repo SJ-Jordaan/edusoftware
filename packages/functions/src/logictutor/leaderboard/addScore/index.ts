@@ -10,7 +10,6 @@ import {
   LogictutorLeaderboardModel,
   LogictutorLevelModel,
 } from '@edusoftware/core/databases/logictutor';
-import mongoose from 'mongoose';
 
 export const main = handler<string>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<string>> => {
@@ -35,10 +34,6 @@ export const main = handler<string>(
       throw new BadRequestError('score is required and must be a valid number');
     }
 
-    if (!mongoose.Types.ObjectId.isValid(levelId)) {
-      throw new BadRequestError('Invalid levelId format');
-    }
-
     await connectToDatabase();
 
     // Get user session
@@ -46,18 +41,20 @@ export const main = handler<string>(
 
     try {
       const leaderboard = await LogictutorLeaderboardModel.findOne({
-        levelId: new mongoose.Types.ObjectId(levelId),
+        levelId: levelId,
       });
 
       if (!leaderboard) {
         const level = await LogictutorLevelModel.findById(levelId).lean();
         await LogictutorLeaderboardModel.create({
-          levelId: new mongoose.Types.ObjectId(levelId),
+          levelId: levelId,
           levelName: level?.levelName, // Add logic to fetch name/desc if needed
           description: level?.description,
           userScores: [
             {
               userId,
+              picture,
+              email,
               userName: name,
               score,
             },

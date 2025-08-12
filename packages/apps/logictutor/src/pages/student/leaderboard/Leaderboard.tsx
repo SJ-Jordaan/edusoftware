@@ -51,12 +51,18 @@ const AvatarFallback = ({
 };
 
 export const LeaderBoard = () => {
-  const [selectedLevelId, setSelectedLevelId] = useState('');
+  const [selectedLevelId, setSelectedLevelId] = useState<string | null>(null);
   const {
     data: leaderboard,
     error,
     isLoading,
-  } = useGetLogictutorLeaderboardQuery(selectedLevelId || skipToken);
+  } = useGetLogictutorLeaderboardQuery(
+    selectedLevelId === null ? skipToken : selectedLevelId,
+    {
+      skip: selectedLevelId === null,
+    },
+  );
+
   const { data: levels } = useGetAllLevelsQuery(undefined);
 
   const currentLeaderboard = useMemo(() => {
@@ -65,7 +71,7 @@ export const LeaderBoard = () => {
   }, [leaderboard, selectedLevelId]);
 
   if (isLoading) return <LeaderboardLoader />;
-  if (error || !leaderboard) return <ErrorPage />;
+  if (error) return <ErrorPage />;
 
   const [first, second, third, ...rest] = currentLeaderboard;
 
@@ -75,7 +81,7 @@ export const LeaderBoard = () => {
     return (
       <div className="flex flex-col items-center">
         <p className="text-lg font-semibold text-orange-400">
-          {entry.score.toLocaleString()} pts
+          {entry?.score?.toLocaleString?.() ?? 0} pts
         </p>
       </div>
     );
@@ -93,7 +99,7 @@ export const LeaderBoard = () => {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
+            {/* <button
               onClick={() => setSelectedLevelId('')}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 !selectedLevelId
@@ -102,8 +108,8 @@ export const LeaderBoard = () => {
               }`}
             >
               Overall Rankings
-            </button>
-            <div className="h-4 w-px bg-gray-700" />
+            </button> */}
+            {/* <div className="h-4 w-px bg-gray-700" /> */}
             <div className="flex flex-wrap items-center gap-2">
               {levels?.map((level) => (
                 <button
