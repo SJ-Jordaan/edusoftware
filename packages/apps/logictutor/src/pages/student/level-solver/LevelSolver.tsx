@@ -157,7 +157,9 @@ const LevelSolver = () => {
         },
       );
       if (level.questions.length === currentQuestion + 1) {
-        const score = level?.timeLimit ? remaining : 1000 - elapsed;
+        const score = level?.timeLimit
+          ? remaining
+          : Math.max(1000 - elapsed, 0);
         await addScore({ levelId: level._id, score });
         navigate('/practice');
       } else setCurrentQuestion(currentQuestion + 1);
