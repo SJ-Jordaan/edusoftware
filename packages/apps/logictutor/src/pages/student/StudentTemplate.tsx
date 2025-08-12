@@ -1,24 +1,19 @@
 import { NavBar, Route } from '../../components';
 
-import Home from '../../assets/home-icon.svg?react';
+// import Home from '../../assets/home-icon.svg?react';
 import Practice from '../../assets/four-squares-icon.svg?react';
 import Leaderboard from '../../assets/priorities-icon.svg?react';
 
 const routes: Route[] = [
-  {
-    path: '/',
-    icon: Home,
-    label: 'Challenges',
-  },
+  // {
+  //   path: '/',
+  //   icon: Home,
+  //   label: 'Challenges',
+  // },
   {
     path: '/practice',
     icon: Practice,
     label: 'Practice',
-  },
-  {
-    path: '/admin/levels',
-    icon: Practice,
-    label: 'View/Edit Levels',
   },
   {
     path: '/leaderboard',

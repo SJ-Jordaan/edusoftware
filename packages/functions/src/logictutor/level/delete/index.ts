@@ -1,9 +1,10 @@
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { handler } from '@edusoftware/core/handlers';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
 import {
   BadRequestError,
   LambdaResponse,
   ApplicationError,
+  OrganisationRole,
 } from '@edusoftware/core/types';
 import {
   LogictutorLevelModel,
@@ -15,6 +16,11 @@ export const main = handler<{ message: string }>(
   async (
     event: APIGatewayProxyEventV2,
   ): Promise<LambdaResponse<{ message: string }>> => {
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
+
     const levelId = event.queryStringParameters?.levelId;
 
     if (!levelId) {

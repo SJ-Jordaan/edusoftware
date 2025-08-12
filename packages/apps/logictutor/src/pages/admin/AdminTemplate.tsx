@@ -15,8 +15,8 @@ const sidebarItems = [
     },
   },
   {
-    label: 'Levels',
     href: '/admin/levels',
+    label: 'View/Edit Levels',
     icon: {
       viewBox: '0 0 18 18',
       paths: [

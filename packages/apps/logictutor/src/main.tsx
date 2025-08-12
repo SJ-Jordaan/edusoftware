@@ -19,9 +19,9 @@ import PrivateRoute from './components/PrivateRoute.tsx';
 import StudentTemplate from './pages/student/StudentTemplate.tsx';
 import ErrorPage, { ErrorConfig } from './pages/ErrorPage.tsx';
 import AdminTemplate from './pages/admin/AdminTemplate.tsx';
-import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
+// import Dashboard from './pages/admin/dashboard/Dashboard.tsx';
 import { ReloadPrompt } from './components/ReloadPrompt.tsx';
-import ChallengePage from './pages/student/challenges/Challenges.tsx';
+// import ChallengePage from './pages/student/challenges/Challenges.tsx';
 import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import { LevelView } from './pages/student/practice/LevelView.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
@@ -44,10 +44,10 @@ const router = createBrowserRouter(
       <Route path="/" element={<PrivateRoute />}>
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
-          <Route path="/" element={<ChallengePage />} />
+          {/* <Route path="/" element={<ChallengePage />} /> */}
           <Route path="/practice" element={<LevelView isAdmin={false} />} />
-          <Route path="/admin/levels" element={<LevelView isAdmin={true} />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
+          {/* <Route path="/admin/levels" element={<LevelView isAdmin={true} />} /> */}
         </Route>
 
         {/* Level Solving routes */}
@@ -55,8 +55,7 @@ const router = createBrowserRouter(
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
-          <Route path="/admin" element={<Dashboard />} />
-          {/* <Route path="/admin/levels" element={<LevelManager />} /> */}
+          <Route path="/admin/levels" element={<LevelView isAdmin={true} />} />
         </Route>
       </Route>
 

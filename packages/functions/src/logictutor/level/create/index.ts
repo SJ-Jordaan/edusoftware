@@ -1,6 +1,10 @@
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { handler } from '@edusoftware/core/handlers';
-import { BadRequestError, LambdaResponse } from '@edusoftware/core/types';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
+import {
+  BadRequestError,
+  LambdaResponse,
+  OrganisationRole,
+} from '@edusoftware/core/types';
 import {
   LogictutorLevelModel,
   LogictutorQuestionModel,
@@ -14,6 +18,10 @@ import {
 
 export const main = handler<string>(
   async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<string>> => {
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
     if (!event.body) {
       throw new BadRequestError('Request body is required');
     }
