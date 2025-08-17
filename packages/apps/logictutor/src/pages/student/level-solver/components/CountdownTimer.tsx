@@ -3,21 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 interface TimerProps {
   initialCount: number;
   onEnd: () => void;
-  onTick?: (timeLeft: number) => void;
 }
 
-export const CountdownTimer = ({ initialCount, onEnd, onTick }: TimerProps) => {
+export const CountdownTimer = ({ initialCount, onEnd }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(initialCount);
   const onEndRef = useRef(onEnd);
-  const onTickRef = useRef(onTick);
 
   useEffect(() => {
     onEndRef.current = onEnd;
   }, [onEnd]);
-
-  useEffect(() => {
-    onTickRef.current = onTick;
-  }, [onTick]);
 
   useEffect(() => {
     if (initialCount === 0) return;
@@ -25,7 +19,6 @@ export const CountdownTimer = ({ initialCount, onEnd, onTick }: TimerProps) => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         const next = prev - 1;
-        onTickRef.current?.(next);
 
         if (next <= 0) {
           clearInterval(timer);

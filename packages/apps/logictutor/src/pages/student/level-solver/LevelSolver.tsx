@@ -22,18 +22,16 @@ import { toast } from 'react-toastify';
 import { PageLoader } from '../../../components/loaders/PageLoader';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { InfoToast } from '../../../components/toasts/InfoToast';
-import { TruthTable } from './components/TruthTable';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import useSound from 'use-sound';
 import { CounterExample } from './components/CounterExample';
 import { useAddScoreMutation } from '../../../slices/leaderboard.slice';
+import { QuestionInfo } from './components/QuestionInfo';
 
 const LevelSolver = () => {
   const dispatch = useAppDispatch();
   const pieces = useAppSelector((state) => state.gridCircuit.pieces);
   const [addScore] = useAddScoreMutation();
-
-  const [remaining, setRemaining] = useState(0);
+  const [incorrectSubmissions, setIncorrectSubmissions] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -157,13 +155,15 @@ const LevelSolver = () => {
         },
       );
       if (level.questions.length === currentQuestion + 1) {
-        const score = level?.timeLimit
-          ? remaining
-          : Math.max(1000 - elapsed, 0);
-        await addScore({ levelId: level._id, score });
+        const score = Math.max(
+          (level?.timeLimit ?? 1000) - elapsed - incorrectSubmissions * 100,
+          0,
+        );
+        addScore({ levelId: level._id, score });
         navigate('/practice');
       } else setCurrentQuestion(currentQuestion + 1);
     } else {
+      setIncorrectSubmissions(incorrectSubmissions + 1);
       playIncorrect();
       setHintNum((hintNum + 1) % (question.hints?.length ?? 1));
       toast(
@@ -212,65 +212,6 @@ const LevelSolver = () => {
     );
   };
 
-  const QuestionInfo = ({
-    collapsedDefault,
-  }: {
-    collapsedDefault: boolean;
-  }) => {
-    const [isCollapsed, setIsCollapsed] = useState(collapsedDefault);
-    const contentRef = useRef<HTMLDivElement>(null);
-
-    return (
-      <div className="rounded-lg bg-gray-800/70 shadow-lg backdrop-blur-sm transition-all hover:bg-gray-800">
-        <div
-          className="flex cursor-pointer items-center justify-between rounded-lg p-4 hover:bg-gray-700"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          <h3 className="flex items-center text-sm font-medium text-indigo-400">
-            <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/20 text-xs">
-              i
-            </span>
-            Question Info
-          </h3>
-          <ChevronDownIcon
-            className={`${isCollapsed ? 'rotate-180' : ''} h-5 w-5 text-indigo-400 transition-transform duration-300`}
-          />
-        </div>
-
-        <div
-          className="overflow-hidden transition-all duration-300 ease-in-out"
-          style={{
-            maxHeight: isCollapsed
-              ? '0px'
-              : `${contentRef.current?.scrollHeight}px`,
-            opacity: isCollapsed ? 0 : 1,
-          }}
-        >
-          <div ref={contentRef} className="p-4">
-            <div>
-              <h4 className="mb-2 text-base font-medium text-gray-400">
-                {question.showTruthTable ? 'Truth Table' : 'Boolean Expression'}
-              </h4>
-              {question.showTruthTable ? (
-                <TruthTable
-                  booleanExpression={question.booleanExpression}
-                  outputSymbol={question.outputSymbol}
-                />
-              ) : (
-                <div className="flex flex-wrap items-center rounded-lg text-base text-white shadow-inner transition-transform">
-                  {`${question.booleanExpression} = ${question.outputSymbol}`
-                    .split('')
-                    .filter((char) => !/[\s]/g.test(char))
-                    .join(' ')}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <DragAndDropProvider>
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-950">
@@ -287,7 +228,6 @@ const LevelSolver = () => {
                         createFailedToast();
                         navigate('/practice');
                       }}
-                      onTick={(time) => setRemaining(time)}
                     />
                   ) : (
                     <h3 className="mb-3 flex items-center text-sm font-medium text-gray-400">
@@ -325,7 +265,7 @@ const LevelSolver = () => {
                 </div>
               </div>
               <div className="h-4"></div>
-              <QuestionInfo collapsedDefault />
+              <QuestionInfo question={question} collapsedDefault />
               <div className="mt-4 flex flex-col gap-4">
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
@@ -393,11 +333,10 @@ const LevelSolver = () => {
                         createFailedToast();
                         navigate('/practice');
                       }}
-                      onTick={(time) => setRemaining(time)}
                     />
                   )}
                 </div>
-                <QuestionInfo collapsedDefault={false} />
+                <QuestionInfo question={question} collapsedDefault={false} />
                 <button
                   className="w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none active:scale-[0.98] disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
                   onClick={submitAnswer}
