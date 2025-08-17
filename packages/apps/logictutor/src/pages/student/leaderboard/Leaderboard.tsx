@@ -6,7 +6,7 @@ import Third from '../../../assets/third-icon.svg?react';
 import ErrorPage from '../../ErrorPage';
 import { LeaderboardLoader } from './components/LeaderboardLoader';
 import { useGetLogictutorLeaderboardQuery } from '../../../slices/leaderboard.slice';
-import { useGetAllLevelsQuery } from '../../../slices/testApi.slice';
+import { useGetAllLevelsQuery } from '../../../slices/levelApi.slice';
 import { LogictutorScore } from '@edusoftware/core/src/types';
 import { skipToken } from '@reduxjs/toolkit/query';
 

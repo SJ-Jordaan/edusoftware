@@ -1,113 +1,72 @@
 import {
-  GetLevelsQueryParams,
-  IUpdateLevel,
-  Level,
-  LevelObject,
-  PopulatedLevelObject,
-  Question,
-  QuestionObject,
-} from '@edusoftware/core/src/types';
+  LogictutorCreateLevelRequest,
+  LogictutorFullLevel,
+  LogictutorLevelObject,
+  LogictutorUpdateLevelRequest,
+} from '@edusoftware/core/src/types/logictutor';
 import { apiSlice } from './api.slice';
 
-const LEVEL_URL = '/levels';
-const QUESTION_URL = '/questions';
-
-interface UpdateLevelPayload {
-  levelId: string;
-  level: IUpdateLevel;
-}
-
-interface UpdateQuestionPayload extends Question {
-  questionId: string;
-}
-
-export const levelApiSlice = apiSlice.injectEndpoints({
+export const testApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    fetchLevels: builder.query<
-      PopulatedLevelObject[],
-      GetLevelsQueryParams | void
+    createLogictutorLevel: builder.mutation<
+      string, // Response type
+      LogictutorCreateLevelRequest // Request payload type
     >({
-      query: (params) => {
-        if (!params) return LEVEL_URL;
-
-        const queryParams = new URLSearchParams();
-        if (params.isPractice !== undefined) {
-          queryParams.append('isPractice', params.isPractice.toString());
-        }
-        if (params.track) {
-          queryParams.append('track', params.track);
-        }
-
-        return `${LEVEL_URL}?${queryParams.toString()}`;
-      },
-      providesTags: ['Level'],
-    }),
-    fetchLevel: builder.query<PopulatedLevelObject, string>({
-      query: (levelId) => `${LEVEL_URL}/${levelId}`,
-      providesTags: (_result, _error, levelId) => [
-        { type: 'Level', id: levelId },
-      ],
-    }),
-    createLevel: builder.mutation<LevelObject, Level>({
-      query: (level) => ({
-        url: LEVEL_URL,
+      query: (body) => ({
+        url: '/logictutor/level',
         method: 'POST',
-        body: level,
+        body,
       }),
-      invalidatesTags: ['Level'],
+      invalidatesTags: ['LogictutorLevel'], // Invalidates all level-related queries
     }),
-    updateLevel: builder.mutation<LevelObject, UpdateLevelPayload>({
-      query: ({ levelId, level }) => ({
-        url: `${LEVEL_URL}/${levelId}`,
-        method: 'PUT',
-        body: level,
-      }),
-      invalidatesTags: (_result, _error, { levelId }) => [
-        { type: 'Level', id: levelId },
-      ],
-    }),
-    deleteLevel: builder.mutation<string, string>({
+    deleteLogictutorLevel: builder.mutation<
+      string, // Response type
+      string // Request payload type
+    >({
       query: (levelId) => ({
-        url: `${LEVEL_URL}/${levelId}`,
+        url: '/logictutor/level',
         method: 'DELETE',
+        params: { levelId },
       }),
-      invalidatesTags: ['Level'],
     }),
-    createQuestion: builder.mutation<QuestionObject, Question>({
-      query: (question) => ({
-        url: QUESTION_URL,
-        method: 'POST',
-        body: question,
-      }),
-      invalidatesTags: ['Question', 'Level'],
-    }),
-    updateQuestion: builder.mutation<QuestionObject, UpdateQuestionPayload>({
-      query: ({ questionId, ...question }) => ({
-        url: `${QUESTION_URL}/${questionId}`,
+    updateLogictutorLevel: builder.mutation<
+      string, // Response type
+      LogictutorUpdateLevelRequest // Request payload type
+    >({
+      query: (body) => ({
+        url: '/logictutor/level',
         method: 'PUT',
-        body: question,
+        body,
       }),
-      invalidatesTags: (_result, _error, { questionId }) => [
-        { type: 'Question', id: questionId },
+      invalidatesTags: (_result, _error, body) => [
+        { type: 'LogictutorLevel', id: body._id },
+        'LogictutorLevel',
       ],
     }),
-    deleteQuestion: builder.mutation<string, string>({
-      query: (questionId) => ({
-        url: `${QUESTION_URL}/${questionId}`,
-        method: 'DELETE',
+    getLogictutorLevel: builder.query<
+      LogictutorFullLevel, // Response type
+      string // Path param: levelId
+    >({
+      query: (levelId) => ({
+        url: '/logictutor/level',
+        method: 'GET',
+        params: { levelId },
       }),
-      invalidatesTags: ['Question', 'Level'],
+      providesTags: (_result, _error, levelId) => [
+        { type: 'LogictutorLevel', id: levelId },
+      ],
+    }),
+    getAllLevels: builder.query<LogictutorLevelObject[], undefined>({
+      query: () => '/logictutor/level-previews',
+      providesTags: ['LogictutorLevel'],
     }),
   }),
 });
 
 export const {
-  useFetchLevelsQuery,
-  useFetchLevelQuery,
-  useCreateLevelMutation,
-  useUpdateLevelMutation,
-  useDeleteLevelMutation,
-  useCreateQuestionMutation,
-  useUpdateQuestionMutation,
-  useDeleteQuestionMutation,
-} = levelApiSlice;
+  useCreateLogictutorLevelMutation,
+  useUpdateLogictutorLevelMutation,
+  useDeleteLogictutorLevelMutation,
+  useGetLogictutorLevelQuery,
+  useGetAllLevelsQuery,
+} = testApiSlice;

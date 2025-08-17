@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 // import { PageLoader } from '../../../components/loaders/PageLoader';
 import { PracticeLoader } from './Practice.loader';
 import { LevelGroup } from './components/LevelGroup';
-import { useGetAllLevelsQuery } from '../../../slices/testApi.slice';
+import { useGetAllLevelsQuery } from '../../../slices/levelApi.slice';
 import { CreateLevel } from '../../../components/create-level';
 import CreateModal, {
   useCreateModal,

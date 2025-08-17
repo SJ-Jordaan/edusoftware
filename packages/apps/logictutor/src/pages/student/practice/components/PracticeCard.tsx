@@ -1,7 +1,7 @@
 import {
   useDeleteLogictutorLevelMutation,
   useGetAllLevelsQuery,
-} from '../../../../slices/testApi.slice';
+} from '../../../../slices/levelApi.slice';
 import {
   ArrowPathIcon,
   PencilIcon,

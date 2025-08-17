@@ -3,7 +3,7 @@ import { CountdownTimer } from './components/CountdownTimer';
 import { DragAndDropProvider } from '../../../components/DragAndDropProvider';
 import { GridCircuitBuilder } from '../../../components/grid-circuit/GridCircuitBuilder';
 import { useEffect, useRef, useState } from 'react';
-import { useGetLogictutorLevelQuery } from '../../../slices/testApi.slice';
+import { useGetLogictutorLevelQuery } from '../../../slices/levelApi.slice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import correct from '../../../assets/correct.mp3';

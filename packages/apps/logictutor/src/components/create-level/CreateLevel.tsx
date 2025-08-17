@@ -7,7 +7,7 @@ import {
   useCreateLogictutorLevelMutation,
   useGetLogictutorLevelQuery,
   useUpdateLogictutorLevelMutation,
-} from '../../slices/testApi.slice';
+} from '../../slices/levelApi.slice';
 import { useEffect, useState } from 'react';
 import { parseBooleanExpr } from '@edusoftware/core/src/algorithms';
 import { InfoToast } from '../toasts/InfoToast';
