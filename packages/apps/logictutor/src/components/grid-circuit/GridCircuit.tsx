@@ -77,35 +77,45 @@ const GridCircuit = ({ cellScale }: GridCircuitProps) => {
     setClickedGate(null);
   };
 
+  const scaleFactor = 0.8;
+  const cellScaleOffsetFactor = (1 - scaleFactor) / 2;
   const getCellOutputPosition = (x: number, y: number) => {
     const cellSize = 56 * cellScale;
+    const scaleOffset = cellSize * cellScaleOffsetFactor;
     return {
-      x: x * cellSize + cellSize - 2,
+      x: x * cellSize + cellSize - 2 - scaleOffset,
       y: y * cellSize + cellSize / 2,
     };
   };
 
   const getCellInputPosition = (outputGate: Gate) => {
     const cellSize = 56 * cellScale;
+    const scaleOffset = cellSize * cellScaleOffsetFactor;
     const inputGate = pieces.find(
       (element) => outputGate.output === element.id,
     );
     if (inputGate?.gateType === 'not' || inputGate?.gateType === 'output')
       return {
-        x: inputGate.position.x * cellSize + 2,
+        x: inputGate.position.x * cellSize + 2 + scaleOffset,
         y: inputGate.position.y * cellSize + cellSize / 2,
       };
 
     if (inputGate?.inputs?.at(0) === outputGate.id) {
       return {
-        x: inputGate.position.x * cellSize + 2,
-        y: inputGate.position.y * cellSize + cellSize / 3 - 1,
+        x: inputGate.position.x * cellSize + 2 + scaleOffset,
+        y:
+          inputGate.position.y * cellSize +
+          scaleOffset +
+          (cellSize * scaleFactor) / 3,
       };
     }
     if (inputGate?.inputs?.at(1) === outputGate.id) {
       return {
-        x: inputGate.position.x * cellSize + 2,
-        y: inputGate.position.y * cellSize + cellSize * (2 / 3) - 1,
+        x: inputGate.position.x * cellSize + 2 + scaleOffset,
+        y:
+          inputGate.position.y * cellSize +
+          scaleOffset +
+          cellSize * scaleFactor * (2 / 3),
       };
     }
   };

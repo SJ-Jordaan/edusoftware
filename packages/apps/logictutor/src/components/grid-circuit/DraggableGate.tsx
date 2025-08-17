@@ -29,8 +29,8 @@ export const DraggableGate = ({
     <div
       ref={drag}
       onClick={(e) => onClick?.(e)}
-      className={`flex h-full w-full cursor-pointer items-center justify-center transition-all duration-200 ${
-        isDragging ? 'scale-110 opacity-70' : 'hover:scale-110'
+      className={`flex h-full w-full scale-[0.8] cursor-pointer items-center justify-center transition-all duration-200 ${
+        isDragging ? 'scale-90 opacity-70' : 'hover:scale-90'
       }`}
     >
       {gateMap(gateType, inputLabel)}
