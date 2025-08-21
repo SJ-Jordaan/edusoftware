@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_BUCKET: string
   readonly VITE_GOOGLE_CLIENT_ID: string
   readonly VITE_GOOGLE_LOGIN_URI: string
+  readonly VITE_STAGE: string
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv

@@ -12,9 +12,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
     const token = state?.auth?.token;
-    if (token) {
-      headers.set('authorization', `Bearer ${token}`);
-    }
+    if (token) headers.set('authorization', `Bearer ${token}`);
     return headers;
   },
 });
@@ -25,20 +23,14 @@ const baseQueryWithReAuth = async (
   extraOptions: object,
 ) => {
   const result = await baseQuery(args, api, extraOptions);
-
-  if (result.error && result.error.status === 401) {
-    api.dispatch(logout());
-  }
-
-  if (result.error && result.error.status === 403) {
+  if (result.error && result.error.status === 401) api.dispatch(logout());
+  if (result.error && result.error.status === 403)
     window.location.href = '/login/forbidden';
-  }
-
   return result;
 };
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReAuth,
-  tagTypes: ['User', 'LogictutorLevel', 'LogictutorLeaderboard'],
+  tagTypes: ['User', 'LogictutorLevel', 'LogictutorLeaderboard', 'Dashboard'],
   endpoints: () => ({}),
 });
