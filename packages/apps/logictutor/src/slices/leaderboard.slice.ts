@@ -18,6 +18,28 @@ export const leaderboardSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['LogictutorLevel'], // Invalidates all level-related queries
     }),
+    deleteScore: builder.mutation<
+      string, // Response type
+      { levelId: string; userId: string } // Request payload type
+    >({
+      query: (body) => ({
+        url: '/logictutor/score',
+        method: 'DELETE',
+        body,
+      }),
+      invalidatesTags: ['LogictutorLevel', 'LogictutorLeaderboard'], // Invalidates all level-related queries
+    }),
+    deleteLeaderboard: builder.mutation<
+      string, // Response type
+      { levelId: string } // Request payload type
+    >({
+      query: (body) => ({
+        url: '/logictutor/leaderboard',
+        method: 'DELETE',
+        body,
+      }),
+      invalidatesTags: ['LogictutorLevel', 'LogictutorLeaderboard'], // Invalidates all level-related queries
+    }),
     getLogictutorLeaderboard: builder.query<
       LogictutorLeaderboard, // Response type
       string // Path param: levelId
@@ -51,4 +73,6 @@ export const {
   useAddScoreMutation,
   useGetLogictutorLeaderboardQuery,
   useGetUserScoreQuery,
+  useDeleteLeaderboardMutation,
+  useDeleteScoreMutation,
 } = leaderboardSlice;

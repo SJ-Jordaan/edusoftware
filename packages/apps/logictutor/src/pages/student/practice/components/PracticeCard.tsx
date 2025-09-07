@@ -1,3 +1,4 @@
+import { LogictutorScore } from '@edusoftware/core/src/types';
 import {
   useDeleteLogictutorLevelMutation,
   useGetAllLevelsQuery,
@@ -16,6 +17,7 @@ interface PracticeCardProps {
   editLevel: (levelId) => void;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   isAdmin: boolean;
+  score?: LogictutorScore;
 }
 
 const difficultyConfig = {
@@ -47,6 +49,7 @@ export const PracticeCard = ({
   editLevel,
   difficulty,
   isAdmin,
+  score,
 }: PracticeCardProps) => {
   const [deleteLevel, { isLoading: isDeleting, error: deleteError }] =
     useDeleteLogictutorLevelMutation(undefined);
@@ -115,6 +118,9 @@ export const PracticeCard = ({
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {description}
         </p>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Score: <strong>{score?.score ?? 'No score achieved yet'}</strong>
+        </p>
 
         {/* Action buttons - now using mt-auto to push to bottom */}
         <div className="mt-auto pt-6">
@@ -124,7 +130,7 @@ export const PracticeCard = ({
               className={`flex-1 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition-colors ${isDeleting ? 'cursor-not-allowed opacity-70' : 'hover:bg-indigo-600 dark:hover:bg-indigo-400'}  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
               disabled={isDeleting}
             >
-              {isAdmin ? 'Test Level' : 'Start Practice'}
+              {isAdmin ? 'Test Level' : 'Start Challenge'}
             </button>
           </div>
         </div>

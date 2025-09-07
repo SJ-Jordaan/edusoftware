@@ -142,6 +142,7 @@ export const LevelGroup = ({
                 levelId={level._id}
                 isAdmin={isAdmin}
                 editLevel={editLevel}
+                score={level.userScore}
               />
             </div>
           ))}

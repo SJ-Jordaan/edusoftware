@@ -61,8 +61,12 @@ export const LevelView = ({ isAdmin }: LevelViewProps) => {
     {} as Record<string, typeof levels>,
   );
 
+  function clicl() {
+    console.log(levels);
+  }
   return (
     <div className="container mx-auto p-6">
+      <button onClick={clicl}>CLICICL</button>
       {isAdmin && (
         <>
           <CreateModal

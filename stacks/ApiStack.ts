@@ -21,8 +21,12 @@ export function ApiStack({ stack, app }: StackContext) {
       'packages/functions/src/logictutor/leaderboard/get/index.main',
     'POST /logictutor/leaderboard':
       'packages/functions/src/logictutor/leaderboard/addScore/index.main',
+    'DELETE /logictutor/leaderboard':
+      'packages/functions/src/logictutor/leaderboard/deleteLeaderboard/index.main',
     'GET /logictutor/score':
       'packages/functions/src/logictutor/leaderboard/getScore/index.main',
+    'DELETE /logictutor/score':
+      'packages/functions/src/logictutor/leaderboard/deleteScore/index.main',
   };
 
   const api = new Api(stack, 'Api', {

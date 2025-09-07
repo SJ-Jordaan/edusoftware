@@ -1,7 +1,14 @@
 import { connectToDatabase } from '@edusoftware/core/databases';
-import { LogictutorLevelModel } from '@edusoftware/core/databases/logictutor';
-import { handler } from '@edusoftware/core/handlers';
-import { ApplicationError, LambdaResponse } from '@edusoftware/core/types';
+import {
+  LogictutorLeaderboardModel,
+  LogictutorLevelModel,
+} from '@edusoftware/core/databases/logictutor';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
+import {
+  ApplicationError,
+  LambdaResponse,
+  LogictutorScore,
+} from '@edusoftware/core/types';
 
 /**
  * Lambda function to retrieve all levels without full question details.
@@ -27,6 +34,7 @@ export const main = handler<
         questionIds?: string[];
         updatedAt?: string;
         timeLimit?: number;
+        userScore?: LogictutorScore;
         _id: string;
       }>
     >
@@ -34,16 +42,33 @@ export const main = handler<
     await connectToDatabase();
 
     try {
-      const levels = await LogictutorLevelModel.find();
+      const [levels, leaderboards, { userId }] = await Promise.all([
+        LogictutorLevelModel.find(),
+        LogictutorLeaderboardModel.find(),
+        useSessionWithRoles(),
+      ]);
 
-      const result = levels.map((level) => ({
-        levelName: level.levelName,
-        description: level.description,
-        difficulty: level.difficulty,
-        updatedAt: level.updatedAt,
-        questionIds: level.questionIds?.map((id) => id.toString()),
-        _id: level._id,
-      }));
+      const result = levels.map((level) => {
+        const leaderboard = leaderboards.find((leaderboard) => {
+          // Convert both IDs to strings for comparison
+          return leaderboard.levelId.toString() === level._id.toString();
+        });
+
+        const userScore = leaderboard?.userScores?.find((score) => {
+          // Convert both user IDs to strings for comparison
+          return score.userId.toString() === userId.toString();
+        });
+
+        return {
+          levelName: level.levelName,
+          description: level.description,
+          difficulty: level.difficulty,
+          updatedAt: level.updatedAt,
+          questionIds: level.questionIds?.map((id) => id.toString()),
+          _id: level._id.toString(),
+          userScore,
+        };
+      });
 
       return {
         statusCode: 200,

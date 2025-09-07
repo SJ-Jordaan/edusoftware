@@ -47,7 +47,10 @@ const router = createBrowserRouter(
         <Route path="/" element={<StudentTemplate />}>
           {/* <Route path="/" element={<ChallengePage />} /> */}
           <Route path="/challenges" element={<LevelView isAdmin={false} />} />
-          <Route path="/leaderboard" element={<LeaderBoard />} />
+          <Route
+            path="/leaderboard"
+            element={<LeaderBoard isAdmin={false} />}
+          />
           <Route path="/tutorial" element={<Tutorial />} />
           {/* <Route path="/admin/levels" element={<LevelView isAdmin={true} />} /> */}
         </Route>
@@ -58,6 +61,10 @@ const router = createBrowserRouter(
         {/* Admin routes */}
         <Route path="/admin" element={<AdminTemplate />}>
           <Route path="/admin/levels" element={<LevelView isAdmin={true} />} />
+          <Route
+            path="/admin/leaderboard"
+            element={<LeaderBoard isAdmin={true} />}
+          />
         </Route>
       </Route>
 

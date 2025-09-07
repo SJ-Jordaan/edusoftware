@@ -7,6 +7,7 @@ import {
   OrganisationRole,
 } from '@edusoftware/core/types';
 import {
+  LogictutorLeaderboardModel,
   LogictutorLevelModel,
   LogictutorQuestionModel,
 } from '@edusoftware/core/databases/logictutor';
@@ -31,6 +32,10 @@ export const main = handler<{ message: string }>(
 
     try {
       const level = await LogictutorLevelModel.findByIdAndDelete(levelId);
+
+      await LogictutorLeaderboardModel.findOneAndDelete({
+        levelId: levelId,
+      });
 
       if (!level) {
         throw new BadRequestError(`Level with ID ${levelId} not found`);

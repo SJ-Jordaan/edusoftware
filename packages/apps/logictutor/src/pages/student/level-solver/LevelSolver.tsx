@@ -198,7 +198,8 @@ const LevelSolver = () => {
         (level?.timeLimit ?? 1000) -
           elapsed -
           incorrectSubmissions * 100 +
-          correctCount * 150,
+          correctCount * 500 -
+          incorrectCount * 150,
         0,
       );
       addScore({ levelId: level._id, score });

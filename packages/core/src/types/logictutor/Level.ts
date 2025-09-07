@@ -4,6 +4,7 @@ import {
   LogictutorPopulatedQuestion,
   LogictutorPopulatedQuestionSchema,
 } from './Question';
+import { LogictutorScore } from './Leaderboard';
 
 export const LogictutorLevelSchema = z.object({
   levelName: z.string(),
@@ -36,7 +37,10 @@ export type LogictutorIUpdateLevel = z.infer<
 export type LogictutorPopulatedLevelObject = LogictutorPopulatedLevel & {
   _id: string;
 };
-export type LogictutorLevelObject = LogictutorLevel & { _id: string };
+export type LogictutorLevelObject = LogictutorLevel & {
+  _id: string;
+  userScore?: LogictutorScore;
+};
 
 type QuestionWithoutId = Omit<LogictutorPopulatedQuestion, '_id'>;
 type QuestionWithOrWIthoutId = Omit<LogictutorPopulatedQuestion, '_id'> & {

@@ -5,10 +5,15 @@ import Second from '../../../assets/second-icon.svg?react';
 import Third from '../../../assets/third-icon.svg?react';
 import ErrorPage from '../../ErrorPage';
 import { LeaderboardLoader } from './components/LeaderboardLoader';
-import { useGetLogictutorLeaderboardQuery } from '../../../slices/leaderboard.slice';
+import {
+  useDeleteLeaderboardMutation,
+  useDeleteScoreMutation,
+  useGetLogictutorLeaderboardQuery,
+} from '../../../slices/leaderboard.slice';
 import { useGetAllLevelsQuery } from '../../../slices/levelApi.slice';
 import { LogictutorScore } from '@edusoftware/core/src/types';
 import { skipToken } from '@reduxjs/toolkit/query';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 // Add these helper functions at the top of the file
 const getInitials = (name: string | undefined | null): string => {
@@ -50,7 +55,10 @@ const AvatarFallback = ({
   );
 };
 
-export const LeaderBoard = () => {
+interface LevelViewProps {
+  isAdmin: boolean;
+}
+export const LeaderBoard = ({ isAdmin }: LevelViewProps) => {
   const [selectedLevelId, setSelectedLevelId] = useState<string | null>(null);
   const {
     data: leaderboard,
@@ -64,6 +72,11 @@ export const LeaderBoard = () => {
     },
   );
 
+  const [deleteLeaderboard, { isLoading: isDeleting }] =
+    useDeleteLeaderboardMutation();
+  const [deleteScore, { isLoading: isScoreDeleting }] =
+    useDeleteScoreMutation();
+
   const { data: levels } = useGetAllLevelsQuery(undefined);
 
   const currentLeaderboard = useMemo(() => {
@@ -71,7 +84,8 @@ export const LeaderBoard = () => {
     return selectedLevelId ? (leaderboard.userScores ?? []) : [];
   }, [leaderboard, selectedLevelId]);
 
-  if (isLoading || isFetching) return <LeaderboardLoader />;
+  if (isLoading || isFetching || isDeleting || isScoreDeleting)
+    return <LeaderboardLoader />;
   if (error) return <ErrorPage />;
 
   const [first, second, third, ...rest] = currentLeaderboard;
@@ -139,6 +153,19 @@ export const LeaderBoard = () => {
           </div>
         ) : (
           <>
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  if (selectedLevelId)
+                    deleteLeaderboard({ levelId: selectedLevelId });
+                }}
+                className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label="Delete"
+                disabled={isDeleting}
+              >
+                Reset Leaderboard
+              </button>
+            )}
             {/* Top 3 Podium - Existing code remains the same */}
             <div className="mb-12 flex *:flex *:flex-1 *:flex-col *:items-center *:justify-start *:text-center">
               {/* Second Place */}
@@ -165,6 +192,22 @@ export const LeaderBoard = () => {
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(second)}</div>
+                  {isAdmin && second && (
+                    <button
+                      onClick={() => {
+                        if (selectedLevelId)
+                          deleteScore({
+                            levelId: selectedLevelId,
+                            userId: second.userId,
+                          });
+                      }}
+                      className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Delete"
+                      disabled={isScoreDeleting}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -192,6 +235,22 @@ export const LeaderBoard = () => {
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(first)}</div>
+                  {isAdmin && first && (
+                    <button
+                      onClick={() => {
+                        if (selectedLevelId)
+                          deleteScore({
+                            levelId: selectedLevelId,
+                            userId: first.userId,
+                          });
+                      }}
+                      className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Delete"
+                      disabled={isScoreDeleting}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -219,6 +278,22 @@ export const LeaderBoard = () => {
                     </p>
                   </div>
                   <div className="mb-2 mt-auto">{renderScores(third)}</div>
+                  {isAdmin && third && (
+                    <button
+                      onClick={() => {
+                        if (selectedLevelId)
+                          deleteScore({
+                            levelId: selectedLevelId,
+                            userId: third.userId,
+                          });
+                      }}
+                      className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Delete"
+                      disabled={isScoreDeleting}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -258,6 +333,23 @@ export const LeaderBoard = () => {
                       {entry.score.toLocaleString()} pts
                     </p>
                   </div>
+
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        if (selectedLevelId)
+                          deleteScore({
+                            levelId: selectedLevelId,
+                            userId: entry.userId,
+                          });
+                      }}
+                      className="rounded-full bg-gray-700 p-2 text-gray-300 shadow-md transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Delete"
+                      disabled={isScoreDeleting}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
