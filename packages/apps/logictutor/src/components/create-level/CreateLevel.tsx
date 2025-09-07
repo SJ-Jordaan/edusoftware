@@ -175,12 +175,24 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
   };
 
   const addHint = (index: number) => {
-    if (questions[index].hints.length === 3) {
+    if (questions[index].hints.length >= 3) {
       createToast('Invalid', 'A maximum of 3 hints are allowed per question.');
       return;
     }
+
+    // Clone the specific question object and its hints array
     const updated = [...questions];
-    updated[index]['hints'].push('');
+    const questionCopy = {
+      ...updated[index],
+      hints: [...updated[index].hints],
+    };
+
+    // Add the new hint
+    questionCopy.hints.push('');
+
+    // Replace the question in the updated array
+    updated[index] = questionCopy;
+
     setQuestions(updated);
   };
 

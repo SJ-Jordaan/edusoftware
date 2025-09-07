@@ -25,6 +25,7 @@ import { ReloadPrompt } from './components/ReloadPrompt.tsx';
 import LevelSolver from './pages/student/level-solver/LevelSolver.tsx';
 import { LevelView } from './pages/student/practice/LevelView.tsx';
 import { LeaderBoard } from './pages/student/leaderboard/Leaderboard.tsx';
+import { Tutorial } from './pages/student/tutorial/Tutorial.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,8 +46,9 @@ const router = createBrowserRouter(
         {/* Authenticated student routes */}
         <Route path="/" element={<StudentTemplate />}>
           {/* <Route path="/" element={<ChallengePage />} /> */}
-          <Route path="/practice" element={<LevelView isAdmin={false} />} />
+          <Route path="/challenges" element={<LevelView isAdmin={false} />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
+          <Route path="/tutorial" element={<Tutorial />} />
           {/* <Route path="/admin/levels" element={<LevelView isAdmin={true} />} /> */}
         </Route>
 

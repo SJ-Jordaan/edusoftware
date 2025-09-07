@@ -3,22 +3,23 @@ import { NavBar, Route } from '../../components';
 // import Home from '../../assets/home-icon.svg?react';
 import Practice from '../../assets/four-squares-icon.svg?react';
 import Leaderboard from '../../assets/priorities-icon.svg?react';
+import Tutorial from '../../assets/bulb-icon.svg?react';
 
 const routes: Route[] = [
-  // {
-  //   path: '/',
-  //   icon: Home,
-  //   label: 'Challenges',
-  // },
   {
-    path: '/practice',
+    path: '/challenges',
     icon: Practice,
-    label: 'Practice',
+    label: 'Challenges',
   },
   {
     path: '/leaderboard',
     icon: Leaderboard,
     label: 'Leaderboard',
+  },
+  {
+    path: '/tutorial',
+    icon: Tutorial,
+    label: 'Tutorial',
   },
 ];
 

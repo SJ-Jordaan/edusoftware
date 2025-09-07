@@ -32,6 +32,10 @@ const LevelSolver = () => {
   const pieces = useAppSelector((state) => state.gridCircuit.pieces);
   const [addScore] = useAddScoreMutation();
   const [incorrectSubmissions, setIncorrectSubmissions] = useState(0);
+  const [currentIncorrectSubmissions, setCurrentIncorrectSubmissions] =
+    useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [incorrectCount, setIncorrectCount] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -125,68 +129,109 @@ const LevelSolver = () => {
 
   const submitAnswer = async () => {
     if (!question.booleanExpression) return;
-    const answerPostFix = infixToPostfix(question.booleanExpression.split(''));
 
-    const answerTruthTable = generateTruthTable(answerPostFix);
+    const answerTruthTable = generateTruthTable(
+      infixToPostfix(question.booleanExpression.split('')),
+    );
+    const studentTruthTable = generateTruthTable(
+      generateBooleanExpression(pieces),
+    );
 
-    const studentAnswerPostFix = generateBooleanExpression(pieces);
+    const isCorrect = answerTruthTable === studentTruthTable;
 
-    const studentTruthTable = generateTruthTable(studentAnswerPostFix);
-
-    if (answerTruthTable === studentTruthTable) {
-      setShowCounterExample(false);
-      playCorrect();
-      toast(
-        ({ closeToast }) => (
-          <FeedbackToast
-            isCorrect={true}
-            message="Correct"
-            onClose={closeToast}
-            hint={question.hints?.at(hintNum)}
-          />
-        ),
-        {
-          autoClose: 6000,
-          closeButton: false,
-          position: 'bottom-center',
-          className: 'bg-transparent shadow-none',
-          bodyClassName: 'bg-transparent p-0',
-          style: { background: 'transparent', boxShadow: 'none' },
-        },
-      );
-      if (level.questions.length === currentQuestion + 1) {
-        const score = Math.max(
-          (level?.timeLimit ?? 1000) - elapsed - incorrectSubmissions * 100,
-          0,
-        );
-        addScore({ levelId: level._id, score });
-        navigate('/practice');
-      } else setCurrentQuestion(currentQuestion + 1);
+    if (isCorrect) {
+      handleCorrectAnswer();
     } else {
-      setIncorrectSubmissions(incorrectSubmissions + 1);
-      playIncorrect();
-      setHintNum((hintNum + 1) % (question.hints?.length ?? 1));
-      toast(
-        ({ closeToast }) => (
-          <FeedbackToast
-            isCorrect={false}
-            message="Incorrect"
-            onClose={closeToast}
-            hint={question.hints?.at(hintNum)}
-          />
-        ),
-        {
-          autoClose: 6000,
-          closeButton: false,
-          position: 'bottom-center',
-          className: 'bg-transparent shadow-none',
-          bodyClassName: 'bg-transparent p-0',
-          style: { background: 'transparent', boxShadow: 'none' },
-        },
-      );
-      setShowCounterExample(true);
-      setIncorrectExpr(studentAnswerPostFix);
+      handleIncorrectAnswer();
     }
+  };
+
+  const handleCorrectAnswer = () => {
+    setShowCounterExample(false);
+    setCurrentIncorrectSubmissions(0);
+    playCorrect();
+    setCorrectCount(correctCount + 1);
+    showToast({
+      isCorrect: true,
+      message: 'Correct',
+      hint: question.hints?.at(hintNum),
+    });
+
+    moveToNextQuestionOrFinish();
+  };
+
+  const handleIncorrectAnswer = () => {
+    const newIncorrectCount = currentIncorrectSubmissions + 1;
+    setIncorrectSubmissions((prev) => prev + 1);
+    setCurrentIncorrectSubmissions(newIncorrectCount);
+
+    const maxAttempts = 3;
+    const attemptsLeft = maxAttempts - newIncorrectCount;
+
+    if (newIncorrectCount >= maxAttempts) {
+      showToast({
+        isCorrect: false,
+        message: 'Incorrect',
+        hint: '3 attempts used. Moving to next question',
+      });
+      setCurrentIncorrectSubmissions(0);
+      moveToNextQuestionOrFinish();
+      setIncorrectCount(incorrectCount + 1);
+    } else {
+      playIncorrect();
+      setHintNum((prev) => (prev + 1) % (question.hints?.length ?? 1));
+      showToast({
+        isCorrect: false,
+        message: `Incorrect (${attemptsLeft} left)`,
+        hint: question.hints?.at(hintNum),
+      });
+      setShowCounterExample(true);
+      setIncorrectExpr(generateBooleanExpression(pieces));
+    }
+  };
+
+  const moveToNextQuestionOrFinish = () => {
+    const isLastQuestion = level.questions.length === currentQuestion + 1;
+
+    if (isLastQuestion) {
+      const score = Math.max(
+        (level?.timeLimit ?? 1000) -
+          elapsed -
+          incorrectSubmissions * 100 +
+          correctCount * 150,
+        0,
+      );
+      addScore({ levelId: level._id, score });
+      showToast({
+        isCorrect: true,
+        message: `Your final score is ${score}`,
+        hint: '',
+      });
+      navigate('/challenges');
+    } else {
+      setCurrentQuestion((prev) => prev + 1);
+    }
+  };
+
+  const showToast = ({ isCorrect, message, hint }) => {
+    toast(
+      ({ closeToast }) => (
+        <FeedbackToast
+          isCorrect={isCorrect}
+          message={message}
+          onClose={closeToast}
+          hint={hint}
+        />
+      ),
+      {
+        autoClose: 6000,
+        closeButton: false,
+        position: 'bottom-center',
+        className: 'bg-transparent shadow-none',
+        bodyClassName: 'bg-transparent p-0',
+        style: { background: 'transparent', boxShadow: 'none' },
+      },
+    );
   };
 
   let numCalls = 0;
@@ -226,7 +271,7 @@ const LevelSolver = () => {
                       initialCount={level.timeLimit}
                       onEnd={() => {
                         createFailedToast();
-                        navigate('/practice');
+                        navigate('/challenges');
                       }}
                     />
                   ) : (
@@ -265,7 +310,7 @@ const LevelSolver = () => {
                 </div>
               </div>
               <div className="h-4"></div>
-              <QuestionInfo question={question} collapsedDefault />
+              <QuestionInfo question={question} collapsedDefault={false} />
               <div className="mt-4 flex flex-col gap-4">
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
@@ -331,7 +376,7 @@ const LevelSolver = () => {
                       initialCount={level.timeLimit}
                       onEnd={() => {
                         createFailedToast();
-                        navigate('/practice');
+                        navigate('/challenges');
                       }}
                     />
                   )}
