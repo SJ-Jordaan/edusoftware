@@ -80,8 +80,9 @@ export const LeaderBoard = ({ isAdmin }: LevelViewProps) => {
   const { data: levels } = useGetAllLevelsQuery(undefined);
 
   const currentLeaderboard = useMemo(() => {
-    if (!leaderboard) return [];
-    return selectedLevelId ? (leaderboard.userScores ?? []) : [];
+    if (!leaderboard || !leaderboard.userScores || !selectedLevelId) return [];
+    const userScores = JSON.parse(JSON.stringify(leaderboard.userScores));
+    return userScores.sort((a, b) => b.score - a.score);
   }, [leaderboard, selectedLevelId]);
 
   if (isLoading || isFetching || isDeleting || isScoreDeleting)
