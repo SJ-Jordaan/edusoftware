@@ -21,10 +21,11 @@ import QuestionInfoMob from '../../../assets/tutorial/QuestionInfoMob.png';
 import QuestionInfoMobTT from '../../../assets/tutorial/QuestionInfoMobTT.png';
 import ToolbarDesk from '../../../assets/tutorial/ToolbarDesk.png';
 import ToolbarMob from '../../../assets/tutorial/ToolbarMob.png';
+import VideoTutorial from '../../../assets/tutorial/LogicTutorial.mp4';
 
 export const Tutorial = () => {
   const [activeTab, setActiveTab] = useState<
-    'gates' | 'building_pc' | 'building_mobile'
+    'gates' | 'building_pc' | 'building_mobile' | 'video_tutorial'
   >('gates');
 
   const gateTutorialItems: {
@@ -369,6 +370,16 @@ export const Tutorial = () => {
         >
           Building Circuits (Mobile)
         </button>
+        <button
+          onClick={() => setActiveTab('video_tutorial')}
+          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'video_tutorial'
+              ? 'bg-indigo-600 text-white'
+              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+          }`}
+        >
+          Video Tutorial
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -472,6 +483,16 @@ export const Tutorial = () => {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {activeTab === 'video_tutorial' && (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Tutorial Video
+          </h2>
+          <hr className="my-2" />
+          <video src={VideoTutorial} controls className="rounded-lg" />
         </div>
       )}
     </div>
