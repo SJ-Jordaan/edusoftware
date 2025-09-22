@@ -285,7 +285,8 @@ const LevelSolver = () => {
                   )}
                 </div>
               </div>
-
+              <QuestionInfo question={question} collapsedDefault={false} />
+              <div className="h-4"></div>
               <div className="transform overflow-hidden rounded-xl bg-gray-800/70 shadow-xl backdrop-blur-sm transition-all duration-300">
                 <div className="w-full border-b border-gray-700/70 bg-gray-800/90 px-5 py-1">
                   <div className="flex w-full items-center justify-center">
@@ -310,8 +311,6 @@ const LevelSolver = () => {
                   />
                 </div>
               </div>
-              <div className="h-4"></div>
-              <QuestionInfo question={question} collapsedDefault={false} />
               <div className="mt-4 flex flex-col gap-4">
                 <button
                   className="active:scale-98 w-full transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 focus:outline-none disabled:from-gray-600 disabled:to-gray-500 disabled:opacity-70"
