@@ -8,6 +8,7 @@ export interface LevelDocument extends Document {
   updatedAt?: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   timeLimit?: number;
+  hide: boolean;
 }
 
 const LevelSchema = new Schema<LevelDocument>({
@@ -21,6 +22,7 @@ const LevelSchema = new Schema<LevelDocument>({
     enum: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'],
     required: true,
   },
+  hide: { type: Boolean, required: true },
 });
 
 export const LogictutorLevelModel = mongoose.model<LevelDocument>(

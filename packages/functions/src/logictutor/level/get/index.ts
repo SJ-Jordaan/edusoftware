@@ -22,6 +22,7 @@ export const main = handler<{
   description: string;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   timeLimit?: number;
+  hide: boolean;
   questions?: Array<{
     questionContent: string;
     booleanExpression: string;
@@ -41,6 +42,7 @@ export const main = handler<{
       description: string;
       difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
       timeLimit?: number;
+      hide: boolean;
       questions?: Array<{
         questionContent: string;
         booleanExpression: string;

@@ -378,7 +378,7 @@ export const Tutorial = () => {
               : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
           }`}
         >
-          Video Tutorial
+          Tutorial Video
         </button>
       </div>
 

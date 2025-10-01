@@ -41,6 +41,7 @@ export const main = handler<string>(
         difficulty: true,
         updatedAt: true,
         timeLimit: true,
+        hide: true,
       }).parse(parsedData);
     } catch (error: unknown) {
       const message =
@@ -78,6 +79,7 @@ export const main = handler<string>(
           updatedAt: parsedData.updatedAt ?? new Date().toISOString(),
           timeLimit: parsedData.timeLimit ?? undefined,
           questionIds: questionDocs.map((q) => q._id),
+          hide: parsedData.hide,
         },
       ]);
 

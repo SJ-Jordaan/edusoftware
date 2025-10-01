@@ -23,6 +23,7 @@ export const main = handler<
     questionIds?: string[];
     updatedAt?: string;
     timeLimit?: number;
+    hide: boolean;
   }>
 >(
   async (): Promise<
@@ -35,6 +36,7 @@ export const main = handler<
         updatedAt?: string;
         timeLimit?: number;
         userScore?: LogictutorScore;
+        hide: boolean;
         _id: string;
       }>
     >
@@ -66,6 +68,7 @@ export const main = handler<
           updatedAt: level.updatedAt,
           questionIds: level.questionIds?.map((id) => id.toString()),
           _id: level._id.toString(),
+          hide: level.hide,
           userScore,
         };
       });

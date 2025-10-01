@@ -128,24 +128,28 @@ export const LevelGroup = ({
             isLoading ? 'opacity-50' : 'opacity-100'
           }`}
         >
-          {levels.map((level, index) => (
-            <div
-              key={level._id}
-              data-index={index}
-              className="carousel-card w-[calc(100vw-3rem)] flex-none snap-center md:w-[350px]"
-            >
-              <PracticeCard
-                levelName={level.levelName}
-                description={level.description}
-                difficulty={level.difficulty}
-                onClick={() => onStartPractice(level._id)}
-                levelId={level._id}
-                isAdmin={isAdmin}
-                editLevel={editLevel}
-                score={level.userScore}
-              />
-            </div>
-          ))}
+          {levels
+            .filter((level) => {
+              return isAdmin || !level.hide;
+            })
+            .map((level, index) => (
+              <div
+                key={level._id}
+                data-index={index}
+                className="carousel-card w-[calc(100vw-3rem)] flex-none snap-center md:w-[350px]"
+              >
+                <PracticeCard
+                  levelName={level.levelName}
+                  description={level.description}
+                  difficulty={level.difficulty}
+                  onClick={() => onStartPractice(level._id)}
+                  levelId={level._id}
+                  isAdmin={isAdmin}
+                  editLevel={editLevel}
+                  score={level.userScore}
+                />
+              </div>
+            ))}
         </div>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-900/5 dark:bg-gray-900/20">

@@ -13,6 +13,7 @@ export const LogictutorLevelSchema = z.object({
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   timeLimit: z.number().optional(),
+  hide: z.boolean(),
 });
 
 export const LogictutorPopulatedLevelSchema = z.object({
@@ -22,6 +23,7 @@ export const LogictutorPopulatedLevelSchema = z.object({
   updatedAt: z.string().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   timeLimit: z.number().optional(),
+  hide: z.boolean(),
 });
 
 export const LogictutorUpdateLevelSchema = LogictutorLevelSchema.partial();

@@ -45,6 +45,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
   const [description, setDescription] = useState('');
   const [timeLimit, setTimeLimit] = useState('0:0');
   const [difficulty, setDifficulty] = useState<Difficulty>('BEGINNER');
+  const [hide, setHide] = useState<boolean>(false);
 
   const emptyQuestion = {
     booleanExpression: '',
@@ -74,6 +75,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
       const mins = Math.floor((data.timeLimit ?? 0) / 60);
       const secs = Math.floor((data.timeLimit ?? 0) % 60);
       setTimeLimit(`${mins}:${secs}`);
+      setHide(data.hide);
       setQuestions(
         data.questions.map((q) => {
           return { ...q, hints: q.hints ?? [] };
@@ -279,6 +281,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
       difficulty,
       timeLimit: timeLimitSeconds !== 0 ? timeLimitSeconds : undefined,
       questions: questions.map((q) => ({ ...q })),
+      hide,
     };
 
     try {
@@ -303,6 +306,7 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
       difficulty,
       timeLimit: timeLimitSeconds !== 0 ? timeLimitSeconds : undefined,
       questions: questions.map((q) => ({ ...q })),
+      hide,
     };
 
     try {
@@ -437,6 +441,15 @@ export const CreateLevel = ({ refetch, close, levelId }: CreateLevelProps) => {
                 const minutes = timeLimit.split(':')[0];
                 setTimeLimit(`${minutes}:${e.target.value}`);
               }}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap">
+            <p className="min-w-40">Hide Level</p>
+            <input
+              type="checkbox"
+              checked={hide}
+              onChange={(e) => setHide(e.target.checked)}
+              className="h-5 w-5 rounded-lg accent-indigo-500"
             />
           </div>
         </div>

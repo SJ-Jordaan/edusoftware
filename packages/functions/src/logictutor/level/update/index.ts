@@ -48,6 +48,7 @@ export const main = handler<string>(
         difficulty: true,
         updatedAt: true,
         timeLimit: true,
+        hide: true,
       }).parse(parsedData);
     } catch (error: unknown) {
       const message =
@@ -83,6 +84,7 @@ export const main = handler<string>(
     existingLevel.timeLimit = parsedData.timeLimit ?? undefined;
     existingLevel.updatedAt = parsedData.updatedAt ?? new Date().toISOString();
     existingLevel.questionIds = updatedQuestionIds;
+    existingLevel.hide = parsedData.hide;
 
     await existingLevel.save();
 
