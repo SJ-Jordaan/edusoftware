@@ -236,8 +236,22 @@ const LevelSolver = () => {
   };
 
   let numCalls = 0;
-  const createFailedToast = () => {
+  const handleTimeExpired = () => {
     if (numCalls++ !== 0) return;
+    const score = Math.max(
+      (level?.timeLimit ?? 1000) -
+        elapsed -
+        incorrectSubmissions * 100 +
+        correctCount * 500 -
+        incorrectCount * 150,
+      0,
+    );
+    addScore({ levelId: level._id, score });
+    showToast({
+      isCorrect: true,
+      message: `Your final score is ${score}`,
+      hint: '',
+    });
     toast(
       ({ closeToast }) => (
         <InfoToast
@@ -271,7 +285,7 @@ const LevelSolver = () => {
                     <CountdownTimer
                       initialCount={level.timeLimit}
                       onEnd={() => {
-                        createFailedToast();
+                        handleTimeExpired();
                         navigate('/challenges');
                       }}
                     />
@@ -375,7 +389,7 @@ const LevelSolver = () => {
                     <CountdownTimer
                       initialCount={level.timeLimit}
                       onEnd={() => {
-                        createFailedToast();
+                        handleTimeExpired();
                         navigate('/challenges');
                       }}
                     />
