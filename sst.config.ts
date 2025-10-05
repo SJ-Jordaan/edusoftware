@@ -1,6 +1,7 @@
 import { SSTConfig } from 'sst';
-import { StorageStack, ApiStack, FrontendStack, AuthStack } from './stacks';
+import { StorageStack, ApiStack, AuthStack } from './stacks';
 import { SecretStack } from './stacks/SecretStack';
+import { FrontendStack } from './stacks/FrontendStack';
 
 export default {
   config() {

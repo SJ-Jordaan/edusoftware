@@ -6,6 +6,29 @@ export function ApiStack({ stack, app }: StackContext) {
   const { userTable } = use(StorageStack);
   const { MONGO_URI } = use(SecretStack);
 
+  const logicTutorRoutes = {
+    'POST /logictutor/level':
+      'packages/functions/src/logictutor/level/create/index.main',
+    'PUT /logictutor/level':
+      'packages/functions/src/logictutor/level/update/index.main',
+    'GET /logictutor/level-previews':
+      'packages/functions/src/logictutor/level/getAll/index.main',
+    'GET /logictutor/level':
+      'packages/functions/src/logictutor/level/get/index.main',
+    'DELETE /logictutor/level':
+      'packages/functions/src/logictutor/level/delete/index.main',
+    'GET /logictutor/leaderboard':
+      'packages/functions/src/logictutor/leaderboard/get/index.main',
+    'POST /logictutor/leaderboard':
+      'packages/functions/src/logictutor/leaderboard/addScore/index.main',
+    'DELETE /logictutor/leaderboard':
+      'packages/functions/src/logictutor/leaderboard/deleteLeaderboard/index.main',
+    'GET /logictutor/score':
+      'packages/functions/src/logictutor/leaderboard/getScore/index.main',
+    'DELETE /logictutor/score':
+      'packages/functions/src/logictutor/leaderboard/deleteScore/index.main',
+  };
+
   const api = new Api(stack, 'Api', {
     customDomain: app.stage === 'prod' ? 'api.edusoftware.net' : undefined,
     defaults: {
@@ -45,6 +68,7 @@ export function ApiStack({ stack, app }: StackContext) {
         'packages/functions/src/reports/dashboard/index.main',
       'POST /badges/check': 'packages/functions/src/badges/check/index.main',
       'GET /badges': 'packages/functions/src/badges/get/index.main',
+      ...logicTutorRoutes,
     },
   });
 

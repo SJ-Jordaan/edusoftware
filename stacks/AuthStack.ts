@@ -5,13 +5,19 @@ import { SecretStack } from './SecretStack';
 
 export function AuthStack({ stack }: StackContext) {
   const { api } = use(ApiStack);
-  const { AutomaTutor } = use(FrontendStack);
-  const { GOOGLE_CLIENT_ID } = use(SecretStack);
+  const { AutomaTutor, LogicTutor } = use(FrontendStack);
+  const { GOOGLE_CLIENT_ID, LOGIC_GOOGLE_CLIENT_ID } = use(SecretStack);
 
   const auth = new Auth(stack, 'auth', {
     authenticator: {
       handler: 'packages/functions/src/auth/googleAuth.handler',
-      bind: [AutomaTutor, GOOGLE_CLIENT_ID, api],
+      bind: [
+        AutomaTutor,
+        LogicTutor,
+        GOOGLE_CLIENT_ID,
+        LOGIC_GOOGLE_CLIENT_ID,
+        api,
+      ],
     },
   });
 
@@ -22,5 +28,6 @@ export function AuthStack({ stack }: StackContext) {
 
   return {
     GOOGLE_CLIENT_ID,
+    LOGIC_GOOGLE_CLIENT_ID,
   };
 }

@@ -10,5 +10,9 @@
   "hosted-zone:account=471112981741:domainName=api.edusoftware.net:region=us-east-1": {
     "Id": "/hostedzone/Z0882384M6LVEK7CGJU9",
     "Name": "api.edusoftware.net."
+  },
+  "hosted-zone:account=124355662074:domainName=dev.edusoftware.net:region=us-east-1": {
+    "Id": "/hostedzone/Z0147899CZKJCH4UKLM7",
+    "Name": "dev.edusoftware.net."
   }
 }

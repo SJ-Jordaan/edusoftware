@@ -14,3 +14,4 @@ export * from './UserProgress';
 export * from './Reporting';
 export * from './Leaderboard';
 export * from './Badges';
+export * from './logictutor';

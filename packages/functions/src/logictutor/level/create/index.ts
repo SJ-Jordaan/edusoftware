@@ -1,0 +1,98 @@
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { handler, useSessionWithRoles } from '@edusoftware/core/handlers';
+import {
+  BadRequestError,
+  LambdaResponse,
+  OrganisationRole,
+} from '@edusoftware/core/types';
+import {
+  LogictutorLevelModel,
+  LogictutorQuestionModel,
+} from '@edusoftware/core/databases/logictutor';
+import { connectToDatabase } from '@edusoftware/core/databases';
+import {
+  LogictutorCreateLevelRequest,
+  LogictutorLevelSchema,
+  LogictutorQuestionSchema,
+} from '@edusoftware/core/types/logictutor';
+
+export const main = handler<string>(
+  async (event: APIGatewayProxyEventV2): Promise<LambdaResponse<string>> => {
+    await useSessionWithRoles([
+      OrganisationRole.ADMIN,
+      OrganisationRole.LECTURER,
+    ]);
+    if (!event.body) {
+      throw new BadRequestError('Request body is required');
+    }
+
+    let parsedData: LogictutorCreateLevelRequest;
+    try {
+      parsedData = JSON.parse(event.body);
+    } catch {
+      throw new BadRequestError('Invalid JSON');
+    }
+
+    // Validate level fields (excluding questions)
+    try {
+      LogictutorLevelSchema.pick({
+        levelName: true,
+        description: true,
+        difficulty: true,
+        updatedAt: true,
+        timeLimit: true,
+        hide: true,
+      }).parse(parsedData);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Invalid level data';
+      throw new BadRequestError(message);
+    }
+
+    // Validate each question
+    parsedData.questions.forEach((q, idx) => {
+      try {
+        LogictutorQuestionSchema.parse(q);
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error
+            ? `Question ${idx + 1}: ${error.message}`
+            : `Invalid question at index ${idx}`;
+        throw new BadRequestError(message);
+      }
+    });
+
+    await connectToDatabase();
+
+    try {
+      // Insert questions
+      const questionDocs = await LogictutorQuestionModel.insertMany(
+        parsedData.questions,
+      );
+
+      // Create the level
+      await LogictutorLevelModel.create([
+        {
+          levelName: parsedData.levelName,
+          description: parsedData.description,
+          difficulty: parsedData.difficulty,
+          updatedAt: parsedData.updatedAt ?? new Date().toISOString(),
+          timeLimit: parsedData.timeLimit ?? undefined,
+          questionIds: questionDocs.map((q) => q._id),
+          hide: parsedData.hide,
+        },
+      ]);
+
+      return {
+        statusCode: 201,
+        body: 'Successfully created level',
+      };
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Unknown error while creating level';
+      throw new BadRequestError(message);
+    }
+  },
+);

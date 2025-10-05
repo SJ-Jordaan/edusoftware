@@ -2,14 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug SST Start",
-      "type": "node",
+      "name": "Vite: Chrome Debug",
+      "type": "pwa-chrome",
       "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
-      "runtimeArgs": ["start", "--increase-timeout"],
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"],
-      "env": {}
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/packages/apps/logictutor",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/*": "${workspaceFolder}/*",
+        "webpack:///*": "${workspaceFolder}/*",
+        "vite:///*": "${workspaceFolder}/*"
+      },
+      "runtimeArgs": ["--remote-debugging-port=9222"]
     }
   ]
 }
